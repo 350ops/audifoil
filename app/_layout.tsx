@@ -26,6 +26,11 @@ function RootLayoutNav() {
       <Stack.Screen name="screens/checkout" />
       <Stack.Screen name="screens/success" options={{ gestureEnabled: false }} />
       <Stack.Screen name="screens/confirmation" options={{ presentation: 'modal', gestureEnabled: false }} />
+      {/* Activity Marketplace Flow */}
+      <Stack.Screen name="screens/activity-detail" />
+      <Stack.Screen name="screens/select-time" />
+      <Stack.Screen name="screens/activity-checkout" />
+      <Stack.Screen name="screens/activity-success" options={{ gestureEnabled: false }} />
     </Stack>
   );
 }

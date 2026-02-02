@@ -8,31 +8,40 @@ export default function Layout() {
       // iOS-specific styling for liquid glass effect
       tintColor={Platform.OS === 'ios' ? PlatformColor('label') : '#00A6F4'}
     >
-      {/* Home Tab */}
+      {/* Explore Tab - Main home feed */}
       <NativeTabs.Trigger name="index">
-        <Icon 
-          sf={{ default: 'house', selected: 'house.fill' }} 
-          drawable="ic_home" 
+        <Icon
+          sf={{ default: 'sparkles', selected: 'sparkles' }}
+          drawable="ic_explore"
         />
-        <Label>Home</Label>
+        <Label>Explore</Label>
       </NativeTabs.Trigger>
 
-      {/* Arrivals Tab */}
-      <NativeTabs.Trigger name="arrivals">
-        <Icon 
-          sf={{ default: 'airplane.arrival', selected: 'airplane.arrival' }} 
-          drawable="ic_flight_land" 
+      {/* Activities Tab - Catalog with filters */}
+      <NativeTabs.Trigger name="activities">
+        <Icon
+          sf={{ default: 'water.waves', selected: 'water.waves' }}
+          drawable="ic_activities"
         />
-        <Label>Arrivals</Label>
+        <Label>Activities</Label>
       </NativeTabs.Trigger>
 
-      {/* Profile Tab */}
-      <NativeTabs.Trigger name="profile">
-        <Icon 
-          sf={{ default: 'person', selected: 'person.fill' }} 
-          drawable="ic_person" 
+      {/* Bookings Tab - My bookings */}
+      <NativeTabs.Trigger name="bookings">
+        <Icon
+          sf={{ default: 'calendar', selected: 'calendar' }}
+          drawable="ic_calendar"
         />
-        <Label>Profile</Label>
+        <Label>Bookings</Label>
+      </NativeTabs.Trigger>
+
+      {/* Crew Tab - Flight arrivals shortcut */}
+      <NativeTabs.Trigger name="crew">
+        <Icon
+          sf={{ default: 'airplane', selected: 'airplane' }}
+          drawable="ic_flight"
+        />
+        <Label>Crew</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

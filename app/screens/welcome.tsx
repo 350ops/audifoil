@@ -185,10 +185,10 @@ export default function OnboardingScreen() {
                     {/* Main Content */}
                     <View className="flex-1 justify-end px-6 pb-8">
                         <Text className='text-5xl font-bold text-white w-full leading-tight'>
-                            Fly Over the{'\n'}Indian Ocean
+                            Experience the{'\n'}Maldives
                         </Text>
                         <Text className='text-lg text-white/70 mt-3'>
-                            Premium Audi e-foil experiences for airline crews landing in Malé
+                            Premium water adventures and luxury experiences in paradise
                         </Text>
                     </View>
 
@@ -200,8 +200,8 @@ export default function OnboardingScreen() {
                             className='w-full rounded-2xl flex flex-row items-center justify-center py-4 mb-4'
                             style={{ backgroundColor: colors.highlight }}
                         >
-                            <Icon name="Waves" size={20} color="white" />
-                            <Text className='text-white font-semibold text-lg ml-2'>Start Flying</Text>
+                            <Icon name="Sparkles" size={20} color="white" />
+                            <Text className='text-white font-semibold text-lg ml-2'>Explore Experiences</Text>
                         </Pressable>
 
                         {/* Social Auth Row */}
@@ -278,7 +278,7 @@ export default function OnboardingScreen() {
                             Demo Mode
                         </ThemedText>
                         <ThemedText className="text-center opacity-60 px-4">
-                            This is a demo app. Sign in with any method to explore the e-foil booking experience.
+                            This is a demo app. Sign in with any method to explore premium Maldives experiences.
                         </ThemedText>
                     </View>
 
