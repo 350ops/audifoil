@@ -119,7 +119,7 @@ export const useStore = create<AppState>((set, get) => ({
   demoUser: {
     id: 'demo-user',
     name: 'Miguel',
-    email: 'hello@foilTribe Adventures.com',
+    email: 'hello@foiltribe.com',
     whatsapp: '+34 612 345 678',
   },
   setDemoUser: (user) => set({ demoUser: user }),

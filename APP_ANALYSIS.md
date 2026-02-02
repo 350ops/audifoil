@@ -406,5 +406,5 @@ npx expo prebuild
 ## Contact
 
 - **App Name**: foilTribe Adventures
-- **Support Email**: maldives@foilTribe Adventures.com
+- **Support Email**: maldives@foiltribe.com
 - **GitHub**: https://github.com/350ops/foilTribe Adventures

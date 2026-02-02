@@ -552,7 +552,7 @@ eas submit --platform android
 
 ## Support
 
-For questions or issues, contact [maldives@foilTribe Adventures.com](mailto:maldives@foilTribe Adventures.com)
+For questions or issues, contact [maldives@foiltribe.com](mailto:maldives@foiltribe.com)
 
 ## License
 

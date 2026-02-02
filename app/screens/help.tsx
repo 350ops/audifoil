@@ -63,9 +63,9 @@ export default function HelpScreen() {
     {
       id: 'email',
       type: t('help.emailSupport'),
-      value: 'maldives@foilTribe Adventures.com',
+      value: 'maldives@foiltribe.com',
       icon: 'Mail' as const,
-      action: () => Linking.openURL('mailto:maldives@foilTribe Adventures.com')
+      action: () => Linking.openURL('mailto:maldives@foiltribe.com')
     },
     {
       id: 'phone',
@@ -148,7 +148,7 @@ export default function HelpScreen() {
               title={t('help.emailUs')} 
               iconStart="Mail"
               className="m-3"
-              onPress={() => Linking.openURL('mailto:maldives@foilTribe Adventures.com')}
+              onPress={() => Linking.openURL('mailto:maldives@foiltribe.com')}
             />
           </View>
         </AnimatedView>
