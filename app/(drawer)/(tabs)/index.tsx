@@ -84,7 +84,7 @@ export default function HomeScreen() {
             <LinearGradient
               colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.2)', colors.bg]}
               locations={[0, 0.7, 1]}
-              className="flex-1"
+              style={{ flex: 1 }}
             >
               {/* Header Row */}
               <View 
@@ -201,15 +201,45 @@ export default function HomeScreen() {
           </CardScroller>
         </View>
 
-        {/* How It Works */}
+        {/* The E-Foil Experience */}
         <View className="px-4 mt-6">
-          <ThemedText className="text-2xl font-bold mb-4">How It Works</ThemedText>
+          <ThemedText className="text-2xl font-bold mb-4">The E-Foil Experience</ThemedText>
           <AnimatedView animation="fadeIn" duration={400} delay={350}>
             <View className="bg-secondary rounded-2xl p-5" style={shadowPresets.card}>
-              <StepItem number="1" title="Select Your Flight" description="Choose from today's MLE arrivals" />
-              <StepItem number="2" title="Pick a Time Slot" description="Sessions start 1h after landing" />
-              <StepItem number="3" title="Book & Pay" description="Quick Apple Pay checkout" />
-              <StepItem number="4" title="Fly Over Paradise" description="45-min Audi e-foil session" isLast />
+              <ThemedText className="opacity-70 mb-4 leading-5">
+                Experience the thrill of flying above the crystal-clear waters of the Maldives on a premium Audi e-foil. No waves needed – our electric hydrofoils let you glide silently above the Indian Ocean.
+              </ThemedText>
+              
+              <View className="flex-row flex-wrap" style={{ gap: 8, marginBottom: 16 }}>
+                <FeatureTag icon="Zap" text="Electric powered" />
+                <FeatureTag icon="Volume2" text="Silent ride" />
+                <FeatureTag icon="GraduationCap" text="No experience needed" />
+                <FeatureTag icon="Shield" text="Safety gear included" />
+                <FeatureTag icon="Clock" text="45-min sessions" />
+                <FeatureTag icon="Users" text="1-on-1 instruction" />
+              </View>
+              
+              <View className="bg-background rounded-xl p-3">
+                <View className="flex-row items-center">
+                  <Icon name="Info" size={16} color={colors.highlight} />
+                  <ThemedText className="text-sm ml-2 flex-1 opacity-70">
+                    Sessions timed with your flight arrival – start flying 1 hour after you land!
+                  </ThemedText>
+                </View>
+              </View>
+            </View>
+          </AnimatedView>
+        </View>
+
+        {/* How It Works */}
+        <View className="px-4 mt-6">
+          <ThemedText className="text-2xl font-bold mb-4">How to Book</ThemedText>
+          <AnimatedView animation="fadeIn" duration={400} delay={400}>
+            <View className="bg-secondary rounded-2xl p-5" style={shadowPresets.card}>
+              <StepItem number="1" title="Find Your Flight" description="We sync with MLE arrivals" />
+              <StepItem number="2" title="Pick a Session" description="Choose your preferred time slot" />
+              <StepItem number="3" title="Book Instantly" description="Secure checkout with Apple Pay" />
+              <StepItem number="4" title="Fly Over Paradise" description="Meet us at the lagoon dock" isLast />
             </View>
           </AnimatedView>
         </View>
@@ -433,6 +463,17 @@ function MiniFlightCard({ flight, onPress }: { flight: Flight; onPress: () => vo
         </View>
       </View>
     </Pressable>
+  );
+}
+
+// Feature Tag Component
+function FeatureTag({ icon, text }: { icon: string; text: string }) {
+  const colors = useThemeColors();
+  return (
+    <View className="flex-row items-center bg-background rounded-full px-3 py-1.5">
+      <Icon name={icon as any} size={14} color={colors.highlight} />
+      <ThemedText className="text-xs ml-1.5">{text}</ThemedText>
+    </View>
   );
 }
 

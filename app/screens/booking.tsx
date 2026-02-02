@@ -10,7 +10,6 @@ import useThemeColors from '@/contexts/ThemeColors';
 import { useEfoil, TimeSlot, AIRLINE_COLORS } from '@/contexts/EfoilContext';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
 
 export default function BookingScreen() {
   const colors = useThemeColors();
@@ -55,63 +54,78 @@ export default function BookingScreen() {
         showBackButton
         title="Select Time Slot"
         rightComponents={[
-          <Icon name="HelpCircle" size={22} onPress={() => {}} />
+          <Icon key="help" name="HelpCircle" size={22} onPress={() => {}} />
         ]}
       />
       
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Selected Flight Card */}
+        {/* Your Flight - Compact */}
         <View className="px-4 pt-4">
           <AnimatedView animation="scaleIn" duration={300}>
-            <View className="bg-secondary rounded-2xl p-4" style={shadowPresets.card}>
-              <View className="flex-row items-center">
-                <View
-                  className="w-12 h-12 rounded-full items-center justify-center mr-4"
-                  style={{ backgroundColor: airlineColor }}
-                >
-                  <ThemedText className="text-white font-bold">{flight.airlineCode}</ThemedText>
-                </View>
-                <View className="flex-1">
-                  <ThemedText className="font-bold text-lg">{flight.flightNumber}</ThemedText>
-                  <ThemedText className="opacity-50">{flight.airline}</ThemedText>
-                </View>
-                <View className="items-end">
-                  <ThemedText className="font-bold text-xl">{flight.arrivalTime}</ThemedText>
-                  <ThemedText className="opacity-50 text-sm">{flight.origin} → MLE</ThemedText>
-                </View>
+            <View className="bg-secondary rounded-xl p-3 flex-row items-center" style={shadowPresets.card}>
+              <View
+                className="w-10 h-10 rounded-full items-center justify-center mr-3"
+                style={{ backgroundColor: airlineColor }}
+              >
+                <ThemedText className="text-white font-bold text-sm">{flight.airlineCode}</ThemedText>
+              </View>
+              <View className="flex-1">
+                <ThemedText className="font-semibold">{flight.flightNumber}</ThemedText>
+                <ThemedText className="text-xs opacity-50">{flight.airline}</ThemedText>
+              </View>
+              <View className="items-end">
+                <ThemedText className="font-bold text-lg">{flight.arrivalTime}</ThemedText>
+                <ThemedText className="opacity-50 text-xs">{flight.origin} → MLE</ThemedText>
               </View>
             </View>
           </AnimatedView>
         </View>
 
-        {/* Session Info */}
+        {/* E-Foil Experience Info */}
         <View className="px-4 mt-6">
           <View className="flex-row items-center mb-3">
             <Icon name="Waves" size={20} color={colors.highlight} />
-            <ThemedText className="font-bold text-lg ml-2">E-Foil Sessions</ThemedText>
+            <ThemedText className="font-bold text-lg ml-2">E-Foil Experience</ThemedText>
           </View>
           <ThemedText className="opacity-60 mb-4">
-            45-minute sessions starting 1 hour after your arrival. Select a slot below.
+            Glide above crystal-clear waters on a premium Audi e-foil. Each 45-minute session includes professional instruction and all safety gear.
           </ThemedText>
+          
+          {/* Experience Highlights */}
+          <View className="flex-row flex-wrap mb-4" style={{ gap: 8 }}>
+            <View className="flex-row items-center bg-secondary rounded-full px-3 py-1.5">
+              <Icon name="Clock" size={14} color={colors.highlight} />
+              <ThemedText className="text-xs ml-1.5">45 min session</ThemedText>
+            </View>
+            <View className="flex-row items-center bg-secondary rounded-full px-3 py-1.5">
+              <Icon name="GraduationCap" size={14} color={colors.highlight} />
+              <ThemedText className="text-xs ml-1.5">Expert instructor</ThemedText>
+            </View>
+            <View className="flex-row items-center bg-secondary rounded-full px-3 py-1.5">
+              <Icon name="Shield" size={14} color={colors.highlight} />
+              <ThemedText className="text-xs ml-1.5">Safety gear included</ThemedText>
+            </View>
+            <View className="flex-row items-center bg-secondary rounded-full px-3 py-1.5">
+              <Icon name="Zap" size={14} color={colors.highlight} />
+              <ThemedText className="text-xs ml-1.5">No experience needed</ThemedText>
+            </View>
+          </View>
         </View>
 
-        {/* Time Slots Grid */}
+        {/* Available Sessions */}
         <View className="px-4">
-          <View className="flex-row flex-wrap gap-3">
+          <ThemedText className="font-bold text-lg mb-3">Available Sessions</ThemedText>
+          <View className="flex-row flex-wrap" style={{ gap: 12 }}>
             {slots.map((slot, index) => (
-              <AnimatedView
-                key={slot.id}
-                animation="scaleIn"
-                duration={250}
-                delay={index * 40}
-                className="w-[48%]"
-              >
-                <SlotCard
-                  slot={slot}
-                  isSelected={selectedSlot?.id === slot.id}
-                  onPress={() => handleSlotPress(slot)}
-                />
-              </AnimatedView>
+              <View key={slot.id} style={{ width: '48%' }}>
+                <AnimatedView animation="scaleIn" duration={250} delay={index * 40}>
+                  <SlotCard
+                    slot={slot}
+                    isSelected={selectedSlot?.id === slot.id}
+                    onPress={() => handleSlotPress(slot)}
+                  />
+                </AnimatedView>
+              </View>
             ))}
           </View>
         </View>
@@ -181,6 +195,7 @@ function SlotCard({ slot, isSelected, onPress }: {
   onPress: () => void;
 }) {
   const colors = useThemeColors();
+  const spotsLeft = slot.available ? Math.max(1, 4 - slot.bookedBy.length) : 0;
   
   return (
     <Pressable
@@ -196,18 +211,16 @@ function SlotCard({ slot, isSelected, onPress }: {
       ]}
     >
       <View className="p-4">
-        {/* Time */}
-        <View className="flex-row items-center justify-between mb-2">
+        {/* Time & Popular Badge */}
+        <View className="flex-row items-center justify-between mb-1">
           <ThemedText 
-            className="font-bold text-lg"
+            className="font-bold text-xl"
             style={isSelected ? { color: 'white' } : undefined}
           >
             {slot.startTime}
           </ThemedText>
           {slot.isPopular && (
-            <View className="flex-row items-center">
-              <Icon name="Flame" size={14} color={isSelected ? 'white' : '#EF4444'} />
-            </View>
+            <Icon name="Flame" size={16} color={isSelected ? 'white' : '#EF4444'} />
           )}
         </View>
         
@@ -215,31 +228,25 @@ function SlotCard({ slot, isSelected, onPress }: {
           className="text-sm mb-3"
           style={{ color: isSelected ? 'rgba(255,255,255,0.7)' : colors.placeholder }}
         >
-          {slot.startTime} - {slot.endTime}
+          to {slot.endTime}
         </ThemedText>
 
-        {/* Crew Badges */}
-        {slot.bookedBy.length > 0 && (
-          <View className="flex-row items-center gap-1 mb-2">
-            {slot.bookedBy.map((crew) => (
-              <View
-                key={crew.id}
-                className="px-2 py-1 rounded-full"
-                style={{ 
-                  backgroundColor: isSelected 
-                    ? 'rgba(255,255,255,0.2)' 
-                    : AIRLINE_COLORS[crew.airlineCode] || colors.highlight 
-                }}
-              >
-                <ThemedText className="text-white text-xs font-medium">
-                  {crew.airlineCode} ×{crew.count}
-                </ThemedText>
-              </View>
-            ))}
-          </View>
-        )}
+        {/* Session Info */}
+        <View className="flex-row items-center mb-3">
+          <Icon 
+            name="Waves" 
+            size={14} 
+            color={isSelected ? 'rgba(255,255,255,0.7)' : colors.placeholder} 
+          />
+          <ThemedText 
+            className="text-xs ml-1"
+            style={{ color: isSelected ? 'rgba(255,255,255,0.7)' : colors.placeholder }}
+          >
+            45 min • Instructor included
+          </ThemedText>
+        </View>
 
-        {/* Status */}
+        {/* Status & Price */}
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center">
             <View 
@@ -250,11 +257,11 @@ function SlotCard({ slot, isSelected, onPress }: {
               className="text-xs"
               style={{ color: isSelected ? 'rgba(255,255,255,0.7)' : colors.placeholder }}
             >
-              {slot.available ? 'Available' : 'Full'}
+              {slot.available ? `${spotsLeft} spots left` : 'Full'}
             </ThemedText>
           </View>
           <ThemedText 
-            className="font-bold"
+            className="font-bold text-lg"
             style={isSelected ? { color: 'white' } : { color: colors.highlight }}
           >
             ${slot.price}

@@ -1,7 +1,6 @@
 import React from 'react';
-import { Image, View, ViewStyle } from 'react-native';
+import { Image, Text, View, ViewStyle } from 'react-native';
 
-import ThemedText from '@/components/ThemedText';
 import { getAirlineLogo, hasAirlineLogo } from '@/data/airlineLogos';
 import { getAirlineColor } from '@/data/types';
 
@@ -54,9 +53,9 @@ export default function AirlineLogo({ airlineCode, size = 40, style }: AirlineLo
         },
         style,
       ]}>
-      <ThemedText style={{ color: 'white', fontWeight: 'bold', fontSize: size * 0.3 }}>
+      <Text style={{ color: 'white', fontWeight: 'bold', fontSize: size * 0.3 }}>
         {airlineCode}
-      </ThemedText>
+      </Text>
     </View>
   );
 }
