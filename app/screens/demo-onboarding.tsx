@@ -53,7 +53,7 @@ export default function DemoOnboardingScreen() {
                             Welcome to Demo Mode
                         </ThemedText>
                         <ThemedText className="text-center opacity-60 px-8">
-                            Explore all features of audiFoil without creating an account. Your data will be stored locally on this device.
+                            Discover premium Maldives experiences without creating an account. Your bookings will be stored locally.
                         </ThemedText>
                     </View>
                 </View>
@@ -83,28 +83,28 @@ export default function DemoOnboardingScreen() {
                         What you can do
                     </ThemedText>
                     <ThemedText className="opacity-60 mb-8">
-                        Try out all these features in demo mode.
+                        Discover premium Maldives experiences.
                     </ThemedText>
                     <View className="gap-4">
                         <FeatureItem
-                            icon="FileText"
-                            title="Create Notes"
-                            description="Add colorful notes with categories"
+                            icon="Sparkles"
+                            title="Discover Activities"
+                            description="E-foil, snorkeling, sunset cruises & more"
                         />
                         <FeatureItem
-                            icon="FolderOpen"
-                            title="Organize"
-                            description="Use categories to keep things tidy"
+                            icon="Calendar"
+                            title="Book Sessions"
+                            description="Choose your date, time, and group size"
                         />
                         <FeatureItem
-                            icon="Pin"
-                            title="Pin Important Notes"
-                            description="Keep your favorites at the top"
+                            icon="Plane"
+                            title="Crew Shortcut"
+                            description="Quick booking based on your flight"
                         />
                         <FeatureItem
-                            icon="Search"
-                            title="Search"
-                            description="Find any note quickly"
+                            icon="Bookmark"
+                            title="Manage Bookings"
+                            description="View and track all your experiences"
                         />
                     </View>
                 </View>
@@ -120,7 +120,7 @@ export default function DemoOnboardingScreen() {
                             You're all set!
                         </ThemedText>
                         <ThemedText className="text-center opacity-60 px-8">
-                            Start exploring audiFoil. Ready to book your first e-foil session!
+                            Start exploring premium Maldives experiences. Your adventure awaits!
                         </ThemedText>
                     </View>
                 </View>

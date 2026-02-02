@@ -1,503 +1,472 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, RefreshControl, Pressable, ImageBackground, Dimensions } from 'react-native';
-import ThemedScroller from 'components/ThemeScroller';
-import Header from 'components/Header';
+import {
+  View,
+  ScrollView,
+  RefreshControl,
+  Pressable,
+  ImageBackground,
+  Dimensions,
+  FlatList,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+} from 'react-native';
 import ThemedText from '@/components/ThemedText';
 import AnimatedView from '@/components/AnimatedView';
-import { CardScroller } from '@/components/CardScroller';
 import Icon from '@/components/Icon';
 import { shadowPresets } from '@/utils/useShadow';
 import useThemeColors from '@/contexts/ThemeColors';
 import { useStore } from '@/store/useStore';
-import { mockArrivalsToday, getPopularSlotsToday, getAvailableSlotsCount } from '@/data';
-import { Flight, getAirlineColor } from '@/data/types';
-import AirlineLogo from '@/components/AirlineLogo';
-import { StatsCardSkeleton } from '@/components/SkeletonCard';
+import {
+  Activity,
+  ACTIVITIES,
+  getFeaturedActivities,
+  getTrendingActivities,
+  getSunsetActivities,
+  getWaterSportsActivities,
+  getBoatExperiences,
+  MEDIA,
+} from '@/data/activities';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
+const HERO_HEIGHT = height * 0.52;
 
-export default function HomeScreen() {
+export default function ExploreScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
-  const { setSelectedFlight, bookings, loadBookingsFromStorage, demoUser } = useStore();
+  const { setSelectedActivity, loadActivityBookings, demoUser } = useStore();
   const [refreshing, setRefreshing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
 
-  // Load bookings on mount
   useEffect(() => {
-    loadBookingsFromStorage();
-    const timer = setTimeout(() => setIsLoading(false), 600);
-    return () => clearTimeout(timer);
+    loadActivityBookings();
   }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setIsLoading(true);
-    loadBookingsFromStorage();
-    setTimeout(() => {
-      setRefreshing(false);
-      setIsLoading(false);
-    }, 600);
+    loadActivityBookings();
+    setTimeout(() => setRefreshing(false), 800);
   }, []);
 
-  const handleFlightPress = useCallback((flight: Flight) => {
+  const handleActivityPress = useCallback((activity: Activity) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setSelectedFlight(flight);
-    router.push('/screens/flight-detail');
-  }, [setSelectedFlight]);
+    setSelectedActivity(activity);
+    router.push('/screens/activity-detail');
+  }, [setSelectedActivity]);
 
-  // Get stats
-  const totalFlights = mockArrivalsToday.length;
-  const totalAvailableSlots = mockArrivalsToday.reduce((sum, f) => sum + getAvailableSlotsCount(f), 0);
-  const popularSlots = getPopularSlotsToday();
+  const trendingActivities = getTrendingActivities();
+  const sunsetActivities = getSunsetActivities();
+  const waterSports = getWaterSportsActivities();
+  const boatExperiences = getBoatExperiences();
 
-  // Get next 3 flights
-  const upcomingFlights = mockArrivalsToday.slice(0, 3);
+  const heroImages = [
+    { image: MEDIA.efoil.hero, title: 'Audi E-Foil', subtitle: 'Fly above paradise', activity: ACTIVITIES[0] },
+    { image: MEDIA.boat.sunset, title: 'Sunset Cruises', subtitle: 'Golden hour magic', activity: ACTIVITIES[1] },
+    { image: MEDIA.snorkel.reef, title: 'Reef Discovery', subtitle: 'Underwater wonders', activity: ACTIVITIES[2] },
+    { image: MEDIA.sandbank.aerial, title: 'Private Islands', subtitle: 'Your own paradise', activity: ACTIVITIES[4] },
+  ];
 
-  // Format today's date
-  const today = new Date();
-  const dateStr = today.toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    month: 'long', 
-    day: 'numeric' 
-  });
+  const handleHeroScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / width);
+    if (index !== activeHeroIndex) {
+      setActiveHeroIndex(index);
+    }
+  };
 
   return (
     <View className="flex-1 bg-background">
-      <ThemedScroller
-        className="!px-0"
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="white" />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.text} />
         }
       >
-        {/* Hero Section with integrated header */}
-        <View style={{ height: 280 }}>
-          <ImageBackground
-            source={require('@/assets/img/efoil.jpg')}
-            className="flex-1"
-            resizeMode="cover"
-          >
-            <LinearGradient
-              colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.2)', colors.bg]}
-              locations={[0, 0.7, 1]}
-              style={{ flex: 1 }}
-            >
-              {/* Header Row */}
-              <View 
-                className="flex-row items-center justify-between px-4"
-                style={{ paddingTop: insets.top + 8 }}
+        {/* Hero Carousel */}
+        <View style={{ height: HERO_HEIGHT }}>
+          <FlatList
+            data={heroImages}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={handleHeroScroll}
+            keyExtractor={(_, i) => `hero-${i}`}
+            renderItem={({ item, index }) => (
+              <Pressable
+                onPress={() => handleActivityPress(item.activity)}
+                style={{ width, height: HERO_HEIGHT }}
               >
-                <View className="flex-row items-center">
-                  <Icon name="Waves" size={26} color="white" />
-                  <ThemedText className="text-lg font-bold ml-2 text-white">audiFoil</ThemedText>
-                </View>
-                <Icon name="Bell" size={22} color="white" onPress={() => router.push('/screens/notifications')} />
-              </View>
-              
-              {/* Welcome Text */}
-              <View className="flex-1 justify-end px-4 pb-8">
-                <AnimatedView animation="fadeIn" duration={600}>
-                  <ThemedText className="text-white/60 text-sm">{dateStr}</ThemedText>
-                  <ThemedText className="text-white text-2xl font-bold mt-1">
-                    Welcome back, {demoUser?.name || 'Traveler'}
-                  </ThemedText>
-                  <ThemedText className="text-white/60 text-sm mt-1">
-                    Ready to fly over the Indian Ocean?
-                  </ThemedText>
-                </AnimatedView>
-              </View>
-            </LinearGradient>
-          </ImageBackground>
-        </View>
+                <ImageBackground
+                  source={{ uri: item.image }}
+                  style={{ flex: 1 }}
+                  resizeMode="cover"
+                >
+                  <LinearGradient
+                    colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
+                    locations={[0, 0.4, 1]}
+                    style={{ flex: 1, justifyContent: 'space-between', padding: 20 }}
+                  >
+                    {/* Header */}
+                    <View
+                      className="flex-row items-center justify-between"
+                      style={{ paddingTop: insets.top }}
+                    >
+                      <View className="flex-row items-center">
+                        <Icon name="Waves" size={26} color="white" />
+                        <ThemedText className="text-lg font-bold ml-2 text-white">audiFoil</ThemedText>
+                      </View>
+                      <Pressable
+                        onPress={() => router.push('/screens/notifications')}
+                        className="w-10 h-10 rounded-full bg-white/20 items-center justify-center"
+                      >
+                        <Icon name="Bell" size={20} color="white" />
+                      </Pressable>
+                    </View>
 
-        {/* Quick Stats */}
-        <View className="px-4 -mt-8">
-          {isLoading ? (
-            <StatsCardSkeleton />
-          ) : (
-            <AnimatedView animation="scaleIn" duration={400} delay={100}>
-              <View 
-                className="bg-secondary rounded-2xl p-4 flex-row"
-                style={shadowPresets.large}
-              >
-                <StatItem icon="Plane" value={totalFlights} label="Flights Today" />
-                <View className="w-px bg-border mx-3" />
-                <StatItem icon="Waves" value={totalAvailableSlots} label="Slots Available" highlight />
-                <View className="w-px bg-border mx-3" />
-                <StatItem icon="CalendarCheck" value={bookings.length} label="My Bookings" />
-              </View>
-            </AnimatedView>
-          )}
-        </View>
+                    {/* Hero Content */}
+                    <View className="mb-8">
+                      <View className="flex-row items-center mb-3">
+                        <View className="bg-white/20 px-3 py-1.5 rounded-full mr-2">
+                          <ThemedText className="text-white text-xs font-semibold">Featured</ThemedText>
+                        </View>
+                        {item.activity.isTrending && (
+                          <View className="bg-red-500/90 px-3 py-1.5 rounded-full flex-row items-center">
+                            <Icon name="TrendingUp" size={12} color="white" />
+                            <ThemedText className="text-white text-xs font-semibold ml-1">Trending</ThemedText>
+                          </View>
+                        )}
+                      </View>
+                      <ThemedText className="text-white text-4xl font-bold">{item.title}</ThemedText>
+                      <ThemedText className="text-white/80 text-lg mt-1">{item.subtitle}</ThemedText>
+                      <View className="flex-row items-center mt-4">
+                        <View className="bg-white/20 px-4 py-2 rounded-full flex-row items-center">
+                          <ThemedText className="text-white font-bold">
+                            From ${item.activity.priceFromUsd}
+                          </ThemedText>
+                          <ThemedText className="text-white/70 ml-2">
+                            · {item.activity.durationMin} min
+                          </ThemedText>
+                        </View>
+                      </View>
+                    </View>
+                  </LinearGradient>
+                </ImageBackground>
+              </Pressable>
+            )}
+          />
 
-        {/* Primary CTA Cards */}
-        <View className="px-4 mt-6">
-          <View className="flex-row gap-3">
-            <AnimatedView animation="scaleIn" duration={300} delay={150} className="flex-1">
-              <QuickActionCard
-                icon="Plane"
-                title="Check Arrivals"
-                subtitle="View all MLE flights"
-                onPress={() => router.push('/arrivals')}
-                variant="highlight"
+          {/* Hero Pagination */}
+          <View className="absolute bottom-4 left-0 right-0 flex-row justify-center">
+            {heroImages.map((_, i) => (
+              <View
+                key={i}
+                className="mx-1 rounded-full"
+                style={{
+                  width: i === activeHeroIndex ? 24 : 8,
+                  height: 8,
+                  backgroundColor: i === activeHeroIndex ? 'white' : 'rgba(255,255,255,0.4)',
+                }}
               />
-            </AnimatedView>
-            <AnimatedView animation="scaleIn" duration={300} delay={200} className="flex-1">
-              <QuickActionCard
-                icon="Waves"
-                title="Book a Slot"
-                subtitle="Reserve your session"
-                onPress={() => router.push('/arrivals')}
-              />
-            </AnimatedView>
-          </View>
-        </View>
-
-        {/* Today's Popular Slots */}
-        {popularSlots.length > 0 && (
-          <View className="mt-6">
-            <View className="flex-row items-center justify-between px-4 mb-4">
-              <ThemedText className="text-2xl font-bold">Popular Slots</ThemedText>
-              <View className="flex-row items-center">
-                <Icon name="Flame" size={16} color="#EF4444" />
-                <ThemedText className="text-sm opacity-60 ml-1">High demand</ThemedText>
-              </View>
-            </View>
-            
-            <CardScroller space={12} className="pl-4">
-              {popularSlots.map(({ flight, slot }, index) => (
-                <AnimatedView key={slot.id} animation="scaleIn" duration={300} delay={250 + index * 50}>
-                  <PopularSlotCard 
-                    flight={flight} 
-                    slot={slot} 
-                    onPress={() => handleFlightPress(flight)} 
-                  />
-                </AnimatedView>
-              ))}
-            </CardScroller>
-          </View>
-        )}
-
-        {/* Next Arrivals */}
-        <View className="mt-6">
-          <View className="flex-row items-center justify-between px-4 mb-4">
-            <ThemedText className="text-2xl font-bold">Next Arrivals</ThemedText>
-            <Pressable onPress={() => router.push('/arrivals')} className="flex-row items-center">
-              <ThemedText style={{ color: colors.highlight }} className="font-medium">See All</ThemedText>
-              <Icon name="ChevronRight" size={18} color={colors.highlight} />
-            </Pressable>
-          </View>
-          
-          <CardScroller space={12} className="pl-4">
-            {upcomingFlights.map((flight, index) => (
-              <AnimatedView key={flight.id} animation="scaleIn" duration={300} delay={300 + index * 50}>
-                <MiniFlightCard flight={flight} onPress={() => handleFlightPress(flight)} />
-              </AnimatedView>
             ))}
-          </CardScroller>
+          </View>
         </View>
 
-        {/* The E-Foil Experience */}
-        <View className="px-4 mt-6">
-          <ThemedText className="text-2xl font-bold mb-4">The E-Foil Experience</ThemedText>
-          <AnimatedView animation="fadeIn" duration={400} delay={350}>
-            <View className="bg-secondary rounded-2xl p-5" style={shadowPresets.card}>
-              <ThemedText className="opacity-70 mb-4 leading-5">
-                Experience the thrill of flying above the crystal-clear waters of the Maldives on a premium Audi e-foil. No waves needed – our electric hydrofoils let you glide silently above the Indian Ocean.
-              </ThemedText>
-              
-              <View className="flex-row flex-wrap" style={{ gap: 8, marginBottom: 16 }}>
-                <FeatureTag icon="Zap" text="Electric powered" />
-                <FeatureTag icon="Volume2" text="Silent ride" />
-                <FeatureTag icon="GraduationCap" text="No experience needed" />
-                <FeatureTag icon="Shield" text="Safety gear included" />
-                <FeatureTag icon="Clock" text="45-min sessions" />
-                <FeatureTag icon="Users" text="1-on-1 instruction" />
-              </View>
-              
-              <View className="bg-background rounded-xl p-3">
-                <View className="flex-row items-center">
-                  <Icon name="Info" size={16} color={colors.highlight} />
-                  <ThemedText className="text-sm ml-2 flex-1 opacity-70">
-                    Sessions timed with your flight arrival – start flying 1 hour after you land!
-                  </ThemedText>
-                </View>
-              </View>
+        {/* Quick Stats Bar */}
+        <View className="px-4 py-4 -mt-6">
+          <AnimatedView animation="scaleIn" delay={100}>
+            <View
+              className="bg-secondary rounded-2xl p-4 flex-row items-center justify-around"
+              style={shadowPresets.large}
+            >
+              <QuickStat value="6" label="Experiences" icon="Sparkles" />
+              <View className="w-px h-10 bg-border" />
+              <QuickStat value="24" label="Booked today" icon="Users" />
+              <View className="w-px h-10 bg-border" />
+              <QuickStat value="4.9" label="Avg rating" icon="Star" />
             </View>
           </AnimatedView>
         </View>
 
-        {/* How It Works */}
-        <View className="px-4 mt-6">
-          <ThemedText className="text-2xl font-bold mb-4">How to Book</ThemedText>
-          <AnimatedView animation="fadeIn" duration={400} delay={400}>
-            <View className="bg-secondary rounded-2xl p-5" style={shadowPresets.card}>
-              <StepItem number="1" title="Find Your Flight" description="We sync with MLE arrivals" />
-              <StepItem number="2" title="Pick a Session" description="Choose your preferred time slot" />
-              <StepItem number="3" title="Book Instantly" description="Secure checkout with Apple Pay" />
-              <StepItem number="4" title="Fly Over Paradise" description="Meet us at the lagoon dock" isLast />
-            </View>
-          </AnimatedView>
+        {/* Welcome Message */}
+        <View className="px-4 mt-2 mb-2">
+          <ThemedText className="text-2xl font-bold">
+            Welcome{demoUser?.name ? `, ${demoUser.name}` : ''}
+          </ThemedText>
+          <ThemedText className="opacity-50">Discover premium experiences in the Maldives</ThemedText>
         </View>
 
-        {/* CTA Banner */}
-        <View className="px-4 mt-8">
-          <AnimatedView animation="scaleIn" duration={400} delay={400}>
+        {/* Trending Section */}
+        <Section
+          title="Trending Now"
+          subtitle="Most popular this week"
+          icon="TrendingUp"
+          delay={200}
+        >
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
+          >
+            {trendingActivities.map((activity, index) => (
+              <ActivityCard
+                key={activity.id}
+                activity={activity}
+                onPress={() => handleActivityPress(activity)}
+                variant="large"
+                index={index}
+              />
+            ))}
+          </ScrollView>
+        </Section>
+
+        {/* Sunset Experiences */}
+        <Section
+          title="Sunset Experiences"
+          subtitle="Golden hour magic"
+          icon="Sunset"
+          delay={300}
+        >
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
+          >
+            {sunsetActivities.map((activity, index) => (
+              <ActivityCard
+                key={activity.id}
+                activity={activity}
+                onPress={() => handleActivityPress(activity)}
+                variant="medium"
+                index={index}
+              />
+            ))}
+          </ScrollView>
+        </Section>
+
+        {/* Water Sports */}
+        <Section
+          title="Water Sports"
+          subtitle="Thrills on the lagoon"
+          icon="Waves"
+          delay={400}
+        >
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
+          >
+            {waterSports.map((activity, index) => (
+              <ActivityCard
+                key={activity.id}
+                activity={activity}
+                onPress={() => handleActivityPress(activity)}
+                variant="medium"
+                index={index}
+              />
+            ))}
+          </ScrollView>
+        </Section>
+
+        {/* Boat Experiences */}
+        <Section
+          title="On the Water"
+          subtitle="Cruises, fishing & more"
+          icon="Ship"
+          delay={500}
+        >
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
+          >
+            {boatExperiences.map((activity, index) => (
+              <ActivityCard
+                key={activity.id}
+                activity={activity}
+                onPress={() => handleActivityPress(activity)}
+                variant="medium"
+                index={index}
+              />
+            ))}
+          </ScrollView>
+        </Section>
+
+        {/* All Activities CTA */}
+        <View className="px-4 mt-8 mb-4">
+          <AnimatedView animation="fadeIn" delay={600}>
             <Pressable
-              onPress={() => router.push('/arrivals')}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                router.push('/activities');
+              }}
               className="rounded-2xl overflow-hidden"
               style={shadowPresets.card}
             >
               <LinearGradient
-                colors={['#0077B6', '#00A6F4']}
+                colors={[colors.highlight, '#0077B6']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                style={{ padding: 24 }}
+                className="p-5 flex-row items-center justify-between"
               >
-                <View className="flex-row items-center justify-between">
-                  <View style={{ flex: 1, marginRight: 24 }}>
-                    <ThemedText className="text-white text-xl font-bold">Ready to Fly?</ThemedText>
-                    <ThemedText className="text-white/70 text-sm" style={{ marginTop: 4 }}>Book your e-foil session now</ThemedText>
+                <View className="flex-row items-center flex-1">
+                  <View className="w-12 h-12 rounded-full bg-white/20 items-center justify-center mr-4">
+                    <Icon name="Grid3X3" size={24} color="white" />
                   </View>
-                  <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
-                    <Icon name="ArrowRight" size={22} color="#0077B6" />
+                  <View className="flex-1">
+                    <ThemedText className="text-white font-bold text-lg">Browse All Activities</ThemedText>
+                    <ThemedText className="text-white/70">{ACTIVITIES.length} unique experiences</ThemedText>
                   </View>
                 </View>
+                <Icon name="ChevronRight" size={24} color="white" />
               </LinearGradient>
             </Pressable>
           </AnimatedView>
         </View>
-
-        <View className="h-40" />
-      </ThemedScroller>
+      </ScrollView>
     </View>
   );
 }
 
-// Stat Item Component
-function StatItem({ icon, value, label, highlight }: { 
-  icon: string; 
-  value: number; 
-  label: string; 
-  highlight?: boolean;
-}) {
+// Quick Stat Component
+function QuickStat({ value, label, icon }: { value: string; label: string; icon: string }) {
   const colors = useThemeColors();
   return (
-    <View className="flex-1 items-center">
-      <Icon name={icon as any} size={20} color={highlight ? colors.highlight : colors.icon} />
-      <ThemedText 
-        className="text-2xl font-bold mt-1"
-        style={highlight ? { color: colors.highlight } : undefined}
-      >
-        {value}
-      </ThemedText>
-      <ThemedText className="text-xs opacity-50">{label}</ThemedText>
+    <View className="items-center">
+      <View className="flex-row items-center">
+        <Icon name={icon as any} size={16} color={colors.highlight} />
+        <ThemedText className="font-bold text-xl ml-1">{value}</ThemedText>
+      </View>
+      <ThemedText className="text-xs opacity-50 mt-1">{label}</ThemedText>
     </View>
   );
 }
 
-// Quick Action Card Component
-function QuickActionCard({ icon, title, subtitle, onPress, variant }: {
-  icon: string;
+// Section Component
+function Section({
+  title,
+  subtitle,
+  icon,
+  children,
+  delay = 0,
+}: {
   title: string;
   subtitle: string;
-  onPress: () => void;
-  variant?: 'default' | 'highlight';
+  icon: string;
+  children: React.ReactNode;
+  delay?: number;
 }) {
   const colors = useThemeColors();
-  const isHighlight = variant === 'highlight';
-
-  const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onPress();
-  };
-
   return (
-    <Pressable
-      onPress={handlePress}
-      className="rounded-2xl p-4"
-      style={({ pressed }) => [
-        shadowPresets.card,
-        {
-          backgroundColor: isHighlight ? colors.highlight : colors.secondary,
-          transform: [{ scale: pressed ? 0.97 : 1 }],
-          opacity: pressed ? 0.9 : 1,
-        }
-      ]}
-    >
-      <View 
-        className="w-12 h-12 rounded-xl items-center justify-center mb-3"
-        style={{ backgroundColor: isHighlight ? 'rgba(255,255,255,0.2)' : colors.bg }}
-      >
-        <Icon name={icon as any} size={24} color={isHighlight ? 'white' : colors.highlight} />
+    <AnimatedView animation="fadeIn" delay={delay} className="mt-8">
+      <View className="px-4 mb-4 flex-row items-center justify-between">
+        <View className="flex-row items-center flex-1">
+          <View
+            className="w-10 h-10 rounded-xl items-center justify-center mr-3"
+            style={{ backgroundColor: colors.highlight + '15' }}
+          >
+            <Icon name={icon as any} size={20} color={colors.highlight} />
+          </View>
+          <View className="flex-1">
+            <ThemedText className="font-bold text-xl">{title}</ThemedText>
+            <ThemedText className="text-sm opacity-50">{subtitle}</ThemedText>
+          </View>
+        </View>
       </View>
-      <ThemedText 
-        className="font-bold text-base"
-        style={isHighlight ? { color: 'white' } : undefined}
-      >
-        {title}
-      </ThemedText>
-      <ThemedText 
-        className="text-sm mt-0.5"
-        style={{ color: isHighlight ? 'rgba(255,255,255,0.7)' : colors.placeholder }}
-      >
-        {subtitle}
-      </ThemedText>
-    </Pressable>
+      {children}
+    </AnimatedView>
   );
 }
 
-// Popular Slot Card Component
-function PopularSlotCard({ flight, slot, onPress }: {
-  flight: Flight;
-  slot: any;
+// Activity Card Component
+function ActivityCard({
+  activity,
+  onPress,
+  variant = 'medium',
+  index = 0,
+}: {
+  activity: Activity;
   onPress: () => void;
+  variant?: 'large' | 'medium' | 'small';
+  index?: number;
 }) {
   const colors = useThemeColors();
-  const airlineColor = getAirlineColor(flight.airlineCode);
+
+  const cardWidth = variant === 'large' ? width * 0.78 : variant === 'medium' ? width * 0.58 : width * 0.4;
+  const cardHeight = variant === 'large' ? 260 : variant === 'medium' ? 200 : 160;
 
   return (
-    <Pressable
-      onPress={onPress}
-      className="bg-secondary rounded-2xl p-4 overflow-hidden"
-      style={({ pressed }) => [
-        shadowPresets.card,
-        { width: width * 0.7, transform: [{ scale: pressed ? 0.98 : 1 }] }
-      ]}
-    >
-      {/* Popular Badge */}
-      <View className="absolute top-3 right-3 flex-row items-center bg-red-500/10 px-2 py-1 rounded-full">
-        <Icon name="Flame" size={12} color="#EF4444" />
-        <ThemedText className="text-xs font-medium ml-1" style={{ color: '#EF4444' }}>Popular</ThemedText>
-      </View>
-      
-      {/* Flight Info */}
-      <View className="flex-row items-center mb-3">
-        <AirlineLogo airlineCode={flight.airlineCode} size={40} style={{ marginRight: 12 }} />
-        <View>
-          <ThemedText className="font-bold">{flight.flightNo}</ThemedText>
-          <ThemedText className="text-sm opacity-50">{flight.originCity}</ThemedText>
-        </View>
-      </View>
-      
-      {/* Slot Time */}
-      <View className="flex-row items-center justify-between mb-3">
-        <View>
-          <ThemedText className="opacity-50 text-xs">Session</ThemedText>
-          <ThemedText className="font-bold text-xl" style={{ color: colors.highlight }}>
-            {slot.startLocal} - {slot.endLocal}
-          </ThemedText>
-        </View>
-        <ThemedText className="font-bold text-lg">$150</ThemedText>
-      </View>
-      
-      {/* Peer Badges */}
-      {slot.peers?.length > 0 && (
-        <View className="flex-row items-center">
-          <ThemedText className="text-xs opacity-50 mr-2">Already booked:</ThemedText>
-          {slot.peers.slice(0, 2).map((peer: any) => (
-            <View
-              key={peer.id}
-              className="px-2 py-1 rounded-full mr-1"
-              style={{ backgroundColor: getAirlineColor(peer.airlineCode) }}
-            >
-              <ThemedText className="text-white text-xs font-medium">{peer.airlineCode}</ThemedText>
+    <AnimatedView animation="scaleIn" delay={index * 60}>
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [
+          {
+            width: cardWidth,
+            height: cardHeight,
+            borderRadius: 20,
+            overflow: 'hidden',
+            transform: [{ scale: pressed ? 0.97 : 1 }],
+          },
+          shadowPresets.card,
+        ]}
+      >
+        <ImageBackground
+          source={{ uri: activity.media[0].uri }}
+          style={{ flex: 1 }}
+          resizeMode="cover"
+        >
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.8)']}
+            locations={[0.3, 1]}
+            style={{ flex: 1, justifyContent: 'flex-end', padding: 16 }}
+          >
+            {/* Badges */}
+            <View className="flex-row items-center mb-2">
+              {activity.isTrending && (
+                <View className="bg-red-500/90 px-2 py-1 rounded-full flex-row items-center mr-2">
+                  <Icon name="Flame" size={10} color="white" />
+                  <ThemedText className="text-white text-xs font-semibold ml-1">Hot</ThemedText>
+                </View>
+              )}
+              {activity.isPrivate && (
+                <View className="bg-white/25 px-2 py-1 rounded-full">
+                  <ThemedText className="text-white text-xs font-semibold">Private</ThemedText>
+                </View>
+              )}
             </View>
-          ))}
-          {slot.bookedCount > 2 && (
-            <ThemedText className="text-xs opacity-50">+{slot.bookedCount - 2} more</ThemedText>
-          )}
-        </View>
-      )}
-    </Pressable>
-  );
-}
 
-// Mini Flight Card Component
-function MiniFlightCard({ flight, onPress }: { flight: Flight; onPress: () => void }) {
-  const colors = useThemeColors();
-  const airlineColor = getAirlineColor(flight.airlineCode);
+            {/* Title & Info */}
+            <ThemedText className="text-white font-bold text-lg" numberOfLines={1}>
+              {activity.title}
+            </ThemedText>
 
-  const statusConfig = {
-    'On time': { bg: 'rgba(34, 197, 94, 0.15)', color: '#22C55E' },
-    'Landed': { bg: 'rgba(59, 130, 246, 0.15)', color: '#3B82F6' },
-    'Delayed': { bg: 'rgba(239, 68, 68, 0.15)', color: '#EF4444' },
-  };
-  const status = statusConfig[flight.status];
+            <View className="flex-row items-center mt-1">
+              <View className="flex-row items-center">
+                <Icon name="Star" size={12} color="#FFD700" fill="#FFD700" />
+                <ThemedText className="text-white text-sm ml-1 font-medium">{activity.rating}</ThemedText>
+              </View>
+              <ThemedText className="text-white/60 text-sm ml-2">
+                · {activity.durationMin} min
+              </ThemedText>
+            </View>
 
-  return (
-    <Pressable
-      onPress={onPress}
-      className="bg-secondary rounded-2xl p-4"
-      style={({ pressed }) => [
-        shadowPresets.card,
-        { width: width * 0.65, transform: [{ scale: pressed ? 0.98 : 1 }] }
-      ]}
-    >
-      <View className="flex-row items-center mb-3">
-        <AirlineLogo airlineCode={flight.airlineCode} size={40} style={{ marginRight: 12 }} />
-        <View className="flex-1">
-          <ThemedText className="font-bold">{flight.flightNo}</ThemedText>
-          <ThemedText className="text-sm opacity-50">{flight.airline}</ThemedText>
-        </View>
-        <View className="px-2 py-1 rounded-full" style={{ backgroundColor: status.bg }}>
-          <ThemedText className="text-xs font-medium" style={{ color: status.color }}>
-            {flight.status}
-          </ThemedText>
-        </View>
-      </View>
-      
-      <View className="flex-row items-center justify-between">
-        <View>
-          <ThemedText className="opacity-50 text-xs">From</ThemedText>
-          <ThemedText className="font-bold text-lg">{flight.originCode}</ThemedText>
-        </View>
-        <Icon name="ArrowRight" size={18} color={colors.placeholder} />
-        <View>
-          <ThemedText className="opacity-50 text-xs">Arrives</ThemedText>
-          <ThemedText className="font-bold text-lg">{flight.timeLocal}</ThemedText>
-        </View>
-      </View>
-    </Pressable>
-  );
-}
-
-// Feature Tag Component
-function FeatureTag({ icon, text }: { icon: string; text: string }) {
-  const colors = useThemeColors();
-  return (
-    <View className="flex-row items-center bg-background rounded-full px-3 py-1.5">
-      <Icon name={icon as any} size={14} color={colors.highlight} />
-      <ThemedText className="text-xs ml-1.5">{text}</ThemedText>
-    </View>
-  );
-}
-
-// Step Item Component
-function StepItem({ number, title, description, isLast }: {
-  number: string;
-  title: string;
-  description: string;
-  isLast?: boolean;
-}) {
-  const colors = useThemeColors();
-  
-  return (
-    <View className={`flex-row ${!isLast ? 'mb-4 pb-4 border-b border-border' : ''}`}>
-      <View 
-        className="w-8 h-8 rounded-full items-center justify-center mr-4"
-        style={{ backgroundColor: colors.highlight }}
-      >
-        <ThemedText className="text-white font-bold text-sm">{number}</ThemedText>
-      </View>
-      <View className="flex-1">
-        <ThemedText className="font-semibold">{title}</ThemedText>
-        <ThemedText className="text-sm opacity-50">{description}</ThemedText>
-      </View>
-    </View>
+            {/* Price & Social Proof */}
+            <View className="flex-row items-center justify-between mt-2">
+              <ThemedText className="text-white font-bold text-base">
+                From ${activity.priceFromUsd}
+              </ThemedText>
+              {activity.socialProof[0] && variant !== 'small' && (
+                <ThemedText className="text-white/60 text-xs" numberOfLines={1}>
+                  {activity.socialProof[0].label}
+                </ThemedText>
+              )}
+            </View>
+          </LinearGradient>
+        </ImageBackground>
+      </Pressable>
+    </AnimatedView>
   );
 }
