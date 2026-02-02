@@ -15,6 +15,7 @@ import AirlineLogo from '@/components/AirlineLogo';
 import { FlightCardSkeleton } from '@/components/SkeletonCard';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Haptics from 'expo-haptics';
 
 export default function ArrivalsScreen() {
   const colors = useThemeColors();
@@ -54,6 +55,7 @@ export default function ArrivalsScreen() {
   }, [searchQuery, statusFilter]);
 
   const handleFlightPress = useCallback((flight: Flight) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedFlight(flight);
     router.push('/screens/flight-detail');
   }, [setSelectedFlight]);
@@ -119,19 +121,28 @@ export default function ArrivalsScreen() {
           <Chip
             isSelected={statusFilter === 'all'}
             label={`All (${mockArrivalsToday.length})`}
-            onPress={() => setStatusFilter('all')}
+            onPress={() => {
+              Haptics.selectionAsync();
+              setStatusFilter('all');
+            }}
           />
           <Chip
             isSelected={statusFilter === 'ontime'}
             label="On Time"
             icon="Clock"
-            onPress={() => setStatusFilter('ontime')}
+            onPress={() => {
+              Haptics.selectionAsync();
+              setStatusFilter('ontime');
+            }}
           />
           <Chip
             isSelected={statusFilter === 'landed'}
             label="Landed"
             icon="Check"
-            onPress={() => setStatusFilter('landed')}
+            onPress={() => {
+              Haptics.selectionAsync();
+              setStatusFilter('landed');
+            }}
           />
         </CardScroller>
 
@@ -189,7 +200,10 @@ const FlightCard = React.memo(function FlightCard({ flight, availableSlots, onPr
     <Pressable
       onPress={onPress}
       className="bg-secondary rounded-2xl p-4 mb-3 overflow-hidden"
-      style={shadowPresets.card}
+      style={({ pressed }) => [
+        shadowPresets.card,
+        { transform: [{ scale: pressed ? 0.98 : 1 }], opacity: pressed ? 0.9 : 1 }
+      ]}
     >
       {/* Top Row: Airline + Flight Number */}
       <View className="flex-row items-center justify-between mb-3">

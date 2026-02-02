@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Pressable, FlatList } from 'react-native';
+import { View, Pressable, FlatList, RefreshControl } from 'react-native';
 import Header from '@/components/Header';
 import ThemedText from '@/components/ThemedText';
 import AnimatedView from '@/components/AnimatedView';
@@ -13,12 +13,14 @@ import AirlineLogo from '@/components/AirlineLogo';
 import { SlotCardSkeleton } from '@/components/SkeletonCard';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Haptics from 'expo-haptics';
 
 export default function FlightDetailScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const { selectedFlight, currentSlots, selectedSlot, setSelectedSlot, generateSlots } = useStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (selectedFlight) {
@@ -28,14 +30,25 @@ export default function FlightDetailScreen() {
     }
   }, [selectedFlight]);
 
+  const onRefresh = useCallback(() => {
+    if (!selectedFlight) return;
+    setRefreshing(true);
+    generateSlots(selectedFlight);
+    setTimeout(() => setRefreshing(false), 500);
+  }, [selectedFlight, generateSlots]);
+
   const handleSlotSelect = useCallback((slot: Slot) => {
     if (slot.available) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       setSelectedSlot(slot);
+    } else {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     }
   }, [setSelectedSlot]);
 
   const handleContinue = () => {
     if (selectedSlot) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       router.push('/screens/checkout');
     }
   };
@@ -118,6 +131,9 @@ export default function FlightDetailScreen() {
             columnWrapperStyle={{ paddingHorizontal: 16, gap: 12 }}
             contentContainerStyle={{ paddingBottom: 200, gap: 12 }}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             ListEmptyComponent={
               <View className="items-center py-12 px-4">
                 <Icon name="CalendarX" size={48} color={colors.placeholder} />
@@ -193,17 +209,18 @@ const SlotCard = React.memo(function SlotCard({ slot, isSelected, onPress }: {
   onPress: () => void;
 }) {
   const colors = useThemeColors();
-  
+
   return (
     <Pressable
       onPress={onPress}
       disabled={!slot.available}
       className="flex-1 rounded-xl overflow-hidden min-h-[140px]"
-      style={[
+      style={({ pressed }) => [
         shadowPresets.card,
         {
           backgroundColor: isSelected ? colors.highlight : colors.secondary,
-          opacity: slot.available ? 1 : 0.5,
+          opacity: slot.available ? (pressed ? 0.8 : 1) : 0.5,
+          transform: [{ scale: pressed && slot.available ? 0.97 : 1 }],
         }
       ]}
     >

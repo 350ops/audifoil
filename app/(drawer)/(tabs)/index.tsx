@@ -16,6 +16,7 @@ import { StatsCardSkeleton } from '@/components/SkeletonCard';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Haptics from 'expo-haptics';
 
 const { width } = Dimensions.get('window');
 
@@ -44,6 +45,7 @@ export default function HomeScreen() {
   }, []);
 
   const handleFlightPress = useCallback((flight: Flight) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedFlight(flight);
     router.push('/screens/flight-detail');
   }, [setSelectedFlight]);
@@ -278,15 +280,22 @@ function QuickActionCard({ icon, title, subtitle, onPress, variant }: {
 }) {
   const colors = useThemeColors();
   const isHighlight = variant === 'highlight';
-  
+
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onPress();
+  };
+
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
       className="rounded-2xl p-4"
-      style={[
+      style={({ pressed }) => [
         shadowPresets.card,
-        { 
+        {
           backgroundColor: isHighlight ? colors.highlight : colors.secondary,
+          transform: [{ scale: pressed ? 0.97 : 1 }],
+          opacity: pressed ? 0.9 : 1,
         }
       ]}
     >
@@ -313,19 +322,22 @@ function QuickActionCard({ icon, title, subtitle, onPress, variant }: {
 }
 
 // Popular Slot Card Component
-function PopularSlotCard({ flight, slot, onPress }: { 
-  flight: Flight; 
-  slot: any; 
+function PopularSlotCard({ flight, slot, onPress }: {
+  flight: Flight;
+  slot: any;
   onPress: () => void;
 }) {
   const colors = useThemeColors();
   const airlineColor = getAirlineColor(flight.airlineCode);
-  
+
   return (
     <Pressable
       onPress={onPress}
       className="bg-secondary rounded-2xl p-4 overflow-hidden"
-      style={[shadowPresets.card, { width: width * 0.7 }]}
+      style={({ pressed }) => [
+        shadowPresets.card,
+        { width: width * 0.7, transform: [{ scale: pressed ? 0.98 : 1 }] }
+      ]}
     >
       {/* Popular Badge */}
       <View className="absolute top-3 right-3 flex-row items-center bg-red-500/10 px-2 py-1 rounded-full">
@@ -379,19 +391,22 @@ function PopularSlotCard({ flight, slot, onPress }: {
 function MiniFlightCard({ flight, onPress }: { flight: Flight; onPress: () => void }) {
   const colors = useThemeColors();
   const airlineColor = getAirlineColor(flight.airlineCode);
-  
+
   const statusConfig = {
     'On time': { bg: 'rgba(34, 197, 94, 0.15)', color: '#22C55E' },
     'Landed': { bg: 'rgba(59, 130, 246, 0.15)', color: '#3B82F6' },
     'Delayed': { bg: 'rgba(239, 68, 68, 0.15)', color: '#EF4444' },
   };
   const status = statusConfig[flight.status];
-  
+
   return (
     <Pressable
       onPress={onPress}
       className="bg-secondary rounded-2xl p-4"
-      style={[shadowPresets.card, { width: width * 0.65 }]}
+      style={({ pressed }) => [
+        shadowPresets.card,
+        { width: width * 0.65, transform: [{ scale: pressed ? 0.98 : 1 }] }
+      ]}
     >
       <View className="flex-row items-center mb-3">
         <AirlineLogo airlineCode={flight.airlineCode} size={40} style={{ marginRight: 12 }} />

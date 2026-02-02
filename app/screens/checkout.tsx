@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Image } from 'react-native';
+import { View, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Image, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import Header from '@/components/Header';
 import ThemedText from '@/components/ThemedText';
 import AnimatedView from '@/components/AnimatedView';
@@ -12,10 +12,11 @@ import AirlineLogo from '@/components/AirlineLogo';
 import { calculatePrice, CREW_PROMO_CODE, SLOT_PRICE } from '@/data';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring, 
+import * as Haptics from 'expo-haptics';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
   withDelay,
   withTiming,
   withSequence,
@@ -32,7 +33,11 @@ export default function CheckoutScreen() {
   const [whatsapp, setWhatsapp] = useState(demoUser?.whatsapp || '');
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
-  
+
+  // Validation state
+  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+  const [touched, setTouched] = useState<{ name?: boolean; email?: boolean }>({});
+
   // Payment modal state
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'faceid' | 'processing' | 'success'>('faceid');
@@ -48,39 +53,106 @@ export default function CheckoutScreen() {
 
   const { price, discount, originalPrice } = calculatePrice(promoApplied ? promoCode : undefined);
 
+  // Email validation
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Validate form
+  const validateForm = () => {
+    const newErrors: { name?: string; email?: string } = {};
+
+    if (!name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+
+    if (!email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!validateEmail(email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle field blur for validation
+  const handleBlur = (field: 'name' | 'email') => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+
+    if (field === 'name' && !name.trim()) {
+      setErrors(prev => ({ ...prev, name: 'Name is required' }));
+    } else if (field === 'name') {
+      setErrors(prev => ({ ...prev, name: undefined }));
+    }
+
+    if (field === 'email') {
+      if (!email.trim()) {
+        setErrors(prev => ({ ...prev, email: 'Email is required' }));
+      } else if (!validateEmail(email)) {
+        setErrors(prev => ({ ...prev, email: 'Please enter a valid email' }));
+      } else {
+        setErrors(prev => ({ ...prev, email: undefined }));
+      }
+    }
+  };
+
   const handleApplyPromo = () => {
     if (promoCode.toUpperCase() === CREW_PROMO_CODE) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setPromoApplied(true);
+    } else if (promoCode.trim()) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert('Invalid Code', 'This promo code is not valid. Try CREW25 for a crew discount!');
     }
   };
 
   const handleApplePay = async () => {
-    if (!name.trim() || !email.trim()) return;
-    
+    // Validate form first
+    if (!validateForm()) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      setTouched({ name: true, email: true });
+      return;
+    }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setShowPaymentModal(true);
     setPaymentStep('faceid');
-    
-    // Simulate Face ID
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setPaymentStep('processing');
-    
-    // Simulate processing
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Create booking
-    const booking = await addNewBooking(
-      selectedFlight,
-      selectedSlot,
-      { name, email, whatsapp }
-    );
-    
-    setPaymentStep('success');
-    
-    // Wait for success animation
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setShowPaymentModal(false);
-    router.replace('/screens/success');
+
+    try {
+      // Simulate Face ID
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setPaymentStep('processing');
+
+      // Simulate processing
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Create booking
+      const booking = await addNewBooking(
+        selectedFlight,
+        selectedSlot,
+        { name, email, whatsapp }
+      );
+
+      setPaymentStep('success');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      // Wait for success animation
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      setShowPaymentModal(false);
+      router.replace('/screens/success');
+    } catch (error) {
+      setShowPaymentModal(false);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert(
+        'Booking Failed',
+        'Something went wrong. Please try again.',
+        [{ text: 'OK' }]
+      );
+    }
   };
 
   const isFormValid = name.trim().length > 0 && email.trim().length > 0;
@@ -88,8 +160,12 @@ export default function CheckoutScreen() {
   return (
     <View className="flex-1 bg-background">
       <Header showBackButton title="Checkout" />
-      
-      <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="flex-1"
+      >
+      <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         {/* Booking Summary Card */}
         <View className="pt-4">
           <AnimatedView animation="scaleIn" duration={300}>
@@ -120,18 +196,32 @@ export default function CheckoutScreen() {
               label="Full Name"
               placeholder="Enter your name"
               value={name}
-              onChangeText={setName}
+              onChangeText={(text) => {
+                setName(text);
+                if (touched.name && text.trim()) {
+                  setErrors(prev => ({ ...prev, name: undefined }));
+                }
+              }}
+              onBlur={() => handleBlur('name')}
               icon="User"
               required
+              error={touched.name ? errors.name : undefined}
             />
             <FormInput
               label="Email"
               placeholder="your@email.com"
               value={email}
-              onChangeText={setEmail}
+              onChangeText={(text) => {
+                setEmail(text);
+                if (touched.email && validateEmail(text)) {
+                  setErrors(prev => ({ ...prev, email: undefined }));
+                }
+              }}
+              onBlur={() => handleBlur('email')}
               icon="Mail"
               keyboardType="email-address"
               required
+              error={touched.email ? errors.email : undefined}
             />
             <FormInput
               label="WhatsApp (for confirmation)"
@@ -217,6 +307,7 @@ export default function CheckoutScreen() {
 
         <View className="h-48" />
       </ScrollView>
+      </KeyboardAvoidingView>
 
       {/* Bottom Payment Section */}
       <View 
@@ -290,7 +381,7 @@ export default function CheckoutScreen() {
   );
 }
 
-function FormInput({ label, placeholder, value, onChangeText, icon, keyboardType, required }: {
+function FormInput({ label, placeholder, value, onChangeText, icon, keyboardType, required, error, onBlur }: {
   label: string;
   placeholder: string;
   value: string;
@@ -298,28 +389,43 @@ function FormInput({ label, placeholder, value, onChangeText, icon, keyboardType
   icon: string;
   keyboardType?: 'default' | 'email-address' | 'phone-pad';
   required?: boolean;
+  error?: string;
+  onBlur?: () => void;
 }) {
   const colors = useThemeColors();
+  const hasError = !!error;
+
   return (
     <View>
       <ThemedText className="font-medium mb-2">
         {label} {required && <ThemedText style={{ color: colors.highlight }}>*</ThemedText>}
       </ThemedText>
-      <View 
+      <View
         className="bg-secondary rounded-xl px-4 py-3 flex-row items-center"
-        style={shadowPresets.small}
+        style={[
+          shadowPresets.small,
+          hasError && { borderWidth: 1, borderColor: '#EF4444' }
+        ]}
       >
-        <Icon name={icon as any} size={20} color={colors.placeholder} />
+        <Icon name={icon as any} size={20} color={hasError ? '#EF4444' : colors.placeholder} />
         <TextInput
           value={value}
           onChangeText={onChangeText}
+          onBlur={onBlur}
           placeholder={placeholder}
           placeholderTextColor={colors.placeholder}
           keyboardType={keyboardType}
           className="flex-1 ml-3 text-base"
           style={{ color: colors.text }}
+          autoCapitalize={keyboardType === 'email-address' ? 'none' : 'words'}
         />
+        {hasError && <Icon name="AlertCircle" size={18} color="#EF4444" />}
       </View>
+      {hasError && (
+        <ThemedText className="text-sm mt-1" style={{ color: '#EF4444' }}>
+          {error}
+        </ThemedText>
+      )}
     </View>
   );
 }
