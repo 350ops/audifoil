@@ -1,0 +1,68 @@
+{
+  "expo": {
+    "newArchEnabled": true,
+    "name": "audiFoil",
+    "slug": "audifoil",
+    "version": "1.0.0",
+    "runtimeVersion": "1.0.0",
+    "scheme": "audifoil",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-video",
+      "expo-web-browser",
+      "expo-apple-authentication",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#0077B6"
+        }
+      ]
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mmdev13.audifoil",
+      "usesAppleSignIn": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "softwareKeyboardLayoutMode": "pan",
+      "predictiveBackGestureEnabled": false,
+      "package": "com.mmdev13.audifoil"
+    },  
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "c883a253-ca71-4403-ada1-a21b2b51370d"
+      }
+    },
+    "owner": "native-templates",
+    "updates": {
+      "url": "https://u.expo.dev/c883a253-ca71-4403-ada1-a21b2b51370d"
+    }
+  }
+}
