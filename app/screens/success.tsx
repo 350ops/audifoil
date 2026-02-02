@@ -10,10 +10,11 @@ import { useStore } from '@/store/useStore';
 import AirlineLogo from '@/components/AirlineLogo';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring, 
+import * as Haptics from 'expo-haptics';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
@@ -30,6 +31,9 @@ export default function SuccessScreen() {
   const contentOpacity = useSharedValue(0);
 
   useEffect(() => {
+    // Celebration haptic on mount
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
     checkOpacity.value = withDelay(100, withTiming(1, { duration: 300 }));
     checkScale.value = withDelay(100, withSpring(1, { damping: 10, stiffness: 200 }));
     contentOpacity.value = withDelay(500, withTiming(1, { duration: 400 }));
@@ -46,18 +50,21 @@ export default function SuccessScreen() {
 
   const handleShare = async () => {
     if (!latestBooking) return;
-    
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     await Share.share({
       message: `🏄‍♂️ I just booked an Audi e-foil session in the Maldives!\n\n✈️ Flight: ${latestBooking.flightNo}\n🕐 Session: ${latestBooking.slotStart} - ${latestBooking.slotEnd}\n📍 Location: Malé Lagoon\n\nJoin me! Book at audifoil.com`,
     });
   };
 
   const handleViewBookings = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     resetSelection();
     router.replace('/screens/my-bookings');
   };
 
   const handleBookAnother = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     resetSelection();
     router.replace('/arrivals');
   };
