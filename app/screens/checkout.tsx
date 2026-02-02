@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Pressable, ScrollView, TextInput, Modal, ActivityIndicator } from 'react-native';
+import { View, Pressable, ScrollView, TextInput, Modal, ActivityIndicator, Image } from 'react-native';
 import Header from '@/components/Header';
 import ThemedText from '@/components/ThemedText';
 import AnimatedView from '@/components/AnimatedView';
@@ -232,13 +232,14 @@ export default function CheckoutScreen() {
         <Pressable
           onPress={handleApplePay}
           disabled={!isFormValid}
-          className="rounded-xl overflow-hidden"
+          className="overflow-hidden rounded-2xl"
           style={[shadowPresets.medium, { opacity: isFormValid ? 1 : 0.5 }]}
         >
-          <View className="py-4 flex-row items-center justify-center bg-black">
-            <Icon name="Apple" size={22} color="white" />
-            <ThemedText className="text-white font-semibold ml-2 text-lg">Pay</ThemedText>
-          </View>
+          <Image
+            source={require('@/assets/img/apple-pay.png')}
+            style={{ width: '100%', height: 56 }}
+            resizeMode="contain"
+          />
         </Pressable>
         
         <ThemedText className="text-center text-sm opacity-40 mt-3">
