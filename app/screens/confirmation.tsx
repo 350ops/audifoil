@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect } from 'react';
-import { Pressable, ScrollView, Share, View } from 'react-native';
+import { Pressable, ScrollView, Share, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -84,7 +84,13 @@ export default function ConfirmationScreen() {
             className="mb-6 h-24 w-24 items-center justify-center rounded-full">
             <LinearGradient
               colors={['#22C55E', '#16A34A']}
-              className="h-full w-full items-center justify-center rounded-full">
+              style={{
+                height: '100%',
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 9999,
+              }}>
               <Icon name="Check" size={48} color="white" strokeWidth={3} />
             </LinearGradient>
           </Animated.View>
@@ -120,18 +126,18 @@ export default function ConfirmationScreen() {
                 colors={[colors.highlight, colors.oceanLight || '#00A6F4']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                className="p-4">
+                style={{ padding: 16 }}>
                 <View className="flex-row items-center">
                   <View className="mr-4 h-12 w-12 items-center justify-center rounded-full bg-white/20">
                     <Icon name="Waves" size={24} color="white" />
                   </View>
-                  <View>
-                    <ThemedText className="text-lg font-bold text-white">
-                      Audi E-Foil Session
-                    </ThemedText>
-                    <ThemedText className="text-white/80">
-                      45 minutes • Professional instruction
-                    </ThemedText>
+                  <View className="flex-1">
+                    <Text className="text-lg font-bold text-white">
+                      E-Foil Adventure
+                    </Text>
+                    <Text className="text-white/80">
+                      45 min • Fly above the Indian Ocean
+                    </Text>
                   </View>
                 </View>
               </LinearGradient>
@@ -142,6 +148,7 @@ export default function ConfirmationScreen() {
                   icon="Clock"
                   label="Session Time"
                   value={`${booking.slot.startTime} - ${booking.slot.endTime}`}
+                  isFirst
                 />
                 <DetailRow icon="Calendar" label="Date" value="Today" />
                 <DetailRow icon="MapPin" label="Location" value="Malé Lagoon Dock" />
@@ -165,30 +172,44 @@ export default function ConfirmationScreen() {
           </AnimatedView>
         </View>
 
+        {/* What's Included */}
+        <View className="mb-6 px-4">
+          <ThemedText className="mb-3 text-lg font-bold">What's Included</ThemedText>
+          <AnimatedView animation="fadeIn" duration={400} delay={800}>
+            <View className="rounded-xl bg-secondary p-4" style={shadowPresets.card}>
+              <IncludedItem icon="Waves" text="Premium Audi e-foil equipment" />
+              <IncludedItem icon="GraduationCap" text="Professional 1-on-1 instruction" />
+              <IncludedItem icon="Shield" text="Life jacket & safety gear" />
+              <IncludedItem icon="Droplets" text="Wetsuit (if needed)" />
+              <IncludedItem icon="Camera" text="Action photos of your session" isLast />
+            </View>
+          </AnimatedView>
+        </View>
+
         {/* Next Steps */}
         <View className="mb-6 px-4">
-          <ThemedText className="mb-3 text-lg font-bold">Next Steps</ThemedText>
-          <AnimatedView animation="fadeIn" duration={400} delay={800}>
+          <ThemedText className="mb-3 text-lg font-bold">Your Journey</ThemedText>
+          <AnimatedView animation="fadeIn" duration={400} delay={850}>
             <View className="rounded-xl bg-secondary p-4" style={shadowPresets.card}>
               <NextStepItem
                 number="1"
-                title="Land in Malé"
-                description={`Your flight arrives at ${booking.flight.arrivalTime}`}
+                title="Arrive in Malé"
+                description={`Flight lands at ${booking.flight.arrivalTime}`}
               />
               <NextStepItem
                 number="2"
-                title="Meet at the dock"
-                description="Look for our audiFoil team with the blue flags"
+                title="Meet Your Instructor"
+                description="Look for blue audiFoil flags at the lagoon dock"
               />
               <NextStepItem
                 number="3"
-                title="Gear up"
-                description="We'll provide all equipment and safety briefing"
+                title="Quick Safety Briefing"
+                description="10-minute intro to e-foiling basics"
               />
               <NextStepItem
                 number="4"
-                title="Fly!"
-                description={`Your session starts at ${booking.slot.startTime}`}
+                title="Take Flight!"
+                description={`Your 45-min adventure starts at ${booking.slot.startTime}`}
                 isLast
               />
             </View>
@@ -229,15 +250,48 @@ export default function ConfirmationScreen() {
   );
 }
 
-function DetailRow({ icon, label, value }: { icon: string; label: string; value: string }) {
+function DetailRow({
+  icon,
+  label,
+  value,
+  isFirst,
+}: {
+  icon: string;
+  label: string;
+  value: string;
+  isFirst?: boolean;
+}) {
   const colors = useThemeColors();
   return (
-    <View className="flex-row items-center border-t border-border py-3 first:border-t-0">
-      <Icon name={icon as any} size={18} color={colors.placeholder} className="mr-3" />
+    <View className={`flex-row items-center py-3 ${isFirst ? '' : 'border-t border-border'}`}>
+      <Icon name={icon as any} size={18} color={colors.placeholder} style={{ marginRight: 12 }} />
       <View className="flex-1">
         <ThemedText className="text-sm opacity-50">{label}</ThemedText>
         <ThemedText className="font-semibold">{value}</ThemedText>
       </View>
+    </View>
+  );
+}
+
+function IncludedItem({
+  icon,
+  text,
+  isLast,
+}: {
+  icon: string;
+  text: string;
+  isLast?: boolean;
+}) {
+  const colors = useThemeColors();
+  return (
+    <View className={`flex-row items-center ${!isLast ? 'mb-3' : ''}`}>
+      <View
+        className="mr-3 h-8 w-8 items-center justify-center rounded-full"
+        style={{ backgroundColor: `${colors.highlight}15` }}>
+        <Icon name={icon as any} size={16} color={colors.highlight} />
+      </View>
+      <ThemedText className="flex-1">{text}</ThemedText>
+      <Icon name="Check" size={16} color="#22C55E" />
     </View>
   );
 }
@@ -259,7 +313,7 @@ function NextStepItem({
       <View
         className="mr-3 h-7 w-7 items-center justify-center rounded-full"
         style={{ backgroundColor: colors.highlight }}>
-        <ThemedText className="text-sm font-bold text-white">{number}</ThemedText>
+        <Text className="text-sm font-bold text-white">{number}</Text>
       </View>
       <View className="flex-1">
         <ThemedText className="font-semibold">{title}</ThemedText>

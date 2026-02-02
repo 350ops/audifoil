@@ -92,8 +92,7 @@ export default function SuccessScreen() {
           colors={[colors.highlight, '#00A6F4']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          className="pt-20 pb-12 items-center"
-          style={{ paddingTop: insets.top + 40 }}
+          style={{ paddingTop: insets.top + 40, paddingBottom: 48, alignItems: 'center' }}
         >
           <Animated.View 
             className="w-24 h-24 rounded-full bg-white items-center justify-center mb-6"
