@@ -179,7 +179,7 @@ export default function OnboardingScreen() {
                         <Animated.View style={waveAnimatedStyle}>
                             <Icon name="Waves" size={32} color="white" />
                         </Animated.View>
-                        <Text className="text-white text-2xl font-bold ml-3">audiFoil</Text>
+                        <Text className="text-white text-2xl font-bold ml-3">foilTribe Adventures</Text>
                     </View>
 
                     {/* Main Content */}

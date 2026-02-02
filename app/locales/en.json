@@ -139,7 +139,7 @@
     "appUpdatesDesc": "New features and improvements"
   },
   "subscription": {
-    "title": "audiFoil Pro",
+    "title": "foilTribe Adventures Pro",
     "subtitle": "Unlock all premium features",
     "unlimitedNotes": "Unlimited notes",
     "cloudSync": "Cloud sync",
@@ -172,7 +172,7 @@
     "faq2Question": "How do I organize my notes with categories?",
     "faq2Answer": "When creating or editing a note, select a category from the list at the bottom. You can also create custom categories in Settings > Categories. Filter notes by category on the home screen.",
     "faq3Question": "Can I sync my notes across devices?",
-    "faq3Answer": "Yes! With audiFoil Pro, your bookings automatically sync across all your devices. Your data is securely stored in the cloud and accessible anytime, anywhere with an internet connection.",
+    "faq3Answer": "Yes! With foilTribe Adventures Pro, your bookings automatically sync across all your devices. Your data is securely stored in the cloud and accessible anytime, anywhere with an internet connection.",
     "faq4Question": "How do I search for specific notes?",
     "faq4Answer": "Tap the search icon in the header. You can search by title, description, or category. Premium members get AI-powered search that understands context and can find related notes.",
     "faq5Question": "Is my data safe and private?",
@@ -181,12 +181,12 @@
     "faq6Answer": "Notes are moved to a trash folder where they stay for 30 days. You can restore them from Settings > Trash. After 30 days, notes are permanently deleted. Premium members get unlimited backup history.",
     "faq7Question": "Can I share my notes with others?",
     "faq7Answer": "Yes! Long press any note and select \"Share\" to send it via email, messaging, or other apps. Premium members can create shared notebooks for real-time collaboration with others.",
-    "faq8Question": "What features do I get with audiFoil Pro?",
-    "faq8Answer": "audiFoil Pro includes priority booking, exclusive time slots, cloud sync across all devices, priority support, and early access to new locations. Try it free for 7 days!"
+    "faq8Question": "What features do I get with foilTribe Adventures Pro?",
+    "faq8Answer": "foilTribe Adventures Pro includes priority booking, exclusive time slots, cloud sync across all devices, priority support, and early access to new locations. Try it free for 7 days!"
   },
   "onboarding": {
     "profilePicture": "Add a profile picture",
-    "profilePictureDesc": "Personalize your audiFoil profile",
+    "profilePictureDesc": "Personalize your foilTribe Adventures profile",
     "takePhoto": "Take Photo",
     "choosePhoto": "Choose Photo",
     "name": "What's your name?",

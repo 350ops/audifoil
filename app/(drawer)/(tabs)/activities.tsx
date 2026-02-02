@@ -226,7 +226,7 @@ function ActivityListCard({ activity, onPress }: { activity: Activity; onPress: 
       ]}
     >
       <ImageBackground
-        source={{ uri: activity.media[0].uri }}
+        source={activity.media[0].localSource ? activity.media[0].localSource : { uri: activity.media[0].uri }}
         style={{ height: 180 }}
         resizeMode="cover"
       >

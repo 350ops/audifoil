@@ -25,6 +25,7 @@ import {
   getWaterSportsActivities,
   getBoatExperiences,
   MEDIA,
+  LOCAL_IMAGES,
 } from '@/data/activities';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -63,10 +64,10 @@ export default function ExploreScreen() {
   const boatExperiences = getBoatExperiences();
 
   const heroImages = [
-    { image: MEDIA.efoil.hero, title: 'Audi E-Foil', subtitle: 'Fly above paradise', activity: ACTIVITIES[0] },
-    { image: MEDIA.boat.sunset, title: 'Sunset Cruises', subtitle: 'Golden hour magic', activity: ACTIVITIES[1] },
-    { image: MEDIA.snorkel.reef, title: 'Reef Discovery', subtitle: 'Underwater wonders', activity: ACTIVITIES[2] },
-    { image: MEDIA.sandbank.aerial, title: 'Private Islands', subtitle: 'Your own paradise', activity: ACTIVITIES[4] },
+    { image: LOCAL_IMAGES.lagoonBoat, isLocal: true, title: 'Paradise Awaits', subtitle: 'Crystal clear waters', activity: ACTIVITIES[0] },
+    { image: LOCAL_IMAGES.swimmingFish, isLocal: true, title: 'Swim With Nature', subtitle: 'Underwater adventures', activity: ACTIVITIES[2] },
+    { image: LOCAL_IMAGES.seaTurtle, isLocal: true, title: 'Reef Discovery', subtitle: 'Meet marine life', activity: ACTIVITIES[2] },
+    { image: LOCAL_IMAGES.privateIsland, isLocal: true, title: 'Private Islands', subtitle: 'Your own paradise', activity: ACTIVITIES[4] },
   ];
 
   const handleHeroScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -101,7 +102,7 @@ export default function ExploreScreen() {
                 style={{ width, height: HERO_HEIGHT }}
               >
                 <ImageBackground
-                  source={{ uri: item.image }}
+                  source={item.isLocal ? item.image : { uri: item.image }}
                   style={{ flex: 1 }}
                   resizeMode="cover"
                 >
@@ -117,7 +118,7 @@ export default function ExploreScreen() {
                     >
                       <View className="flex-row items-center">
                         <Icon name="Waves" size={26} color="white" />
-                        <ThemedText className="text-lg font-bold ml-2 text-white">audiFoil</ThemedText>
+                        <ThemedText className="text-lg font-bold ml-2 text-white">foilTribe Adventures</ThemedText>
                       </View>
                       <Pressable
                         onPress={() => router.push('/screens/notifications')}
@@ -145,10 +146,10 @@ export default function ExploreScreen() {
                       <View className="flex-row items-center mt-4">
                         <View className="bg-white/20 px-4 py-2 rounded-full flex-row items-center">
                           <ThemedText className="text-white font-bold">
-                            From ${item.activity.priceFromUsd}
+                            From $80
                           </ThemedText>
                           <ThemedText className="text-white/70 ml-2">
-                            · {item.activity.durationMin} min
+                            · 5 hour adventures
                           </ThemedText>
                         </View>
                       </View>
@@ -197,6 +198,53 @@ export default function ExploreScreen() {
             Welcome{demoUser?.name ? `, ${demoUser.name}` : ''}
           </ThemedText>
           <ThemedText className="opacity-50">Discover premium experiences in the Maldives</ThemedText>
+        </View>
+
+        {/* Crew Share Promo Banner */}
+        <View className="px-4 mt-4">
+          <AnimatedView animation="fadeIn" delay={150}>
+            <Pressable
+              onPress={() => router.push('/crew')}
+              className="rounded-2xl overflow-hidden"
+              style={shadowPresets.card}
+            >
+              <ImageBackground
+                source={require('@/assets/img/crew.jpeg')}
+                style={{ width: '100%' }}
+                resizeMode="cover"
+              >
+                <LinearGradient
+                  colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.4)', 'rgba(0,0,0,0.95)']}
+                  locations={[0, 0.3, 0.75]}
+                  className="p-6"
+                >
+                  <View className="h-20" />
+                  {/* Text container with blur background */}
+                  <View className="bg-black/40 rounded-xl p-4 backdrop-blur-sm">
+                    <View className="flex-row items-center mb-3">
+                      <View className="bg-white/25 px-3 py-1.5 rounded-full flex-row items-center">
+                        <Icon name="Users" size={14} color="white" />
+                        <ThemedText className="text-white text-xs font-semibold ml-1.5">Crew Sharing</ThemedText>
+                      </View>
+                    </View>
+                    <ThemedText className="text-white font-bold text-2xl mb-2">Join the Crew</ThemedText>
+                    <ThemedText className="text-white/90 leading-5">
+                      Join with your crew or hop into an existing group from other airlines. Share the price, join for less than{' '}
+                      <ThemedText className="text-white font-bold">$80</ThemedText>
+                      {' '}and have a whole day of Maldivian fun.
+                    </ThemedText>
+                  </View>
+                  <View className="bg-black/40 rounded-xl p-3 mt-4 flex-row items-center">
+                    <Icon name="Plane" size={14} color="rgba(255,255,255,0.9)" />
+                    <ThemedText className="text-white/90 text-xs ml-2 flex-1">British Airways · Qatar · Iberia · Etihad · Korean Air</ThemedText>
+                    <View className="ml-2">
+                      <Icon name="ChevronRight" size={16} color="white" />
+                    </View>
+                  </View>
+                </LinearGradient>
+              </ImageBackground>
+            </Pressable>
+          </AnimatedView>
         </View>
 
         {/* Trending Section */}
@@ -304,24 +352,42 @@ export default function ExploreScreen() {
                 router.push('/activities');
               }}
               className="rounded-2xl overflow-hidden"
-              style={shadowPresets.card}
+              style={[
+                shadowPresets.large,
+                { shadowColor: colors.highlight, shadowOpacity: 0.3 }
+              ]}
             >
               <LinearGradient
                 colors={[colors.highlight, '#0077B6']}
                 start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                className="p-5 flex-row items-center justify-between"
+                end={{ x: 1, y: 1 }}
+                style={{ paddingVertical: 20, paddingHorizontal: 24 }}
               >
-                <View className="flex-row items-center flex-1">
-                  <View className="w-12 h-12 rounded-full bg-white/20 items-center justify-center mr-4">
-                    <Icon name="Grid3X3" size={24} color="white" />
+                <View className="flex-row items-center">
+                  <View 
+                    className="w-14 h-14 rounded-2xl items-center justify-center"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+                  >
+                    <Icon name="Compass" size={28} color="white" />
                   </View>
-                  <View className="flex-1">
-                    <ThemedText className="text-white font-bold text-lg">Browse All Activities</ThemedText>
-                    <ThemedText className="text-white/70">{ACTIVITIES.length} unique experiences</ThemedText>
+                  <View className="flex-1 ml-4 mr-3">
+                    <ThemedText 
+                      className="text-white font-bold text-xl"
+                      style={{ marginBottom: 4 }}
+                    >
+                      Browse All Activities
+                    </ThemedText>
+                    <ThemedText className="text-white/80 text-sm">
+                      Explore {ACTIVITIES.length} unique Maldivian experiences
+                    </ThemedText>
+                  </View>
+                  <View 
+                    className="w-10 h-10 rounded-full items-center justify-center"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+                  >
+                    <Icon name="ArrowRight" size={20} color="white" />
                   </View>
                 </View>
-                <Icon name="ChevronRight" size={24} color="white" />
               </LinearGradient>
             </Pressable>
           </AnimatedView>
@@ -414,7 +480,7 @@ function ActivityCard({
         ]}
       >
         <ImageBackground
-          source={{ uri: activity.media[0].uri }}
+          source={activity.media[0].localSource ? activity.media[0].localSource : { uri: activity.media[0].uri }}
           style={{ flex: 1 }}
           resizeMode="cover"
         >

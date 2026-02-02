@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Booking, Flight, Slot } from './types';
 
-const BOOKINGS_STORAGE_KEY = '@audifoil_bookings';
+const BOOKINGS_STORAGE_KEY = '@foilTribe Adventures_bookings';
 
 // Generate confirmation code
 export const generateConfirmationCode = (): string => {

@@ -5,6 +5,7 @@ export type ActivityCategory = 'EFOIL' | 'BOAT' | 'SNORKEL' | 'FISHING' | 'PRIVA
 export interface MediaItem {
   type: 'image' | 'video';
   uri: string;
+  localSource?: ImageSourcePropType;
   poster?: string;
 }
 
@@ -70,7 +71,21 @@ export interface ActivityBooking {
   createdAt: string;
 }
 
-// High-quality placeholder images (using Unsplash for demo)
+// Local images for activities
+import { ImageSourcePropType } from 'react-native';
+
+// Local asset imports
+export const LOCAL_IMAGES = {
+  lagoonBoat: require('@/assets/img/File 1.jpg'),
+  swimmingFish: require('@/assets/img/File 2.jpg'),
+  seaTurtle: require('@/assets/img/File 3.jpg'),
+  privateIsland: require('@/assets/img/File 4.jpg'),
+  dolphin: require('@/assets/img/dolphin.jpg'),
+  fishing: require('@/assets/img/fishing.jpg'),
+  efoil: require('@/assets/img/audi.jpg'),
+};
+
+// High-quality images for activities
 export const MEDIA = {
   efoil: {
     hero: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&q=80',
@@ -119,7 +134,7 @@ export const ACTIVITIES: Activity[] = [
     title: 'Audi E-Foil Experience',
     subtitle: 'Fly above the crystal lagoon',
     category: 'EFOIL',
-    durationMin: 45,
+    durationMin: 300,
     priceFromUsd: 150,
     rating: 4.9,
     reviewCount: 127,
@@ -128,7 +143,7 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'beginner',
     isPrivate: true,
     media: [
-      { type: 'image', uri: MEDIA.efoil.hero },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.efoil },
       { type: 'image', uri: MEDIA.efoil.action1 },
       { type: 'image', uri: MEDIA.efoil.lagoon },
       { type: 'image', uri: MEDIA.efoil.action2 },
@@ -167,7 +182,7 @@ export const ACTIVITIES: Activity[] = [
     title: 'Safari Boat Sunset Cruise',
     subtitle: 'Golden hour on a traditional dhoni',
     category: 'BOAT',
-    durationMin: 120,
+    durationMin: 300,
     priceFromUsd: 300,
     rating: 4.8,
     reviewCount: 89,
@@ -176,7 +191,7 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'all',
     isPrivate: false,
     media: [
-      { type: 'image', uri: MEDIA.boat.sunset },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.lagoonBoat },
       { type: 'image', uri: MEDIA.boat.cruise },
       { type: 'image', uri: MEDIA.boat.yacht },
       { type: 'image', uri: MEDIA.boat.deck },
@@ -215,7 +230,7 @@ export const ACTIVITIES: Activity[] = [
     title: 'Lagoon Reef Snorkeling',
     subtitle: 'Discover vibrant coral gardens',
     category: 'SNORKEL',
-    durationMin: 90,
+    durationMin: 300,
     priceFromUsd: 120,
     rating: 4.7,
     reviewCount: 156,
@@ -224,10 +239,10 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'beginner',
     isPrivate: false,
     media: [
-      { type: 'image', uri: MEDIA.snorkel.reef },
-      { type: 'image', uri: MEDIA.snorkel.underwater },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.swimmingFish },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.seaTurtle },
       { type: 'image', uri: MEDIA.snorkel.fish },
-      { type: 'image', uri: MEDIA.snorkel.turtle },
+      { type: 'image', uri: MEDIA.snorkel.reef },
     ],
     tags: ['90 min', '1-6 guests', 'Beginner friendly', 'Equipment provided'],
     highlights: ['House reef teeming with life', 'Sea turtles & rays', 'Professional guide'],
@@ -262,7 +277,7 @@ export const ACTIVITIES: Activity[] = [
     title: 'Sunset Line Fishing',
     subtitle: 'Traditional Maldivian fishing experience',
     category: 'FISHING',
-    durationMin: 150,
+    durationMin: 300,
     priceFromUsd: 200,
     rating: 4.6,
     reviewCount: 73,
@@ -271,7 +286,7 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'all',
     isPrivate: false,
     media: [
-      { type: 'image', uri: MEDIA.fishing.sunset },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.fishing },
       { type: 'image', uri: MEDIA.fishing.boat },
       { type: 'image', uri: MEDIA.fishing.catch },
       { type: 'image', uri: MEDIA.boat.deck },
@@ -309,7 +324,7 @@ export const ACTIVITIES: Activity[] = [
     title: 'Private Sandbank Picnic',
     subtitle: 'Your own island for the day',
     category: 'PRIVATE',
-    durationMin: 180,
+    durationMin: 300,
     priceFromUsd: 450,
     rating: 5.0,
     reviewCount: 42,
@@ -318,8 +333,8 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'all',
     isPrivate: true,
     media: [
-      { type: 'image', uri: MEDIA.sandbank.aerial },
-      { type: 'image', uri: MEDIA.sandbank.picnic },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.privateIsland },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.lagoonBoat },
       { type: 'image', uri: MEDIA.sandbank.beach },
       { type: 'image', uri: MEDIA.maldives.lagoon },
     ],
@@ -357,7 +372,7 @@ export const ACTIVITIES: Activity[] = [
     title: 'Dolphin Discovery Cruise',
     subtitle: 'Meet spinner dolphins at dawn',
     category: 'BOAT',
-    durationMin: 90,
+    durationMin: 300,
     priceFromUsd: 180,
     rating: 4.8,
     reviewCount: 98,
@@ -366,7 +381,7 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'all',
     isPrivate: false,
     media: [
-      { type: 'image', uri: MEDIA.dolphin.pod },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.dolphin },
       { type: 'image', uri: MEDIA.dolphin.jumping },
       { type: 'image', uri: MEDIA.dolphin.sunset },
       { type: 'image', uri: MEDIA.boat.cruise },
@@ -415,7 +430,16 @@ export function getFeaturedActivities(): Activity[] {
 }
 
 export function getTrendingActivities(): Activity[] {
-  return ACTIVITIES.filter(a => a.isTrending);
+  const trending = ACTIVITIES.filter(a => a.isTrending);
+  // Custom order: dolphins, snorkeling, efoil
+  const order = ['dolphin-cruise', 'snorkel-lagoon', 'efoil-session'];
+  return trending.sort((a, b) => {
+    const aIndex = order.indexOf(a.id);
+    const bIndex = order.indexOf(b.id);
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
 }
 
 export function getSunsetActivities(): Activity[] {

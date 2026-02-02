@@ -12,6 +12,9 @@ import { useAuth } from './AuthContext';
 // Detect if running in Expo Go (not a development build)
 const isExpoGo = Constants.executionEnvironment === 'storeClient';
 
+// Set to true to skip RevenueCat and use mock mode (for testing without RevenueCat setup)
+const SKIP_REVENUECAT = true;
+
 // Suppress RevenueCat SDK internal errors in Expo Go
 LogBox.ignoreLogs([
   '[RevenueCat]',
@@ -25,7 +28,7 @@ LogBox.ignoreLogs([
 const REVENUECAT_API_KEY = 'test_AVWMyXWmcTEGLmgXhvVbxBNriOS';
 
 // Entitlement identifier
-export const ENTITLEMENT_ID = 'audiFoil Pro';
+export const ENTITLEMENT_ID = 'foilTribe Adventures Pro';
 
 // Product identifiers
 export const PRODUCT_IDS = {
@@ -155,9 +158,9 @@ export function RevenueCatProvider({ children }: { children: ReactNode }) {
     let removeListener: (() => void) | null = null;
 
     const initRevenueCat = async () => {
-      // In Expo Go, use mock mode with fake offerings
-      if (isExpoGo) {
-        console.log('[RevenueCat] Running in Expo Go - using mock mode. Build a development build to test real purchases.');
+      // Skip RevenueCat entirely and use mock mode
+      if (SKIP_REVENUECAT || isExpoGo) {
+        console.log('[RevenueCat] Using mock mode - RevenueCat is disabled.');
         setOfferings(MOCK_OFFERINGS);
         setIsConfigured(true);
         setIsLoading(false);
@@ -215,8 +218,8 @@ export function RevenueCatProvider({ children }: { children: ReactNode }) {
     // Don't attempt to identify until SDK is configured
     if (!isConfigured) return;
 
-    // Skip in Expo Go
-    if (isExpoGo) return;
+    // Skip in mock mode
+    if (SKIP_REVENUECAT || isExpoGo) return;
 
     // Prevent duplicate identification requests
     if (user?.id === lastIdentifiedUserId.current) return;
@@ -248,7 +251,7 @@ export function RevenueCatProvider({ children }: { children: ReactNode }) {
 
   // Fetch customer info
   const fetchCustomerInfo = async () => {
-    if (isExpoGo) return; // Skip in Expo Go
+    if (SKIP_REVENUECAT || isExpoGo) return; // Skip in mock mode
     try {
       const info = await Purchases.getCustomerInfo();
       setCustomerInfo(info);
@@ -260,7 +263,7 @@ export function RevenueCatProvider({ children }: { children: ReactNode }) {
 
   // Fetch offerings
   const fetchOfferings = async () => {
-    if (isExpoGo) return; // Skip in Expo Go
+    if (SKIP_REVENUECAT || isExpoGo) return; // Skip in mock mode
     try {
       const fetchedOfferings = await Purchases.getOfferings();
       if (fetchedOfferings.current) {
@@ -274,8 +277,8 @@ export function RevenueCatProvider({ children }: { children: ReactNode }) {
 
   // Purchase a package
   const purchasePackage = useCallback(async (pkg: PurchasesPackage): Promise<boolean> => {
-    // In Expo Go, show a confirmation dialog and simulate purchase
-    if (isExpoGo) {
+    // In mock mode, show a confirmation dialog and simulate purchase
+    if (SKIP_REVENUECAT || isExpoGo) {
       return new Promise((resolve) => {
         Alert.alert(
           'Confirm Purchase',
@@ -326,8 +329,8 @@ export function RevenueCatProvider({ children }: { children: ReactNode }) {
 
   // Restore purchases
   const restorePurchases = useCallback(async (): Promise<boolean> => {
-    // In Expo Go, show a message
-    if (isExpoGo) {
+    // In mock mode, show a message
+    if (SKIP_REVENUECAT || isExpoGo) {
       Alert.alert(
         'Demo Mode',
         'No purchases to restore in demo mode.',

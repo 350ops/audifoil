@@ -37,7 +37,7 @@ const STEPS = [
   {
     icon: 'MapPin',
     title: 'Meet at the Dock',
-    description: 'Head to Malé Lagoon Dock after landing. Look for our team with blue audiFoil flags.',
+    description: 'Head to Malé Lagoon Dock after landing. Look for our team with blue foilTribe Adventures flags.',
   },
   {
     icon: 'Waves',

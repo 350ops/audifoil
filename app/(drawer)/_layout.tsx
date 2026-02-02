@@ -40,7 +40,7 @@ export default function DrawerLayout() {
                 <Drawer.Screen
                     name="(tabs)"
                     options={{
-                        title: 'audiFoil',
+                        title: 'foilTribe Adventures',
                         drawerLabel: 'Home',
                     }}
                 />

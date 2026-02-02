@@ -30,7 +30,7 @@ const availableLanguages = [
   { code: 'es', name: 'Spanish', nativeName: 'Español' },
 ];
 
-const LANGUAGE_KEY = '@audifoil_language';
+const LANGUAGE_KEY = '@foilTribe Adventures_language';
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguageState] = useState<string>('en');

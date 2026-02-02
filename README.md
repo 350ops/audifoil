@@ -512,7 +512,7 @@ eas submit --platform android
 
 ## Demo Flow for Investors
 
-**audiFoil** is a premium e-foil booking app for the Maldives. Here's the investor demo flow:
+**foilTribe Adventures** is a premium e-foil booking app for the Maldives. Here's the investor demo flow:
 
 ### Quick Demo (2 minutes)
 
@@ -552,7 +552,7 @@ eas submit --platform android
 
 ## Support
 
-For questions or issues, contact [maldives@audifoil.com](mailto:maldives@audifoil.com)
+For questions or issues, contact [maldives@foilTribe Adventures.com](mailto:maldives@foilTribe Adventures.com)
 
 ## License
 

@@ -72,7 +72,7 @@ export default function ActivityDetailScreen() {
             keyExtractor={(_, i) => `image-${i}`}
             renderItem={({ item }) => (
               <ImageBackground
-                source={{ uri: item.uri }}
+                source={item.localSource ? item.localSource : { uri: item.uri }}
                 style={{ width, height: HERO_HEIGHT }}
                 resizeMode="cover"
               >

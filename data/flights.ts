@@ -138,3 +138,18 @@ export const getUniqueOrigins = (): { city: string; code: string }[] => {
     })
     .map(f => ({ city: f.originCity, code: f.originCode }));
 };
+
+// Mock crew bookings per flight
+export const crewBookingsPerFlight: Record<string, number> = {
+  'ey372': 3,      // Etihad - 3 people joining
+  'ek656': 5,      // Emirates - 5 people joining  
+  'qr676': 2,      // Qatar Airways - 2 people joining
+  'tk740': 4,      // Turkish Airlines - 4 people joining
+  'ul101': 2,      // SriLankan - 2 people joining
+  'fz1025': 1,     // Flydubai - 1 person joining
+};
+
+// Get crew bookings count for a flight
+export const getCrewBookingsCount = (flightId: string): number => {
+  return crewBookingsPerFlight[flightId] || 0;
+};

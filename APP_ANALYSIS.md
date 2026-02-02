@@ -1,8 +1,8 @@
-# audiFoil App - Complete Analysis for Claude Code
+# foilTribe Adventures App - Complete Analysis for Claude Code
 
 ## Overview
 
-**audiFoil** is a premium e-foil (electric hydrofoil) booking app for the Maldives. It allows airline crew and travelers landing at Malé International Airport (MLE) to book 45-minute Audi e-foil sessions in the lagoon.
+**foilTribe Adventures** is a premium e-foil (electric hydrofoil) booking app for the Maldives. It allows airline crew and travelers landing at Malé International Airport (MLE) to book 45-minute Audi e-foil sessions in the lagoon.
 
 **Primary Use Case**: After landing in Malé, users select their flight from the arrivals list, pick an available time slot (starting 1 hour after arrival), and complete a mock Apple Pay checkout.
 
@@ -405,6 +405,6 @@ npx expo prebuild
 
 ## Contact
 
-- **App Name**: audiFoil
-- **Support Email**: maldives@audifoil.com
-- **GitHub**: https://github.com/350ops/audifoil
+- **App Name**: foilTribe Adventures
+- **Support Email**: maldives@foilTribe Adventures.com
+- **GitHub**: https://github.com/350ops/foilTribe Adventures

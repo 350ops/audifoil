@@ -143,7 +143,7 @@ export function useNotifications(): UseNotificationsReturn {
     if (isExpoGoAndroid || !Notifications) {
       Alert.alert(
         'Test Notification',
-        'This is a test notification from audiFoil!\n\n(Demo mode - in a real build this would appear as a system notification)',
+        'This is a test notification from foilTribe Adventures!\n\n(Demo mode - in a real build this would appear as a system notification)',
         [{ text: 'OK' }]
       );
       return;
@@ -152,7 +152,7 @@ export function useNotifications(): UseNotificationsReturn {
     await Notifications.scheduleNotificationAsync({
       content: {
         title: 'Test Notification',
-        body: 'This is a test notification from audiFoil!',
+        body: 'This is a test notification from foilTribe Adventures!',
         data: { type: 'test' },
         sound: true,
       },

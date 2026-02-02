@@ -9,7 +9,7 @@ import { CardScroller } from '@/components/CardScroller';
 import { shadowPresets } from '@/utils/useShadow';
 import useThemeColors from '@/contexts/ThemeColors';
 import { useStore } from '@/store/useStore';
-import { mockArrivalsToday, filterFlights, getAvailableSlotsCount } from '@/data';
+import { mockArrivalsToday, filterFlights, getAvailableSlotsCount, getCrewBookingsCount } from '@/data';
 import { Flight } from '@/data/types';
 import AirlineLogo from '@/components/AirlineLogo';
 import { FlightCardSkeleton } from '@/components/SkeletonCard';
@@ -17,7 +17,9 @@ import { ACTIVITIES, MEDIA } from '@/data/activities';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function CrewScreen() {
   const colors = useThemeColors();
@@ -67,6 +69,7 @@ export default function CrewScreen() {
       <FlightCard
         flight={item}
         availableSlots={getAvailableSlotsCount(item)}
+        crewBookings={getCrewBookingsCount(item.id)}
         onPress={() => handleFlightPress(item)}
       />
     </AnimatedView>
@@ -223,16 +226,19 @@ export default function CrewScreen() {
 interface FlightCardProps {
   flight: Flight;
   availableSlots: number;
+  crewBookings: number;
   onPress: () => void;
 }
 
-const FlightCard = React.memo(function FlightCard({ flight, availableSlots, onPress }: FlightCardProps) {
+const FlightCard = React.memo(function FlightCard({ flight, availableSlots, crewBookings, onPress }: FlightCardProps) {
   const colors = useThemeColors();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   const statusConfig = {
-    'On time': { bg: 'rgba(34, 197, 94, 0.15)', color: '#22C55E' },
-    'Landed': { bg: 'rgba(59, 130, 246, 0.15)', color: '#3B82F6' },
-    'Delayed': { bg: 'rgba(239, 68, 68, 0.15)', color: '#EF4444' },
+    'On time': { bg: 'rgba(34, 197, 94, 0.2)', color: '#22C55E' },
+    'Landed': { bg: 'rgba(59, 130, 246, 0.2)', color: '#3B82F6' },
+    'Delayed': { bg: 'rgba(239, 68, 68, 0.2)', color: '#EF4444' },
   };
 
   const status = statusConfig[flight.status];
@@ -240,64 +246,133 @@ const FlightCard = React.memo(function FlightCard({ flight, availableSlots, onPr
   return (
     <Pressable
       onPress={onPress}
-      className="bg-secondary rounded-2xl p-4 mb-3 overflow-hidden"
+      className="mb-3 rounded-2xl overflow-hidden"
       style={({ pressed }) => [
+        { 
+          transform: [{ scale: pressed ? 0.98 : 1 }], 
+          opacity: pressed ? 0.9 : 1,
+          borderWidth: 1,
+          borderColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.6)',
+        },
         shadowPresets.card,
-        { transform: [{ scale: pressed ? 0.98 : 1 }], opacity: pressed ? 0.9 : 1 }
       ]}
     >
-      {/* Top Row: Airline + Flight Number */}
-      <View className="flex-row items-center justify-between mb-3">
-        <View className="flex-row items-center">
-          <AirlineLogo airlineCode={flight.airlineCode} size={44} style={{ marginRight: 12 }} />
-          <View>
-            <ThemedText className="font-bold text-lg">{flight.flightNo}</ThemedText>
-            <ThemedText className="opacity-50 text-sm">{flight.airline}</ThemedText>
+      <BlurView
+        intensity={isDark ? 40 : 60}
+        tint={isDark ? 'dark' : 'light'}
+        className="p-4"
+        style={{ 
+          backgroundColor: isDark ? 'rgba(30,30,40,0.5)' : 'rgba(255,255,255,0.7)',
+        }}
+      >
+        {/* Crew Booking Badge */}
+        {crewBookings > 0 && (
+          <View 
+            className="flex-row items-center px-3 py-1.5 rounded-full mb-3 self-start"
+            style={{ backgroundColor: colors.highlight }}
+          >
+            <Icon name="Users" size={12} color="white" />
+            <ThemedText className="text-white text-xs font-semibold ml-1.5">
+              {crewBookings} {crewBookings === 1 ? 'person' : 'people'} joining!
+            </ThemedText>
+          </View>
+        )}
+
+        {/* Top Row: Airline + Flight Number */}
+        <View className="flex-row items-center justify-between mb-3">
+          <View className="flex-row items-center">
+            <View 
+              className="rounded-xl overflow-hidden"
+              style={{ 
+                backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)',
+                padding: 4,
+              }}
+            >
+              <AirlineLogo airlineCode={flight.airlineCode} size={40} />
+            </View>
+            <View className="ml-3">
+              <ThemedText className="font-bold text-lg">{flight.flightNo}</ThemedText>
+              <ThemedText className="opacity-60 text-sm">{flight.airline}</ThemedText>
+            </View>
+          </View>
+
+          {/* Status Badge */}
+          <View 
+            className="px-3 py-1.5 rounded-full"
+            style={{ 
+              backgroundColor: status.bg,
+              borderWidth: 1,
+              borderColor: status.color + '40',
+            }}
+          >
+            <ThemedText className="text-sm font-semibold" style={{ color: status.color }}>
+              {flight.status}
+            </ThemedText>
           </View>
         </View>
 
-        {/* Status Badge */}
-        <View className="px-3 py-1 rounded-full" style={{ backgroundColor: status.bg }}>
-          <ThemedText className="text-sm font-medium" style={{ color: status.color }}>
-            {flight.status}
-          </ThemedText>
-        </View>
-      </View>
-
-      {/* Route Info */}
-      <View className="flex-row items-center mb-4">
-        <View className="flex-1">
-          <ThemedText className="text-2xl font-bold">{flight.originCode}</ThemedText>
-          <ThemedText className="opacity-50 text-sm">{flight.originCity}</ThemedText>
-        </View>
-        <View className="flex-row items-center px-4">
-          <View className="h-px w-8 bg-border" />
-          <Icon name="Plane" size={20} color={colors.highlight} className="mx-2" />
-          <View className="h-px w-8 bg-border" />
-        </View>
-        <View className="flex-1 items-end">
-          <ThemedText className="text-2xl font-bold">MLE</ThemedText>
-          <ThemedText className="opacity-50 text-sm">Malé</ThemedText>
-        </View>
-      </View>
-
-      {/* Bottom Row: Time + CTA */}
-      <View className="flex-row items-center justify-between pt-3 border-t border-border">
-        <View className="flex-row items-center">
-          <Icon name="Clock" size={16} color={colors.icon} className="mr-2" />
-          <ThemedText className="font-semibold">{flight.timeLocal}</ThemedText>
-        </View>
-
-        <View
-          className="flex-row items-center px-3 py-1.5 rounded-full"
-          style={{ backgroundColor: colors.highlight }}
+        {/* Route Info */}
+        <View 
+          className="flex-row items-center mb-4 py-3 px-4 rounded-xl"
+          style={{ 
+            backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+          }}
         >
-          <ThemedText className="text-white font-semibold text-sm mr-1">
-            Book Experience
-          </ThemedText>
-          <Icon name="ChevronRight" size={16} color="white" />
+          <View className="flex-1">
+            <ThemedText className="text-2xl font-bold">{flight.originCode}</ThemedText>
+            <ThemedText className="opacity-50 text-sm">{flight.originCity}</ThemedText>
+          </View>
+          <View className="flex-row items-center px-4">
+            <View 
+              className="h-px w-6"
+              style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)' }}
+            />
+            <View 
+              className="mx-2 w-8 h-8 rounded-full items-center justify-center"
+              style={{ backgroundColor: colors.highlight + '20' }}
+            >
+              <Icon name="Plane" size={16} color={colors.highlight} />
+            </View>
+            <View 
+              className="h-px w-6"
+              style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)' }}
+            />
+          </View>
+          <View className="flex-1 items-end">
+            <ThemedText className="text-2xl font-bold">MLE</ThemedText>
+            <ThemedText className="opacity-50 text-sm">Malé</ThemedText>
+          </View>
         </View>
-      </View>
+
+        {/* Bottom Row: Time + CTA */}
+        <View 
+          className="flex-row items-center justify-between pt-3"
+          style={{ 
+            borderTopWidth: 1, 
+            borderTopColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+          }}
+        >
+          <View className="flex-row items-center">
+            <View 
+              className="w-8 h-8 rounded-full items-center justify-center mr-2"
+              style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }}
+            >
+              <Icon name="Clock" size={16} color={colors.icon} />
+            </View>
+            <ThemedText className="font-semibold text-lg">{flight.timeLocal}</ThemedText>
+          </View>
+
+          <View
+            className="flex-row items-center px-4 py-2 rounded-full"
+            style={{ backgroundColor: colors.highlight }}
+          >
+            <ThemedText className="text-white font-semibold text-sm mr-1">
+              Book Experience
+            </ThemedText>
+            <Icon name="ChevronRight" size={16} color="white" />
+          </View>
+        </View>
+      </BlurView>
     </Pressable>
   );
 });

@@ -1,11 +1,11 @@
 {
   "expo": {
     "newArchEnabled": true,
-    "name": "audiFoil",
+    "name": "foilTribe Adventures",
     "slug": "audifoil",
     "version": "1.0.0",
     "runtimeVersion": "1.0.0",
-    "scheme": "audifoil",
+    "scheme": "foiltribe",
     "platforms": [
       "ios",
       "android"
@@ -40,8 +40,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mmdev13.audifoil",
-      "usesAppleSignIn": true
+      "bundleIdentifier": "com.mmdev13.foiltribeadventures",
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -50,19 +53,16 @@
       },
       "softwareKeyboardLayoutMode": "pan",
       "predictiveBackGestureEnabled": false,
-      "package": "com.mmdev13.audifoil"
-    },  
+      "package": "com.mmdev13.foiltribeadventures"
+    },
     "extra": {
       "router": {
         "origin": false
       },
       "eas": {
-        "projectId": "c883a253-ca71-4403-ada1-a21b2b51370d"
+        "projectId": "bf9d6b8b-3fac-4a09-828a-51560c2877c9"
       }
     },
-    "owner": "native-templates",
-    "updates": {
-      "url": "https://u.expo.dev/c883a253-ca71-4403-ada1-a21b2b51370d"
-    }
+    "owner": "mmdev13"
   }
 }

@@ -8,9 +8,9 @@ type Note = Tables<'notes'>;
 type Category = Tables<'categories'>;
 
 // Demo mode storage keys
-const DEMO_NOTES_KEY = '@audifoil_demo_notes';
-const DEMO_CATEGORIES_KEY = '@audifoil_demo_categories';
-const DEMO_VERSION_KEY = '@audifoil_demo_version';
+const DEMO_NOTES_KEY = '@foilTribe Adventures_demo_notes';
+const DEMO_CATEGORIES_KEY = '@foilTribe Adventures_demo_categories';
+const DEMO_VERSION_KEY = '@foilTribe Adventures_demo_version';
 const DEMO_DATA_VERSION = '3'; // Increment this to reset demo data
 
 // Sample demo notes - 10 total (4 with images, 6 without)
@@ -20,7 +20,7 @@ const INITIAL_DEMO_NOTES: Note[] = [
   {
     id: 'demo-note-1',
     user_id: 'demo-user-id',
-    title: 'Welcome to audiFoil!',
+    title: 'Welcome to foilTribe Adventures!',
     description: 'This is a demo note. You can create, edit, and delete notes to try out the app. All data is stored locally on your device.\n\nTry these features:\n• Tap the + button to create notes\n• Swipe left on a note to delete\n• Tap the pin icon to keep important notes at top\n• Use categories to organize your notes',
     color: '#fef3c7',
     category_id: null,

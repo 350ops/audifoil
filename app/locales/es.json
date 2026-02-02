@@ -85,7 +85,7 @@
     "appUpdatesDesc": "Nuevas funciones y mejoras"
   },
   "subscription": {
-    "title": "audiFoil Pro",
+    "title": "foilTribe Adventures Pro",
     "subtitle": "Desbloquea todas las funciones premium",
     "unlimitedNotes": "Notas ilimitadas",
     "cloudSync": "Sincronización en la nube",
@@ -118,7 +118,7 @@
     "faq2Question": "¿Cómo organizo mis notas con categorías?",
     "faq2Answer": "Al crear o editar una nota, selecciona una categoría de la lista inferior. También puedes crear categorías personalizadas en Configuración > Categorías. Filtra notas por categoría en la pantalla principal.",
     "faq3Question": "¿Puedo sincronizar mis notas entre dispositivos?",
-    "faq3Answer": "¡Sí! Con audiFoil Pro, tus reservas se sincronizan automáticamente en todos tus dispositivos. Tus datos se almacenan de forma segura en la nube y son accesibles en cualquier momento y lugar con conexión a internet.",
+    "faq3Answer": "¡Sí! Con foilTribe Adventures Pro, tus reservas se sincronizan automáticamente en todos tus dispositivos. Tus datos se almacenan de forma segura en la nube y son accesibles en cualquier momento y lugar con conexión a internet.",
     "faq4Question": "¿Cómo busco notas específicas?",
     "faq4Answer": "Toca el ícono de búsqueda en el encabezado. Puedes buscar por título, descripción o categoría. Los miembros premium obtienen búsqueda con IA que entiende el contexto y puede encontrar notas relacionadas.",
     "faq5Question": "¿Mis datos están seguros y privados?",
@@ -127,8 +127,8 @@
     "faq6Answer": "Las notas se mueven a una carpeta de papelera donde permanecen durante 30 días. Puedes restaurarlas desde Configuración > Papelera. Después de 30 días, las notas se eliminan permanentemente. Los miembros premium obtienen historial de respaldo ilimitado.",
     "faq7Question": "¿Puedo compartir mis notas con otros?",
     "faq7Answer": "¡Sí! Mantén presionada cualquier nota y selecciona \"Compartir\" para enviarla por email, mensajería u otras apps. Los miembros premium pueden crear cuadernos compartidos para colaboración en tiempo real con otros.",
-    "faq8Question": "¿Qué funciones obtengo con audiFoil Pro?",
-    "faq8Answer": "audiFoil Pro incluye reservas prioritarias, horarios exclusivos, sincronización en la nube, soporte prioritario y acceso anticipado a nuevas ubicaciones. ¡Pruébalo gratis por 7 días!"
+    "faq8Question": "¿Qué funciones obtengo con foilTribe Adventures Pro?",
+    "faq8Answer": "foilTribe Adventures Pro incluye reservas prioritarias, horarios exclusivos, sincronización en la nube, soporte prioritario y acceso anticipado a nuevas ubicaciones. ¡Pruébalo gratis por 7 días!"
   },
   "profile": {
     "title": "Configuración",
@@ -145,7 +145,7 @@
   },
   "onboarding": {
     "profilePicture": "Añade una foto de perfil",
-    "profilePictureDesc": "Personaliza tu perfil de audiFoil",
+    "profilePictureDesc": "Personaliza tu perfil de foilTribe Adventures",
     "takePhoto": "Tomar Foto",
     "choosePhoto": "Elegir Foto",
     "name": "¿Cómo te llamas?",

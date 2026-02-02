@@ -13,7 +13,7 @@ import { Flight, Slot, Booking, DemoUser } from '@/data/types';
 import { loadBookings, saveBookings, createBooking, addBooking } from '@/data/bookings';
 import { generateSlotsForFlight } from '@/data/slots';
 
-const ACTIVITY_BOOKINGS_KEY = 'audifoil_activity_bookings';
+const ACTIVITY_BOOKINGS_KEY = 'foilTribe Adventures_activity_bookings';
 
 interface AppState {
   // Demo user
@@ -119,7 +119,7 @@ export const useStore = create<AppState>((set, get) => ({
   demoUser: {
     id: 'demo-user',
     name: 'Miguel',
-    email: 'hello@audifoil.com',
+    email: 'hello@foilTribe Adventures.com',
     whatsapp: '+34 612 345 678',
   },
   setDemoUser: (user) => set({ demoUser: user }),

@@ -1,4 +1,4 @@
-// Core data types for audiFoil e-foil booking app
+// Core data types for foilTribe Adventures e-foil booking app
 
 export type FlightStatus = 'On time' | 'Landed' | 'Delayed';
 

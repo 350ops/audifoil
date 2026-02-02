@@ -39,7 +39,7 @@ export default function MultiStepScreen() {
                             <Icon name="Sparkles" size={40} className="rounded-full bg-secondary p-6" />
                         </View>
                         <ThemedText className="text-3xl font-bold text-center mb-3">
-                            Welcome to audiFoil
+                            Welcome to foilTribe Adventures
                         </ThemedText>
                         <ThemedText className="text-center opacity-60 px-8">
                             Your personal space for capturing ideas, organizing thoughts, and staying productive.
