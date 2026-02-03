@@ -166,9 +166,9 @@ export default function SelectTimeScreen() {
             </View>
           </View>
 
-          <View className="flex-row flex-wrap gap-3">
+          <View className="gap-3">
             {filteredSlots.map((slot, index) => (
-              <AnimatedView key={slot.id} animation="scaleIn" delay={index * 40} className="w-[48%]">
+              <AnimatedView key={slot.id} animation="scaleIn" delay={index * 40}>
                 <SlotCard
                   slot={slot}
                   isSelected={selectedActivitySlot?.id === slot.id}
@@ -259,82 +259,108 @@ function SlotCard({ slot, isSelected, onPress }: {
     <Pressable
       onPress={onPress}
       disabled={!isAvailable}
-      className="rounded-xl overflow-hidden"
+      className="rounded-2xl overflow-hidden"
       style={({ pressed }) => [
         shadowPresets.card,
         {
           backgroundColor: isSelected ? colors.highlight : colors.secondary,
           opacity: isAvailable ? (pressed ? 0.8 : 1) : 0.5,
           transform: [{ scale: pressed && isAvailable ? 0.97 : 1 }],
+          borderWidth: isSelected ? 2 : 1,
+          borderColor: isSelected ? colors.highlight : colors.border,
         }
       ]}
     >
-      <View className="p-4">
-        {/* Time + Badges */}
-        <View className="flex-row items-center justify-between mb-2">
+      <View className="p-4 flex-row items-center">
+        {/* Left: Time Block */}
+        <View 
+          className="w-20 h-20 rounded-xl items-center justify-center mr-4"
+          style={{ backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : colors.highlight + '10' }}
+        >
           <ThemedText
             className="font-bold text-xl"
-            style={isSelected ? { color: 'white' } : undefined}
+            style={isSelected ? { color: 'white' } : { color: colors.highlight }}
           >
             {slot.startTime}
           </ThemedText>
-          <View className="flex-row items-center">
-            {slot.isSunset && (
-              <Icon name="Sunset" size={14} color={isSelected ? 'white' : '#F59E0B'} />
-            )}
-            {slot.isPopular && (
-              <Icon name="Flame" size={14} color={isSelected ? 'white' : '#EF4444'} className="ml-1" />
-            )}
-          </View>
+          <ThemedText
+            className="text-xs mt-0.5"
+            style={{ color: isSelected ? 'rgba(255,255,255,0.7)' : colors.placeholder }}
+          >
+            to {slot.endTime}
+          </ThemedText>
         </View>
 
-        <ThemedText
-          className="text-sm mb-3"
-          style={{ color: isSelected ? 'rgba(255,255,255,0.7)' : colors.placeholder }}
-        >
-          {slot.startTime} - {slot.endTime}
-        </ThemedText>
-
-        {/* Booked By */}
-        {slot.bookedBy.length > 0 && (
-          <View className="flex-row flex-wrap gap-1 mb-3">
-            {slot.bookedBy.slice(0, 2).map((booking, i) => (
-              <View
-                key={i}
-                className="px-2 py-1 rounded-full"
-                style={{ backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : colors.highlight + '20' }}
-              >
-                <ThemedText
-                  className="text-xs font-medium"
-                  style={isSelected ? { color: 'white' } : { color: colors.highlight }}
+        {/* Middle: Details */}
+        <View className="flex-1">
+          {/* Crew joining badges */}
+          {slot.bookedBy.length > 0 ? (
+            <View className="flex-row flex-wrap gap-1.5 mb-2">
+              {slot.bookedBy.slice(0, 3).map((booking, i) => (
+                <View
+                  key={i}
+                  className="px-2 py-0.5 rounded-full"
+                  style={{ backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : colors.highlight + '15' }}
                 >
-                  {booking.label}
+                  <ThemedText
+                    className="text-xs font-medium"
+                    style={isSelected ? { color: 'white' } : { color: colors.highlight }}
+                  >
+                    {booking.label}
+                  </ThemedText>
+                </View>
+              ))}
+              {slot.bookedBy.length > 3 && (
+                <ThemedText
+                  className="text-xs"
+                  style={{ color: isSelected ? 'rgba(255,255,255,0.6)' : colors.placeholder }}
+                >
+                  +{slot.bookedBy.length - 3} more
                 </ThemedText>
-              </View>
-            ))}
-          </View>
-        )}
+              )}
+            </View>
+          ) : (
+            <ThemedText
+              className="text-sm mb-2"
+              style={{ color: isSelected ? 'rgba(255,255,255,0.6)' : colors.placeholder }}
+            >
+              No crew yet - be the first!
+            </ThemedText>
+          )}
 
-        {/* Availability */}
-        <View className="flex-row items-center justify-between">
+          {/* Availability */}
           <View className="flex-row items-center">
             <View
-              className="w-2 h-2 rounded-full mr-2"
+              className="w-2 h-2 rounded-full mr-1.5"
               style={{ backgroundColor: isAvailable ? '#22C55E' : '#EF4444' }}
             />
             <ThemedText
-              className="text-xs"
-              style={{ color: isSelected ? 'rgba(255,255,255,0.7)' : colors.placeholder }}
+              className="text-sm"
+              style={{ color: isSelected ? 'rgba(255,255,255,0.8)' : colors.placeholder }}
             >
-              {isAvailable ? `${slot.spotsRemaining} left` : 'Full'}
+              {isAvailable ? `${slot.spotsRemaining} spots available` : 'Fully booked'}
             </ThemedText>
           </View>
+        </View>
+
+        {/* Right: Price + Icons */}
+        <View className="items-end">
           <ThemedText
-            className="font-bold"
+            className="font-bold text-xl"
             style={isSelected ? { color: 'white' } : { color: colors.highlight }}
           >
             ${slot.price}
           </ThemedText>
+          {(slot.isSunset || slot.isPopular) && (
+            <View className="flex-row items-center gap-1 mt-1">
+              {slot.isSunset && (
+                <Icon name="Sunset" size={16} color={isSelected ? 'white' : '#F59E0B'} />
+              )}
+              {slot.isPopular && (
+                <Icon name="Flame" size={16} color={isSelected ? 'white' : '#EF4444'} />
+              )}
+            </View>
+          )}
         </View>
       </View>
     </Pressable>
