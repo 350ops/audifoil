@@ -79,8 +79,26 @@ export default function ActivityDetailScreen() {
                 <LinearGradient
                   colors={['rgba(0,0,0,0.3)', 'transparent', 'rgba(0,0,0,0.5)']}
                   locations={[0, 0.3, 1]}
-                  style={{ flex: 1 }}
-                />
+                  style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+                >
+                  {/* E-foil tagline overlay */}
+                  {selectedActivity?.id === 'efoil-session' && (
+                    <View className="items-center">
+                      <ThemedText
+                        className="text-white text-4xl font-bold tracking-widest"
+                        style={{ textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 4 }}
+                      >
+                        SEEK THE
+                      </ThemedText>
+                      <ThemedText
+                        className="text-white text-4xl font-bold tracking-widest"
+                        style={{ textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 4 }}
+                      >
+                        CHALLENGE
+                      </ThemedText>
+                    </View>
+                  )}
+                </LinearGradient>
               </ImageBackground>
             )}
           />
