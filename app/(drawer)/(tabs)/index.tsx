@@ -196,7 +196,7 @@ export default function ExploreScreen() {
         {/* Welcome Message */}
         <View className="px-4 mt-2 mb-2">
           <ThemedText className="text-2xl font-bold">
-            Welcome{demoUser?.name ? `, ${demoUser.name}` : ''}
+           Airline Crew are welcome!
           </ThemedText>
           <ThemedText className="opacity-50">Discover premium experiences in the Maldives</ThemedText>
         </View>
