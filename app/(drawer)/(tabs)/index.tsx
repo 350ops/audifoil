@@ -24,6 +24,7 @@ import {
   getSunsetActivities,
   getWaterSportsActivities,
   getBoatExperiences,
+  getGroupExperiences,
   MEDIA,
   LOCAL_IMAGES,
 } from '@/data/activities';
@@ -146,10 +147,10 @@ export default function ExploreScreen() {
                       <View className="flex-row items-center mt-4">
                         <View className="bg-white/20 px-4 py-2 rounded-full flex-row items-center">
                           <ThemedText className="text-white font-bold">
-                            From $80
+                            From ${item.activity.seatPriceFromUsd}/seat
                           </ThemedText>
                           <ThemedText className="text-white/70 ml-2">
-                            · 5 hour adventures
+                            · {item.activity.isPrivate ? `${item.activity.durationMin} min` : 'Share the trip'}
                           </ThemedText>
                         </View>
                       </View>
@@ -224,14 +225,17 @@ export default function ExploreScreen() {
                     <View className="flex-row items-center mb-3">
                       <View className="bg-white/25 px-3 py-1.5 rounded-full flex-row items-center">
                         <Icon name="Users" size={14} color="white" />
-                        <ThemedText className="text-white text-xs font-semibold ml-1.5">Crew Sharing</ThemedText>
+                        <ThemedText className="text-white text-xs font-semibold ml-1.5">Pay Per Seat</ThemedText>
+                      </View>
+                      <View className="bg-green-500/80 px-3 py-1.5 rounded-full flex-row items-center ml-2">
+                        <ThemedText className="text-white text-xs font-semibold">3/5 seats filled</ThemedText>
                       </View>
                     </View>
-                    <ThemedText className="text-white font-bold text-2xl mb-2">Join the Crew</ThemedText>
+                    <ThemedText className="text-white font-bold text-2xl mb-2">Share a Trip</ThemedText>
                     <ThemedText className="text-white/90 leading-5">
-                      Join with your crew or hop into an existing group from other airlines. Share the price, join for less than{' '}
-                      <ThemedText className="text-white font-bold">$80</ThemedText>
-                      {' '}and have a whole day of Maldivian fun.
+                      Join other airline crews on existing trips. Pay only for your seat, starting from{' '}
+                      <ThemedText className="text-white font-bold">$40/seat</ThemedText>
+                      {' '} we match you with travelers.
                     </ThemedText>
                   </View>
                   <View className="bg-black/40 rounded-xl p-3 mt-4 flex-row items-center">
@@ -522,7 +526,7 @@ function ActivityCard({
             {/* Price & Social Proof */}
             <View className="flex-row items-center justify-between mt-2">
               <ThemedText className="text-white font-bold text-base">
-                From ${activity.priceFromUsd}
+                {activity.isPrivate ? `$${activity.seatPriceFromUsd}` : `From $${activity.seatPriceFromUsd}/seat`}
               </ThemedText>
               {activity.socialProof[0] && variant !== 'small' && (
                 <ThemedText className="text-white/60 text-xs" numberOfLines={1}>

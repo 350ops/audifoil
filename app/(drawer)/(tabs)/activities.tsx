@@ -80,10 +80,10 @@ export default function ActivitiesScreen() {
         result.sort((a, b) => b.bookingsThisWeek - a.bookingsThisWeek);
         break;
       case 'price_low':
-        result.sort((a, b) => a.priceFromUsd - b.priceFromUsd);
+        result.sort((a, b) => a.seatPriceFromUsd - b.seatPriceFromUsd);
         break;
       case 'price_high':
-        result.sort((a, b) => b.priceFromUsd - a.priceFromUsd);
+        result.sort((a, b) => b.seatPriceFromUsd - a.seatPriceFromUsd);
         break;
       case 'duration':
         result.sort((a, b) => a.durationMin - b.durationMin);
@@ -277,11 +277,13 @@ function ActivityListCard({ activity, onPress }: { activity: Activity; onPress: 
             </View>
           </View>
 
-          {/* Price */}
+          {/* Price - Per seat for group experiences */}
           <View className="items-end">
-            <ThemedText className="text-xs opacity-50">From</ThemedText>
+            {!activity.isPrivate && (
+              <ThemedText className="text-xs opacity-50">From</ThemedText>
+            )}
             <ThemedText className="font-bold text-lg" style={{ color: colors.highlight }}>
-              ${activity.priceFromUsd}
+              ${activity.seatPriceFromUsd}{!activity.isPrivate && '/seat'}
             </ThemedText>
           </View>
         </View>
@@ -295,15 +297,22 @@ function ActivityListCard({ activity, onPress }: { activity: Activity; onPress: 
           ))}
         </View>
 
-        {/* Social Proof */}
-        {activity.socialProof[0] && (
-          <View className="flex-row items-center mt-3 pt-3 border-t border-border">
+        {/* Social Proof & Group Info */}
+        <View className="flex-row items-center justify-between mt-3 pt-3 border-t border-border">
+          <View className="flex-row items-center">
             <Icon name="Users" size={14} color={colors.placeholder} />
             <ThemedText className="text-sm opacity-50 ml-2">
-              {activity.socialProof[0].label}
+              {activity.socialProof[0]?.label || `Up to ${activity.capacity} guests`}
             </ThemedText>
           </View>
-        )}
+          {!activity.isPrivate && activity.capacity > 1 && (
+            <View className="flex-row items-center bg-green-500/15 px-2 py-1 rounded-full">
+              <ThemedText className="text-xs font-medium" style={{ color: '#22C55E' }}>
+                Join others
+              </ThemedText>
+            </View>
+          )}
+        </View>
       </View>
     </Pressable>
   );

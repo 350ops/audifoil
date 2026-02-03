@@ -39,9 +39,13 @@ interface AppState {
   selectedActivitySlot: ActivitySlot | null;
   setSelectedActivitySlot: (slot: ActivitySlot | null) => void;
 
-  // Number of guests
-  guestCount: number;
-  setGuestCount: (count: number) => void;
+  // Number of seats (renamed from guests for clarity)
+  seatCount: number;
+  setSeatCount: (count: number) => void;
+
+  // E-Foil addon
+  hasEfoilAddon: boolean;
+  setHasEfoilAddon: (has: boolean) => void;
 
   // Activity bookings
   activityBookings: ActivityBooking[];
@@ -49,8 +53,9 @@ interface AppState {
   addActivityBooking: (
     activity: Activity,
     slot: ActivitySlot,
-    guests: number,
-    userInfo: { name: string; email: string; whatsapp: string }
+    seats: number,
+    userInfo: { name: string; email: string; whatsapp: string },
+    hasEfoilAddon?: boolean
   ) => Promise<ActivityBooking>;
 
   // Latest activity booking (for success screen)
@@ -67,6 +72,10 @@ interface AppState {
 
   // Reset activity selection
   resetActivitySelection: () => void;
+
+  // Legacy compatibility (for existing screens)
+  guestCount: number;
+  setGuestCount: (count: number) => void;
 
   // ==========================================
   // CREW SHORTCUT (SECONDARY - Legacy flights)
@@ -132,7 +141,7 @@ export const useStore = create<AppState>((set, get) => ({
 
   selectedActivity: null,
   setSelectedActivity: (activity) => {
-    set({ selectedActivity: activity, selectedActivitySlot: null, guestCount: 1 });
+    set({ selectedActivity: activity, selectedActivitySlot: null, seatCount: 1, hasEfoilAddon: false });
     if (activity) {
       get().generateActivitySlots(activity);
     }
@@ -147,8 +156,15 @@ export const useStore = create<AppState>((set, get) => ({
   selectedActivitySlot: null,
   setSelectedActivitySlot: (slot) => set({ selectedActivitySlot: slot }),
 
+  seatCount: 1,
+  setSeatCount: (count) => set({ seatCount: count, guestCount: count }), // Keep guestCount in sync
+
+  hasEfoilAddon: false,
+  setHasEfoilAddon: (has) => set({ hasEfoilAddon: has }),
+
+  // Legacy compatibility
   guestCount: 1,
-  setGuestCount: (count) => set({ guestCount: count }),
+  setGuestCount: (count) => set({ guestCount: count, seatCount: count }),
 
   activityBookings: [],
   loadActivityBookings: async () => {
@@ -162,14 +178,22 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
-  addActivityBooking: async (activity, slot, guests, userInfo) => {
+  addActivityBooking: async (activity, slot, seats, userInfo, hasEfoilAddon = false) => {
+    // Calculate total price with optional E-Foil addon
+    const seatTotal = slot.seatPrice * seats;
+    const efoilPrice = hasEfoilAddon && activity.canAddEfoil ? (activity.efoilAddonPrice || 50) : 0;
+    const totalPrice = seatTotal + efoilPrice;
+
     const booking: ActivityBooking = {
       id: `booking-${Date.now()}`,
       confirmationCode: generateConfirmationCode(),
       activity,
       slot,
-      guests,
-      totalPrice: slot.price * guests,
+      seats,
+      seatPrice: slot.seatPrice,
+      totalPrice,
+      hasEfoilAddon,
+      efoilAddonPrice: hasEfoilAddon ? efoilPrice : undefined,
       userName: userInfo.name,
       userEmail: userInfo.email,
       userWhatsapp: userInfo.whatsapp,
@@ -207,7 +231,9 @@ export const useStore = create<AppState>((set, get) => ({
     selectedActivity: null,
     selectedActivitySlot: null,
     activitySlots: [],
+    seatCount: 1,
     guestCount: 1,
+    hasEfoilAddon: false,
     latestActivityBooking: null,
   }),
 

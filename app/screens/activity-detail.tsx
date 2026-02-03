@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   ScrollView,
@@ -19,6 +19,9 @@ import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
+import GroupFillBar from '@/components/GroupFillBar';
+import AirlineBadges from '@/components/AirlineBadges';
+import { ActivitySlot, generateActivitySlots, getStatusMessage } from '@/data/activities';
 
 const { width, height } = Dimensions.get('window');
 const HERO_HEIGHT = height * 0.45;
@@ -45,7 +48,12 @@ export default function ActivityDetailScreen() {
     );
   }
 
-  const { media, title, subtitle, rating, reviewCount, durationMin, priceFromUsd, tags, highlights, whatYoullDo, included, safety, socialProof, meetingPoint, bookingsThisWeek, skillLevel, maxGuests, isPrivate } = selectedActivity;
+  const { media, title, subtitle, rating, reviewCount, durationMin, seatPriceFromUsd, boatTotalUsd, capacity, minToRun, canAddEfoil, efoilAddonPrice, tags, highlights, whatYoullDo, included, safety, socialProof, meetingPoint, bookingsThisWeek, skillLevel, isPrivate } = selectedActivity;
+
+  // Generate preview slots for "Next Available Trips" section
+  const previewSlots = useMemo(() => {
+    return generateActivitySlots(selectedActivity, 2).slice(0, 3);
+  }, [selectedActivity]);
 
   const handleImageScroll = (event: any) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -180,12 +188,84 @@ export default function ActivityDetailScreen() {
               {/* Quick Info */}
               <View className="flex-row items-center justify-between mt-4 pt-4 border-t border-border">
                 <InfoBadge icon="Clock" label={`${durationMin} min`} />
-                <InfoBadge icon="Users" label={`${maxGuests} max`} />
+                <InfoBadge icon="Users" label={isPrivate ? 'Private' : `${capacity} seats`} />
                 <InfoBadge icon="Target" label={skillLevel} />
                 <InfoBadge icon="MapPin" label="Malé" />
               </View>
+
+              {/* Per-Seat Pricing Info (for group experiences) */}
+              {!isPrivate && boatTotalUsd && (
+                <View className="mt-4 pt-4 border-t border-border">
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-row items-baseline">
+                      <ThemedText className="text-sm opacity-50">From</ThemedText>
+                      <ThemedText className="text-2xl font-bold ml-2" style={{ color: colors.highlight }}>
+                        ${seatPriceFromUsd}
+                      </ThemedText>
+                      <ThemedText className="opacity-50 ml-1">/ seat</ThemedText>
+                    </View>
+                    <View className="bg-green-500/15 px-3 py-1 rounded-full">
+                      <ThemedText className="text-xs font-medium" style={{ color: '#22C55E' }}>
+                        Share the trip
+                      </ThemedText>
+                    </View>
+                  </View>
+                  <ThemedText className="text-xs opacity-40 mt-2">
+                    Boat total ${boatTotalUsd} · Split across {minToRun}-{capacity} guests
+                  </ThemedText>
+                </View>
+              )}
             </View>
           </AnimatedView>
+
+          {/* Next Available Trips (Group Fill Preview) */}
+          {!isPrivate && previewSlots.length > 0 && (
+            <AnimatedView animation="fadeIn" delay={150} className="mt-6">
+              <View className="flex-row items-center justify-between mb-3">
+                <ThemedText className="text-xl font-bold">Next Available Trips</ThemedText>
+                <Pressable onPress={handleSelectTime} className="flex-row items-center">
+                  <ThemedText className="text-sm font-medium" style={{ color: colors.highlight }}>
+                    See all times
+                  </ThemedText>
+                  <Icon name="ChevronRight" size={16} color={colors.highlight} />
+                </Pressable>
+              </View>
+
+              {previewSlots.map((slot, i) => (
+                <Pressable
+                  key={slot.id}
+                  onPress={handleSelectTime}
+                  className={`bg-secondary rounded-xl p-4 ${i < previewSlots.length - 1 ? 'mb-3' : ''}`}
+                  style={shadowPresets.card}
+                >
+                  <View className="flex-row items-center justify-between mb-2">
+                    <View className="flex-row items-center">
+                      <ThemedText className="font-bold text-lg">{slot.startTime}</ThemedText>
+                      <ThemedText className="opacity-50 ml-2">{slot.dateLabel}</ThemedText>
+                    </View>
+                    <ThemedText className="font-bold" style={{ color: colors.highlight }}>
+                      ${slot.seatPrice}/seat
+                    </ThemedText>
+                  </View>
+
+                  <GroupFillBar
+                    seatsFilled={slot.seatsFilled}
+                    capacity={slot.capacity}
+                    minToRun={slot.minToRun}
+                    status={slot.status}
+                    size="sm"
+                  />
+
+                  {slot.airlineBadges.length > 0 && (
+                    <View className="flex-row items-center mt-2">
+                      <AirlineBadges badges={slot.airlineBadges} size="sm" />
+                      <ThemedText className="text-xs opacity-50 ml-2">crew joining</ThemedText>
+                    </View>
+                  )}
+                </Pressable>
+              ))}
+            </AnimatedView>
+          )}
 
           {/* Highlights */}
           <AnimatedView animation="fadeIn" delay={200} className="mt-6">
@@ -298,22 +378,31 @@ export default function ActivityDetailScreen() {
       >
         <View className="flex-row items-center justify-between mb-4">
           <View>
-            <ThemedText className="text-sm opacity-50">From</ThemedText>
+            {!isPrivate && <ThemedText className="text-sm opacity-50">From</ThemedText>}
             <View className="flex-row items-baseline">
               <ThemedText className="text-3xl font-bold" style={{ color: colors.highlight }}>
-                ${priceFromUsd}
+                ${seatPriceFromUsd}
               </ThemedText>
-              <ThemedText className="opacity-50 ml-1">/ person</ThemedText>
+              <ThemedText className="opacity-50 ml-1">
+                {isPrivate ? '' : '/ seat'}
+              </ThemedText>
             </View>
           </View>
-          <View className="flex-row items-center">
-            <Icon name="Clock" size={16} color={colors.placeholder} />
-            <ThemedText className="opacity-50 ml-1">{durationMin} min</ThemedText>
+          <View className="items-end">
+            <View className="flex-row items-center">
+              <Icon name="Clock" size={16} color={colors.placeholder} />
+              <ThemedText className="opacity-50 ml-1">{durationMin} min</ThemedText>
+            </View>
+            {canAddEfoil && (
+              <ThemedText className="text-xs opacity-50 mt-1">
+                + E-Foil add-on ${efoilAddonPrice}
+              </ThemedText>
+            )}
           </View>
         </View>
 
         <Button
-          title="Select Time"
+          title={isPrivate ? 'Select Time' : 'Join a Trip'}
           onPress={handleSelectTime}
           iconEnd="ArrowRight"
           size="large"

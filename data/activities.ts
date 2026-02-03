@@ -1,6 +1,9 @@
-// Activities Data for Maldives Luxury Experiences App
+// Activities Data for Premium Maldives Experiences Marketplace
+// Per-seat group pricing model - emphasizes $X/seat, not total boat price
 
 export type ActivityCategory = 'EFOIL' | 'BOAT' | 'SNORKEL' | 'FISHING' | 'PRIVATE';
+
+export type SlotStatus = 'filling' | 'confirmed' | 'almost_full' | 'full';
 
 export interface MediaItem {
   type: 'image' | 'video';
@@ -20,11 +23,19 @@ export interface Activity {
   subtitle: string;
   category: ActivityCategory;
   durationMin: number;
-  priceFromUsd: number;
+
+  // GROUP-FILL PRICING (critical for business model)
+  seatPriceFromUsd: number;     // Per-seat share price - PRIMARY display (e.g., $80)
+  boatTotalUsd?: number;        // Total boat price - shown in small print (e.g., $350)
+  capacity: number;             // Max seats per trip (e.g., 5)
+  minToRun: number;             // Minimum profitable seats (e.g., 4)
+
+  // E-Foil upsell
+  canAddEfoil?: boolean;        // Can add E-Foil as addon
+  efoilAddonPrice?: number;     // E-Foil addon price ($50 for 15min)
+
   rating: number;
   reviewCount: number;
-  maxGuests: number;
-  minGuests: number;
   skillLevel: 'beginner' | 'intermediate' | 'advanced' | 'all';
   isPrivate: boolean;
   media: MediaItem[];
@@ -48,13 +59,21 @@ export interface ActivitySlot {
   endTime: string;
   date: string;
   dateLabel: string;
-  spotsRemaining: number;
-  maxSpots: number;
+
+  // GROUP-FILL STATUS
+  seatsFilled: number;          // Current bookings (e.g., 3)
+  capacity: number;             // Max capacity (e.g., 5)
+  minToRun: number;             // Minimum to confirm (e.g., 4)
+  status: SlotStatus;           // 'filling', 'confirmed', 'almost_full', 'full'
+  airlineBadges: string[];      // Anonymized airline codes ['QR', 'EK', 'TK']
+
+  // Pricing
+  seatPrice: number;            // Price per seat
+  boatTotal?: number;           // Total boat price (optional display)
+
   isPrivate: boolean;
   isSunset: boolean;
   isPopular: boolean;
-  price: number;
-  bookedBy: { label: string; airlineCode?: string }[];
 }
 
 export interface ActivityBooking {
@@ -62,8 +81,11 @@ export interface ActivityBooking {
   confirmationCode: string;
   activity: Activity;
   slot: ActivitySlot;
-  guests: number;
-  totalPrice: number;
+  seats: number;                // Number of seats booked
+  seatPrice: number;            // Price per seat
+  totalPrice: number;           // seats * seatPrice + addons
+  hasEfoilAddon?: boolean;      // E-Foil addon included
+  efoilAddonPrice?: number;     // E-Foil addon price
   userName: string;
   userEmail: string;
   userWhatsapp: string;
@@ -127,19 +149,221 @@ export const MEDIA = {
   },
 };
 
-// Activities catalog
+// Airline codes for group-fill badges
+export const AIRLINE_CODES = {
+  'Emirates': 'EK',
+  'Qatar': 'QR',
+  'Etihad': 'EY',
+  'Turkish': 'TK',
+  'Singapore': 'SQ',
+  'Flydubai': 'FZ',
+  'SriLankan': 'UL',
+  'British': 'BA',
+  'Lufthansa': 'LH',
+  'KLM': 'KL',
+};
+
+export const AIRLINE_NAMES = Object.keys(AIRLINE_CODES);
+
+// Activities catalog with per-seat pricing
 export const ACTIVITIES: Activity[] = [
   {
-    id: 'efoil-session',
-    title: 'Audi E-Foil Experience',
-    subtitle: 'Fly above the crystal lagoon',
-    category: 'EFOIL',
+    id: 'safari-boat-cruise',
+    title: 'Safari Boat Lagoon Cruise',
+    subtitle: 'Share a 5-hour adventure with fellow travelers',
+    category: 'BOAT',
     durationMin: 300,
-    priceFromUsd: 150,
+
+    // GROUP-FILL PRICING
+    seatPriceFromUsd: 80,        // Show this prominently
+    boatTotalUsd: 350,           // Small print: "Boat total $350, split across guests"
+    capacity: 5,
+    minToRun: 4,
+
+    canAddEfoil: true,
+    efoilAddonPrice: 50,
+
     rating: 4.9,
     reviewCount: 127,
-    maxGuests: 1,
-    minGuests: 1,
+    skillLevel: 'all',
+    isPrivate: false,
+    media: [
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.lagoonBoat },
+      { type: 'image', uri: MEDIA.boat.cruise },
+      { type: 'image', uri: MEDIA.boat.yacht },
+      { type: 'image', uri: MEDIA.maldives.lagoon },
+    ],
+    tags: ['5 hours', 'From $80/seat', 'Beginner friendly'],
+    highlights: [
+      'Traditional Maldivian dhoni boat experience',
+      'Snorkel stops at pristine reefs',
+      'Lunch and refreshments included',
+      'Join other crews and travelers',
+    ],
+    whatYoullDo: [
+      'Board a beautifully restored traditional dhoni boat',
+      'Cruise through crystal-clear lagoons and sandbars',
+      'Stop at hidden reefs for world-class snorkeling',
+      'Enjoy a fresh seafood lunch prepared onboard',
+    ],
+    included: [
+      '5-hour lagoon safari',
+      'Snorkel equipment',
+      'Lunch & refreshments',
+      'Soft drinks & water',
+      'Professional crew',
+      'Towels provided',
+    ],
+    safety: [
+      'Life jackets available',
+      'Experienced captain',
+      'First aid on board',
+      'Weather-dependent departure',
+    ],
+    meetingPoint: 'Malé Harbor, Sunset Pier',
+    socialProof: [
+      { label: 'Booked by 3 crews today', type: 'crew' },
+      { label: 'Most popular experience', type: 'popular' },
+    ],
+    bookingsThisWeek: 24,
+    isFeatured: true,
+    isTrending: true,
+  },
+  {
+    id: 'snorkel-lagoon',
+    title: 'Snorkeling Reef Lagoon',
+    subtitle: 'Discover vibrant coral gardens with other guests',
+    category: 'SNORKEL',
+    durationMin: 300,
+
+    // GROUP-FILL PRICING
+    seatPriceFromUsd: 60,
+    boatTotalUsd: 280,
+    capacity: 5,
+    minToRun: 4,
+
+    canAddEfoil: true,
+    efoilAddonPrice: 50,
+
+    rating: 4.8,
+    reviewCount: 156,
+    skillLevel: 'beginner',
+    isPrivate: false,
+    media: [
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.swimmingFish },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.seaTurtle },
+      { type: 'image', uri: MEDIA.snorkel.fish },
+      { type: 'image', uri: MEDIA.snorkel.reef },
+    ],
+    tags: ['5 hours', 'From $60/seat', 'Beginner friendly'],
+    highlights: [
+      'Multiple reef stops with diverse marine life',
+      'Sea turtle and ray encounters',
+      'Professional guide and photos included',
+      'Share the experience with fellow travelers',
+    ],
+    whatYoullDo: [
+      'Explore pristine house reefs teeming with life',
+      'Spot colorful tropical fish, turtles, and rays',
+      'Learn about marine conservation from your guide',
+      'Capture memories with underwater photos',
+    ],
+    included: [
+      '5-hour reef exploration',
+      'Premium snorkel gear',
+      'Fins & reef shoes',
+      'Underwater photos',
+      'Fresh coconut water',
+      'Light snacks',
+    ],
+    safety: [
+      'Shallow reef areas (max 5m)',
+      'Guide stays with group',
+      'Reef-safe sunscreen only',
+      'Float vests available',
+    ],
+    meetingPoint: 'Beach Club, Main Jetty',
+    socialProof: [
+      { label: 'Turtle sightings daily', type: 'popular' },
+      { label: 'Qatar crew loved it', type: 'crew' },
+    ],
+    bookingsThisWeek: 31,
+    isTrending: true,
+  },
+  {
+    id: 'sunset-fishing',
+    title: 'Sunset Fishing Experience',
+    subtitle: 'Traditional line fishing as the sun sets',
+    category: 'FISHING',
+    durationMin: 300,
+
+    // GROUP-FILL PRICING
+    seatPriceFromUsd: 70,
+    boatTotalUsd: 300,
+    capacity: 5,
+    minToRun: 4,
+
+    canAddEfoil: false,
+
+    rating: 4.7,
+    reviewCount: 73,
+    skillLevel: 'all',
+    isPrivate: false,
+    media: [
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.fishing },
+      { type: 'image', uri: MEDIA.fishing.boat },
+      { type: 'image', uri: MEDIA.fishing.catch },
+      { type: 'image', uri: MEDIA.boat.deck },
+    ],
+    tags: ['5 hours', 'From $70/seat', 'Sunset'],
+    highlights: [
+      'Traditional Maldivian hand-line fishing',
+      'Watch the spectacular Indian Ocean sunset',
+      'BBQ your catch option available',
+      'Join other crews for a social experience',
+    ],
+    whatYoullDo: [
+      'Learn traditional Maldivian line fishing techniques',
+      'Fish the outer reef as the sun sets',
+      'Enjoy the camaraderie with fellow travelers',
+      'Optional: have the chef BBQ your catch',
+    ],
+    included: [
+      '5-hour fishing adventure',
+      'Fishing equipment',
+      'Bait & tackle',
+      'Drinks & snacks',
+      'Expert fisherman guide',
+      'BBQ your catch (optional)',
+    ],
+    safety: [
+      'Life jackets provided',
+      'First aid on board',
+      'Catch & release encouraged',
+      'Experienced crew',
+    ],
+    meetingPoint: 'Fisherman\'s Wharf, East Pier',
+    socialProof: [
+      { label: 'Biggest catch: 12kg tuna', type: 'popular' },
+      { label: 'Flydubai crew regular', type: 'crew' },
+    ],
+    bookingsThisWeek: 18,
+    isSunset: true,
+  },
+  {
+    id: 'efoil-session',
+    title: 'Audi E-Foil Session',
+    subtitle: 'Fly above the crystal lagoon',
+    category: 'EFOIL',
+    durationMin: 45,
+
+    // PRIVATE EXPERIENCE - No per-seat model
+    seatPriceFromUsd: 150,       // This is standalone price
+    capacity: 1,
+    minToRun: 1,
+
+    rating: 4.9,
+    reviewCount: 89,
     skillLevel: 'beginner',
     isPrivate: true,
     media: [
@@ -148,12 +372,18 @@ export const ACTIVITIES: Activity[] = [
       { type: 'image', uri: MEDIA.efoil.lagoon },
       { type: 'image', uri: MEDIA.efoil.action2 },
     ],
-    tags: ['45 min', 'Private', 'Beginner friendly', 'Instructor included'],
-    highlights: ['Premium Audi e-foil board', 'Personal instructor', 'GoPro footage included'],
+    tags: ['45 min', 'Private', 'Beginner friendly'],
+    highlights: [
+      'Premium Audi e-foil board',
+      'Personal instructor throughout',
+      'GoPro footage included',
+      'Perfect for beginners',
+    ],
     whatYoullDo: [
-      'Learn the basics of hydrofoil technology with your personal instructor',
+      'Learn the basics of hydrofoil technology with your instructor',
       'Master balance and control as you rise above the water',
       'Experience the thrill of gliding silently over the lagoon',
+      'Receive your personalized GoPro footage',
     ],
     included: [
       '45-minute private session',
@@ -167,169 +397,34 @@ export const ACTIVITIES: Activity[] = [
       'Life jacket required at all times',
       'Instructor stays within 10m',
       'Calm lagoon conditions only',
+      'Beginner-friendly equipment',
     ],
     meetingPoint: 'Malé Lagoon Dock, North Pier',
     socialProof: [
-      { label: 'Booked by 3 crews today', type: 'crew' },
-      { label: 'Popular at sunset', type: 'popular' },
+      { label: 'Most requested experience', type: 'popular' },
+      { label: 'Perfect for beginners', type: 'recent' },
     ],
-    bookingsThisWeek: 24,
+    bookingsThisWeek: 42,
     isFeatured: true,
     isTrending: true,
-  },
-  {
-    id: 'safari-boat-sunset',
-    title: 'Safari Boat Sunset Cruise',
-    subtitle: 'Golden hour on a traditional dhoni',
-    category: 'BOAT',
-    durationMin: 300,
-    priceFromUsd: 300,
-    rating: 4.8,
-    reviewCount: 89,
-    maxGuests: 8,
-    minGuests: 2,
-    skillLevel: 'all',
-    isPrivate: false,
-    media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.lagoonBoat },
-      { type: 'image', uri: MEDIA.boat.cruise },
-      { type: 'image', uri: MEDIA.boat.yacht },
-      { type: 'image', uri: MEDIA.boat.deck },
-    ],
-    tags: ['2 hours', '2-8 guests', 'Sunset', 'Drinks included'],
-    highlights: ['Traditional Maldivian dhoni boat', 'Champagne & canapés', 'Stunning sunset views'],
-    whatYoullDo: [
-      'Board a beautifully restored traditional dhoni boat',
-      'Cruise through the atolls as the sun sets',
-      'Enjoy premium drinks and local delicacies',
-    ],
-    included: [
-      '2-hour sunset cruise',
-      'Welcome champagne',
-      'Canapés & snacks',
-      'Soft drinks & water',
-      'Professional crew',
-      'Bluetooth speaker',
-    ],
-    safety: [
-      'Life jackets available',
-      'Experienced captain',
-      'Weather-dependent departure',
-    ],
-    meetingPoint: 'Malé Harbor, Sunset Pier',
-    socialProof: [
-      { label: 'Emirates crew favorite', type: 'crew' },
-      { label: 'Best at golden hour', type: 'popular' },
-    ],
-    bookingsThisWeek: 18,
-    isFeatured: true,
-    isSunset: true,
-  },
-  {
-    id: 'snorkel-lagoon',
-    title: 'Lagoon Reef Snorkeling',
-    subtitle: 'Discover vibrant coral gardens',
-    category: 'SNORKEL',
-    durationMin: 300,
-    priceFromUsd: 120,
-    rating: 4.7,
-    reviewCount: 156,
-    maxGuests: 6,
-    minGuests: 1,
-    skillLevel: 'beginner',
-    isPrivate: false,
-    media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.swimmingFish },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.seaTurtle },
-      { type: 'image', uri: MEDIA.snorkel.fish },
-      { type: 'image', uri: MEDIA.snorkel.reef },
-    ],
-    tags: ['90 min', '1-6 guests', 'Beginner friendly', 'Equipment provided'],
-    highlights: ['House reef teeming with life', 'Sea turtles & rays', 'Professional guide'],
-    whatYoullDo: [
-      'Explore the pristine house reef with your guide',
-      'Spot colorful tropical fish, turtles, and rays',
-      'Learn about marine conservation efforts',
-    ],
-    included: [
-      '90-minute guided snorkel',
-      'Premium snorkel gear',
-      'Fins & reef shoes',
-      'Underwater photos',
-      'Fresh coconut water',
-      'Marine life briefing',
-    ],
-    safety: [
-      'Shallow reef (max 5m)',
-      'Guide stays with group',
-      'Reef-safe sunscreen only',
-    ],
-    meetingPoint: 'Beach Club, Main Jetty',
-    socialProof: [
-      { label: 'Turtle sightings daily', type: 'popular' },
-      { label: 'Qatar Airways crew loved it', type: 'crew' },
-    ],
-    bookingsThisWeek: 31,
-    isTrending: true,
-  },
-  {
-    id: 'sunset-fishing',
-    title: 'Sunset Line Fishing',
-    subtitle: 'Traditional Maldivian fishing experience',
-    category: 'FISHING',
-    durationMin: 300,
-    priceFromUsd: 200,
-    rating: 4.6,
-    reviewCount: 73,
-    maxGuests: 6,
-    minGuests: 2,
-    skillLevel: 'all',
-    isPrivate: false,
-    media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.fishing },
-      { type: 'image', uri: MEDIA.fishing.boat },
-      { type: 'image', uri: MEDIA.fishing.catch },
-      { type: 'image', uri: MEDIA.boat.deck },
-    ],
-    tags: ['2.5 hours', '2-6 guests', 'Sunset', 'BBQ option'],
-    highlights: ['Traditional hand-line fishing', 'Spectacular sunset views', 'Cook your catch option'],
-    whatYoullDo: [
-      'Learn traditional Maldivian line fishing techniques',
-      'Fish the outer reef as the sun sets',
-      'Optional: have the chef cook your catch',
-    ],
-    included: [
-      '2.5-hour fishing trip',
-      'Fishing equipment',
-      'Bait & tackle',
-      'Drinks & snacks',
-      'Experienced fisherman guide',
-      'BBQ your catch (optional)',
-    ],
-    safety: [
-      'Life jackets provided',
-      'First aid on board',
-      'Catch & release encouraged',
-    ],
-    meetingPoint: 'Fisherman\'s Wharf, East Pier',
-    socialProof: [
-      { label: 'Biggest catch: 12kg tuna', type: 'popular' },
-      { label: 'Flydubai crew regular', type: 'crew' },
-    ],
-    bookingsThisWeek: 12,
-    isSunset: true,
   },
   {
     id: 'sandbank-picnic',
     title: 'Private Sandbank Picnic',
     subtitle: 'Your own island for the day',
     category: 'PRIVATE',
-    durationMin: 300,
-    priceFromUsd: 450,
+    durationMin: 180,
+
+    // PRIVATE EXPERIENCE - Fixed price
+    seatPriceFromUsd: 450,
+    capacity: 4,
+    minToRun: 2,
+
+    canAddEfoil: true,
+    efoilAddonPrice: 75,
+
     rating: 5.0,
     reviewCount: 42,
-    maxGuests: 4,
-    minGuests: 2,
     skillLevel: 'all',
     isPrivate: true,
     media: [
@@ -338,12 +433,18 @@ export const ACTIVITIES: Activity[] = [
       { type: 'image', uri: MEDIA.sandbank.beach },
       { type: 'image', uri: MEDIA.maldives.lagoon },
     ],
-    tags: ['3 hours', '2-4 guests', 'Private', 'Gourmet lunch'],
-    highlights: ['Exclusive sandbank access', 'Gourmet picnic setup', 'Champagne & lobster'],
+    tags: ['3 hours', 'Private', 'Gourmet lunch'],
+    highlights: [
+      'Exclusive sandbank all to yourself',
+      'Gourmet champagne picnic',
+      'Butler service included',
+      'Perfect for special occasions',
+    ],
     whatYoullDo: [
       'Arrive by speedboat to your private sandbank',
       'Enjoy a luxury picnic setup with ocean views',
       'Swim, snorkel, or simply relax in paradise',
+      'Toast with champagne as the waves lap at your feet',
     ],
     included: [
       '3-hour private sandbank',
@@ -358,6 +459,7 @@ export const ACTIVITIES: Activity[] = [
       'Shallow surrounding waters',
       'Radio contact with base',
       'Sun protection provided',
+      'Emergency rescue on standby',
     ],
     meetingPoint: 'VIP Lounge, Marina',
     socialProof: [
@@ -372,12 +474,18 @@ export const ACTIVITIES: Activity[] = [
     title: 'Dolphin Discovery Cruise',
     subtitle: 'Meet spinner dolphins at dawn',
     category: 'BOAT',
-    durationMin: 300,
-    priceFromUsd: 180,
+    durationMin: 90,
+
+    // GROUP-FILL PRICING
+    seatPriceFromUsd: 40,
+    boatTotalUsd: 280,
+    capacity: 8,
+    minToRun: 5,
+
+    canAddEfoil: false,
+
     rating: 4.8,
     reviewCount: 98,
-    maxGuests: 12,
-    minGuests: 2,
     skillLevel: 'all',
     isPrivate: false,
     media: [
@@ -386,12 +494,18 @@ export const ACTIVITIES: Activity[] = [
       { type: 'image', uri: MEDIA.dolphin.sunset },
       { type: 'image', uri: MEDIA.boat.cruise },
     ],
-    tags: ['90 min', '2-12 guests', 'Morning', '95% sighting rate'],
-    highlights: ['Spinner dolphin pods', '95% sighting guarantee', 'Marine biologist guide'],
+    tags: ['90 min', 'From $40/seat', '95% sighting rate'],
+    highlights: [
+      '95% dolphin sighting guarantee',
+      'Pods of spinner dolphins',
+      'Marine biologist guide',
+      'Join travelers from around the world',
+    ],
     whatYoullDo: [
       'Cruise to dolphin feeding grounds at sunrise',
       'Watch pods of spinner dolphins leap and play',
       'Learn about dolphin behavior from our marine expert',
+      'Enjoy a sunrise breakfast on the water',
     ],
     included: [
       '90-minute dolphin cruise',
@@ -405,11 +519,12 @@ export const ACTIVITIES: Activity[] = [
       'Respectful distance maintained',
       'No swimming with dolphins',
       'Eco-friendly practices',
+      'Calm morning waters',
     ],
     meetingPoint: 'Sunrise Pier, Main Harbor',
     socialProof: [
-      { label: '95% dolphin sighting rate', type: 'popular' },
-      { label: 'Turkish Airlines crew loved it', type: 'crew' },
+      { label: '95% sighting rate', type: 'popular' },
+      { label: 'Turkish crew loved it', type: 'crew' },
     ],
     bookingsThisWeek: 22,
     isTrending: true,
@@ -431,8 +546,8 @@ export function getFeaturedActivities(): Activity[] {
 
 export function getTrendingActivities(): Activity[] {
   const trending = ACTIVITIES.filter(a => a.isTrending);
-  // Custom order: dolphins, snorkeling, efoil
-  const order = ['dolphin-cruise', 'snorkel-lagoon', 'efoil-session'];
+  // Custom order: boat cruise, snorkeling, dolphins, efoil
+  const order = ['safari-boat-cruise', 'snorkel-lagoon', 'dolphin-cruise', 'efoil-session'];
   return trending.sort((a, b) => {
     const aIndex = order.indexOf(a.id);
     const bIndex = order.indexOf(b.id);
@@ -458,8 +573,27 @@ export function getBoatExperiences(): Activity[] {
   return ACTIVITIES.filter(a => a.category === 'BOAT' || a.category === 'FISHING');
 }
 
-// Generate time slots for an activity
-export function generateActivitySlots(activity: Activity, daysAhead: number = 2): ActivitySlot[] {
+export function getGroupExperiences(): Activity[] {
+  return ACTIVITIES.filter(a => !a.isPrivate && a.capacity > 1);
+}
+
+// Calculate slot status based on seats filled
+function calculateSlotStatus(seatsFilled: number, capacity: number, minToRun: number): SlotStatus {
+  if (seatsFilled >= capacity) return 'full';
+  if (seatsFilled >= minToRun) return 'confirmed';
+  if (seatsFilled >= minToRun - 1) return 'almost_full';
+  return 'filling';
+}
+
+// Generate airline badges for demo
+function generateAirlineBadges(count: number): string[] {
+  const allCodes = Object.values(AIRLINE_CODES);
+  const shuffled = [...allCodes].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, 3));
+}
+
+// Generate time slots for an activity with group-fill data
+export function generateActivitySlots(activity: Activity, daysAhead: number = 3): ActivitySlot[] {
   const slots: ActivitySlot[] = [];
   const now = new Date();
 
@@ -470,39 +604,56 @@ export function generateActivitySlots(activity: Activity, daysAhead: number = 2)
     const dateLabel = d === 0 ? 'Today' : d === 1 ? 'Tomorrow' : date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
     // Generate slots based on activity type
-    const startHours = activity.isSunset
-      ? [16, 17, 18]
-      : activity.id === 'dolphin-cruise'
-        ? [6, 7, 8]
-        : [9, 10, 11, 14, 15, 16, 17];
+    let startHours: number[];
+    if (activity.isSunset) {
+      startHours = [15, 16, 17];
+    } else if (activity.id === 'dolphin-cruise') {
+      startHours = [6, 7, 8];
+    } else if (activity.id === 'efoil-session') {
+      startHours = [9, 10, 11, 14, 15, 16, 17];
+    } else {
+      startHours = [9, 10, 14, 15, 16];
+    }
 
-    startHours.forEach((hour, idx) => {
+    startHours.forEach((hour) => {
       const startTime = `${hour.toString().padStart(2, '0')}:00`;
       const endMinutes = hour * 60 + activity.durationMin;
-      const endHour = Math.floor(endMinutes / 60);
+      const endHour = Math.floor(endMinutes / 60) % 24;
       const endMin = endMinutes % 60;
       const endTime = `${endHour.toString().padStart(2, '0')}:${endMin.toString().padStart(2, '0')}`;
 
-      const isSunsetSlot = hour >= 17;
+      const isSunsetSlot = hour >= 16;
       const isPopular = isSunsetSlot || hour === 10;
 
-      // Simulate booking data
-      const maxSpots = activity.isPrivate ? 1 : activity.maxGuests;
-      const bookedCount = Math.floor(Math.random() * (maxSpots + 1));
-      const spotsRemaining = Math.max(0, maxSpots - bookedCount);
+      // Simulate group-fill data for demo
+      const isPrivateActivity = activity.isPrivate || activity.capacity === 1;
+      let seatsFilled: number;
 
-      // Generate mock booked-by data
-      const crews = ['Emirates', 'Qatar', 'Etihad', 'Turkish', 'Flydubai', 'SriLankan'];
-      const bookedBy: { label: string; airlineCode?: string }[] = [];
-      if (bookedCount > 0) {
-        const randomCrews = crews.sort(() => Math.random() - 0.5).slice(0, Math.min(bookedCount, 2));
-        randomCrews.forEach(crew => {
-          bookedBy.push({ label: `${crew} crew`, airlineCode: crew.substring(0, 2).toUpperCase() });
-        });
-        if (bookedCount > 2) {
-          bookedBy.push({ label: `+${bookedCount - 2} more` });
+      if (isPrivateActivity) {
+        // Private activities: 0 or 1 (available or booked)
+        seatsFilled = Math.random() > 0.3 ? 0 : 1;
+      } else {
+        // Group activities: random fill between 0 and capacity
+        // Make some slots look more appealing (almost full)
+        const rand = Math.random();
+        if (rand > 0.7) {
+          // Almost confirmed - 3-4 seats for capacity 5
+          seatsFilled = activity.minToRun - 1 + Math.floor(Math.random() * 2);
+        } else if (rand > 0.4) {
+          // Partially filled - 1-3 seats
+          seatsFilled = 1 + Math.floor(Math.random() * (activity.minToRun - 1));
+        } else if (rand > 0.2) {
+          // Just started - 0-1 seats
+          seatsFilled = Math.floor(Math.random() * 2);
+        } else {
+          // Already confirmed - 4-5 seats
+          seatsFilled = activity.minToRun + Math.floor(Math.random() * 2);
         }
+        seatsFilled = Math.min(seatsFilled, activity.capacity - 1); // Leave at least 1 spot
       }
+
+      const status = calculateSlotStatus(seatsFilled, activity.capacity, activity.minToRun);
+      const airlineBadges = seatsFilled > 0 ? generateAirlineBadges(Math.min(seatsFilled, 3)) : [];
 
       slots.push({
         id: `${activity.id}-${dateStr}-${hour}`,
@@ -511,13 +662,16 @@ export function generateActivitySlots(activity: Activity, daysAhead: number = 2)
         endTime,
         date: dateStr,
         dateLabel,
-        spotsRemaining,
-        maxSpots,
+        seatsFilled,
+        capacity: activity.capacity,
+        minToRun: activity.minToRun,
+        status,
+        airlineBadges,
+        seatPrice: activity.seatPriceFromUsd,
+        boatTotal: activity.boatTotalUsd,
         isPrivate: activity.isPrivate,
         isSunset: isSunsetSlot,
         isPopular,
-        price: activity.priceFromUsd,
-        bookedBy,
       });
     });
   }
@@ -539,6 +693,7 @@ export const PROMO_CODES: Record<string, { discount: number; label: string }> = 
   CREW25: { discount: 0.25, label: 'Crew Discount (25%)' },
   PARADISE10: { discount: 0.10, label: 'Paradise Welcome (10%)' },
   SUNSET15: { discount: 0.15, label: 'Sunset Special (15%)' },
+  FOILTRIBE20: { discount: 0.20, label: 'foilTribe Member (20%)' },
 };
 
 export function applyPromoCode(code: string, price: number): { finalPrice: number; discount: number; label: string } | null {
@@ -551,4 +706,38 @@ export function applyPromoCode(code: string, price: number): { finalPrice: numbe
     discount,
     label: promo.label,
   };
+}
+
+// Format price display
+export function formatSeatPrice(price: number): string {
+  return `$${price}`;
+}
+
+export function formatFromSeatPrice(price: number): string {
+  return `From $${price} / seat`;
+}
+
+// Get status message for group-fill
+export function getStatusMessage(slot: ActivitySlot): string {
+  const spotsLeft = slot.capacity - slot.seatsFilled;
+
+  switch (slot.status) {
+    case 'confirmed':
+      return `Confirmed • ${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left`;
+    case 'almost_full':
+      return `Almost there • ${slot.seatsFilled}/${slot.capacity} seats filled`;
+    case 'full':
+      return 'Fully booked';
+    case 'filling':
+    default:
+      if (slot.seatsFilled === 0) {
+        return `Be the first to join • ${slot.capacity} seats available`;
+      }
+      return `${slot.seatsFilled}/${slot.capacity} seats filled • ${spotsLeft} left`;
+  }
+}
+
+// Get fill percentage for progress bar
+export function getFillPercentage(slot: ActivitySlot): number {
+  return (slot.seatsFilled / slot.capacity) * 100;
 }

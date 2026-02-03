@@ -183,9 +183,9 @@ function BookingCard({ booking, onPress }: { booking: ActivityBooking; onPress: 
             </ThemedText>
           </View>
           <View className="items-end">
-            <ThemedText className="font-bold text-lg">${booking.totalPrice}</ThemedText>
+            <ThemedText className="font-bold text-lg">${booking.totalPrice.toFixed(2)}</ThemedText>
             <ThemedText className="text-xs opacity-50">
-              {booking.guests} guest{booking.guests !== 1 ? 's' : ''}
+              {booking.seats} seat{booking.seats !== 1 ? 's' : ''} · ${booking.seatPrice}/seat
             </ThemedText>
           </View>
         </View>
@@ -200,6 +200,18 @@ function BookingCard({ booking, onPress }: { booking: ActivityBooking; onPress: 
             <ThemedText className="text-sm opacity-50">{activity.meetingPoint}</ThemedText>
           </View>
         </View>
+
+        {/* E-Foil Addon Badge */}
+        {booking.hasEfoilAddon && (
+          <View className="flex-row items-center mt-3 pt-3 border-t border-border">
+            <View className="flex-row items-center px-3 py-1.5 rounded-full" style={{ backgroundColor: colors.highlight + '15' }}>
+              <Icon name="Waves" size={14} color={colors.highlight} />
+              <ThemedText className="ml-1.5 text-xs font-semibold" style={{ color: colors.highlight }}>
+                + E-Foil Session
+              </ThemedText>
+            </View>
+          </View>
+        )}
       </View>
     </Pressable>
   );

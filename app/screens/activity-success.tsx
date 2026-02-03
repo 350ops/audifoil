@@ -78,7 +78,7 @@ export default function ActivitySuccessScreen() {
     );
   }
 
-  const { activity, slot, confirmationCode, guests, totalPrice } = latestActivityBooking;
+  const { activity, slot, confirmationCode, seats, seatPrice, totalPrice, hasEfoilAddon, efoilAddonPrice } = latestActivityBooking;
 
   return (
     <View className="flex-1 bg-background">
@@ -152,9 +152,35 @@ export default function ActivitySuccessScreen() {
               <View className="p-4">
                 <DetailRow icon="Calendar" label="Date" value={slot.dateLabel} />
                 <DetailRow icon="Clock" label="Time" value={`${slot.startTime} - ${slot.endTime}`} />
-                <DetailRow icon="Users" label="Guests" value={`${guests} guest${guests !== 1 ? 's' : ''}`} />
+                <DetailRow icon="Users" label="Seats" value={`${seats} seat${seats !== 1 ? 's' : ''}`} />
                 <DetailRow icon="MapPin" label="Location" value={activity.meetingPoint} />
                 <DetailRow icon="Timer" label="Duration" value={`${activity.durationMin} minutes`} isLast />
+              </View>
+            </View>
+          </View>
+
+          {/* Pricing Summary */}
+          <View className="px-4 mt-6">
+            <ThemedText className="text-xl font-bold mb-4">Payment Summary</ThemedText>
+
+            <View className="bg-secondary rounded-2xl p-4" style={shadowPresets.card}>
+              <View className="flex-row justify-between mb-3">
+                <ThemedText className="opacity-60">
+                  {seats} seat{seats !== 1 ? 's' : ''} × ${seatPrice}
+                </ThemedText>
+                <ThemedText className="font-medium">${(seats * seatPrice).toFixed(2)}</ThemedText>
+              </View>
+              {hasEfoilAddon && efoilAddonPrice && (
+                <View className="flex-row justify-between mb-3">
+                  <ThemedText className="opacity-60">E-Foil Session</ThemedText>
+                  <ThemedText className="font-medium">${efoilAddonPrice.toFixed(2)}</ThemedText>
+                </View>
+              )}
+              <View className="flex-row justify-between pt-3 border-t border-border">
+                <ThemedText className="font-bold text-lg">Total Paid</ThemedText>
+                <ThemedText className="font-bold text-xl" style={{ color: colors.highlight }}>
+                  ${totalPrice.toFixed(2)}
+                </ThemedText>
               </View>
             </View>
           </View>
