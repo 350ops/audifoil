@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { View, ScrollView, TextInput, Modal, ActivityIndicator, Image, Alert, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
+import { View, ScrollView, TextInput, Image, Alert, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
 import Header from '@/components/Header';
 import ThemedText from '@/components/ThemedText';
 import AnimatedView from '@/components/AnimatedView';
 import Icon from '@/components/Icon';
 import { Button } from '@/components/Button';
+import Switch from '@/components/forms/Switch';
 import { shadowPresets } from '@/utils/useShadow';
 import useThemeColors from '@/contexts/ThemeColors';
 import { useStore } from '@/store/useStore';
-import { applyPromoCode, PROMO_CODES } from '@/data/activities';
+import { applyPromoCode } from '@/data/activities';
+import PaymentModal from '@/components/PaymentModal';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -19,7 +21,9 @@ export default function ActivityCheckoutScreen() {
   const {
     selectedActivity,
     selectedActivitySlot,
-    guestCount,
+    seatCount,
+    hasEfoilAddon,
+    setHasEfoilAddon,
     addActivityBooking,
     demoUser,
   } = useStore();
@@ -37,7 +41,6 @@ export default function ActivityCheckoutScreen() {
 
   // Payment modal state
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentStep, setPaymentStep] = useState<'faceid' | 'processing' | 'success'>('faceid');
 
   if (!selectedActivity || !selectedActivitySlot) {
     return (
@@ -48,14 +51,16 @@ export default function ActivityCheckoutScreen() {
     );
   }
 
-  const basePrice = selectedActivitySlot.price * guestCount;
-  const discountAmount = promoApplied ? basePrice * (promoApplied.discount / basePrice) : 0;
-  const finalPrice = promoApplied
-    ? basePrice - (basePrice * (promoApplied.discount / basePrice))
-    : basePrice;
+  // Pricing calculations
+  const seatPrice = selectedActivitySlot.seatPrice;
+  const seatTotal = seatPrice * seatCount;
+  const efoilPrice = hasEfoilAddon && selectedActivity.canAddEfoil ? (selectedActivity.efoilAddonPrice || 50) : 0;
+  const basePrice = seatTotal + efoilPrice;
 
-  // Calculate actual discount
-  const actualDiscount = promoApplied ? basePrice - finalPrice : 0;
+  // Apply promo discount
+  const promoDiscount = promoApplied ? basePrice * (promoApplied.discount / 100) : 0;
+  const finalPrice = basePrice - promoDiscount;
+  const isPrivate = selectedActivity.isPrivate;
 
   // Email validation
   const validateEmail = (email: string) => {
@@ -105,14 +110,16 @@ export default function ActivityCheckoutScreen() {
     const result = applyPromoCode(promoCode, basePrice);
     if (result) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setPromoApplied({ discount: result.discount, label: result.label });
+      // Store discount as percentage (e.g., 25 for 25%)
+      const discountPercent = (result.discount / basePrice) * 100;
+      setPromoApplied({ discount: discountPercent, label: result.label });
     } else if (promoCode.trim()) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Invalid Code', 'This promo code is not valid. Try CREW25 for a crew discount!');
     }
   };
 
-  const handleApplePay = async () => {
+  const handleApplePay = () => {
     if (!validateForm()) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setTouched({ name: true, email: true });
@@ -121,30 +128,18 @@ export default function ActivityCheckoutScreen() {
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setShowPaymentModal(true);
-    setPaymentStep('faceid');
+  };
 
+  const handlePaymentSuccess = async () => {
     try {
-      // Simulate Face ID
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setPaymentStep('processing');
-
-      // Simulate processing
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Create booking
+      // Create booking with E-Foil addon
       await addActivityBooking(
         selectedActivity,
         selectedActivitySlot,
-        guestCount,
-        { name, email, whatsapp }
+        seatCount,
+        { name, email, whatsapp },
+        hasEfoilAddon
       );
-
-      setPaymentStep('success');
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-      // Wait for success animation
-      await new Promise(resolve => setTimeout(resolve, 1000));
 
       setShowPaymentModal(false);
       router.replace('/screens/activity-success');
@@ -192,7 +187,7 @@ export default function ActivityCheckoutScreen() {
                   <View className="flex-row items-center">
                     <Icon name="Users" size={16} color={colors.placeholder} />
                     <ThemedText className="ml-2 opacity-60">
-                      {guestCount} guest{guestCount !== 1 ? 's' : ''}
+                      {seatCount} seat{seatCount !== 1 ? 's' : ''} × ${seatPrice}
                     </ThemedText>
                   </View>
                   <View className="flex-row items-center">
@@ -200,9 +195,65 @@ export default function ActivityCheckoutScreen() {
                     <ThemedText className="ml-2 opacity-60">{selectedActivity.durationMin} min</ThemedText>
                   </View>
                 </View>
+
+                {/* Group-fill info */}
+                {!isPrivate && (
+                  <View className="px-4 pb-4 pt-3 border-t border-border">
+                    <View className="flex-row items-center">
+                      <View className="w-2 h-2 rounded-full bg-green-500 mr-2" />
+                      <ThemedText className="text-sm opacity-60">
+                        {selectedActivitySlot.seatsFilled}/{selectedActivitySlot.capacity} seats filled · Joining other travelers
+                      </ThemedText>
+                    </View>
+                  </View>
+                )}
               </View>
             </AnimatedView>
           </View>
+
+          {/* E-Foil Addon Upsell */}
+          {selectedActivity.canAddEfoil && (
+            <View className="mt-6">
+              <ThemedText className="text-xl font-bold mb-4">Add-ons</ThemedText>
+              <AnimatedView animation="fadeIn" delay={100}>
+                <Pressable
+                  onPress={() => {
+                    Haptics.selectionAsync();
+                    setHasEfoilAddon(!hasEfoilAddon);
+                  }}
+                  className="bg-secondary rounded-2xl p-4 flex-row items-center"
+                  style={[
+                    shadowPresets.card,
+                    hasEfoilAddon && { borderWidth: 2, borderColor: colors.highlight }
+                  ]}
+                >
+                  <View
+                    className="w-14 h-14 rounded-xl items-center justify-center mr-4"
+                    style={{ backgroundColor: hasEfoilAddon ? colors.highlight : colors.highlight + '15' }}
+                  >
+                    <Icon name="Waves" size={24} color={hasEfoilAddon ? 'white' : colors.highlight} />
+                  </View>
+                  <View className="flex-1">
+                    <ThemedText className="font-bold text-lg">Audi E-Foil Session</ThemedText>
+                    <ThemedText className="opacity-50 text-sm">
+                      15-minute private session after your trip
+                    </ThemedText>
+                  </View>
+                  <View className="items-end">
+                    <ThemedText className="font-bold text-lg" style={{ color: colors.highlight }}>
+                      +${selectedActivity.efoilAddonPrice || 50}
+                    </ThemedText>
+                    <View
+                      className="w-6 h-6 rounded-full items-center justify-center mt-1"
+                      style={{ backgroundColor: hasEfoilAddon ? colors.highlight : colors.border }}
+                    >
+                      {hasEfoilAddon && <Icon name="Check" size={14} color="white" strokeWidth={3} />}
+                    </View>
+                  </View>
+                </Pressable>
+              </AnimatedView>
+            </View>
+          )}
 
           {/* Contact Details */}
           <View className="mt-6">
@@ -294,22 +345,28 @@ export default function ActivityCheckoutScreen() {
             <View className="bg-secondary rounded-xl p-4" style={shadowPresets.card}>
               <View className="flex-row justify-between mb-3">
                 <ThemedText className="opacity-60">
-                  {selectedActivity.title} × {guestCount}
+                  {seatCount} seat{seatCount !== 1 ? 's' : ''} × ${seatPrice}
                 </ThemedText>
-                <ThemedText className="font-medium">${basePrice}</ThemedText>
+                <ThemedText className="font-medium">${seatTotal}</ThemedText>
               </View>
+              {hasEfoilAddon && (
+                <View className="flex-row justify-between mb-3">
+                  <ThemedText className="opacity-60">E-Foil Session</ThemedText>
+                  <ThemedText className="font-medium">${efoilPrice}</ThemedText>
+                </View>
+              )}
               {promoApplied && (
                 <View className="flex-row justify-between mb-3">
                   <ThemedText style={{ color: '#22C55E' }}>{promoApplied.label}</ThemedText>
                   <ThemedText className="font-medium" style={{ color: '#22C55E' }}>
-                    -${actualDiscount.toFixed(2)}
+                    -${promoDiscount.toFixed(2)}
                   </ThemedText>
                 </View>
               )}
               <View className="flex-row justify-between pt-3 border-t border-border">
                 <ThemedText className="font-bold text-lg">Total</ThemedText>
                 <ThemedText className="font-bold text-2xl" style={{ color: colors.highlight }}>
-                  ${(basePrice - actualDiscount).toFixed(2)}
+                  ${finalPrice.toFixed(2)}
                 </ThemedText>
               </View>
             </View>
@@ -341,7 +398,9 @@ export default function ActivityCheckoutScreen() {
       >
         <View className="flex-row items-center justify-between mb-4">
           <ThemedText className="opacity-50">Total</ThemedText>
-          <ThemedText className="font-bold text-2xl">${(basePrice - actualDiscount).toFixed(2)}</ThemedText>
+          <ThemedText className="font-bold text-2xl" style={{ color: colors.highlight }}>
+            ${finalPrice.toFixed(2)}
+          </ThemedText>
         </View>
 
         {/* Apple Pay Button */}
@@ -359,49 +418,17 @@ export default function ActivityCheckoutScreen() {
         </Pressable>
 
         <ThemedText className="text-center text-sm opacity-40 mt-3">
-          Demo mode - no real payment
+          Demo mode · No real payment processed
         </ThemedText>
       </View>
 
-      {/* Apple Pay Modal */}
-      <Modal visible={showPaymentModal} transparent animationType="fade">
-        <View className="flex-1 bg-black/70 items-center justify-center">
-          <View
-            className="bg-white rounded-3xl p-8 mx-8 items-center"
-            style={{ minWidth: 280 }}
-          >
-            {paymentStep === 'faceid' && (
-              <>
-                <Icon name="ScanFace" size={64} color="#000" />
-                <ThemedText className="text-xl font-bold mt-4 text-black">Confirm with Face ID</ThemedText>
-                <ThemedText className="text-center opacity-60 mt-2 text-black">
-                  Double-click to pay ${(basePrice - actualDiscount).toFixed(2)}
-                </ThemedText>
-              </>
-            )}
-            {paymentStep === 'processing' && (
-              <>
-                <ActivityIndicator size="large" color="#000" />
-                <ThemedText className="text-xl font-bold mt-4 text-black">Processing...</ThemedText>
-                <ThemedText className="text-center opacity-60 mt-2 text-black">
-                  Please wait
-                </ThemedText>
-              </>
-            )}
-            {paymentStep === 'success' && (
-              <>
-                <View className="w-16 h-16 rounded-full bg-green-500 items-center justify-center">
-                  <Icon name="Check" size={32} color="white" strokeWidth={3} />
-                </View>
-                <ThemedText className="text-xl font-bold mt-4 text-black">Payment Complete</ThemedText>
-                <ThemedText className="text-center opacity-60 mt-2 text-black">
-                  Your booking is confirmed
-                </ThemedText>
-              </>
-            )}
-          </View>
-        </View>
-      </Modal>
+      {/* Payment Modal */}
+      <PaymentModal
+        visible={showPaymentModal}
+        amount={finalPrice}
+        onSuccess={handlePaymentSuccess}
+        onClose={() => setShowPaymentModal(false)}
+      />
     </View>
   );
 }

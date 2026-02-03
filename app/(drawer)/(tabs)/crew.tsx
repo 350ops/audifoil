@@ -113,13 +113,13 @@ export default function CrewScreen() {
                 >
                   <View className="flex-row items-center mb-2">
                     <Icon name="Plane" size={16} color="white" />
-                    <ThemedText className="text-white font-medium ml-2">Crew Exclusive</ThemedText>
+                    <ThemedText className="text-white font-medium ml-2">Crew Shortcut</ThemedText>
                   </View>
                   <ThemedText className="text-white text-xl font-bold">
-                    Book based on your arrival
+                    Find your flight, join others
                   </ThemedText>
                   <ThemedText className="text-white/70 text-sm">
-                    Select your flight to see available sessions
+                    Share a trip with other crew arriving the same day
                   </ThemedText>
                 </LinearGradient>
               </ImageBackground>
@@ -132,12 +132,12 @@ export default function CrewScreen() {
                   className="w-12 h-12 rounded-xl items-center justify-center mr-4"
                   style={{ backgroundColor: colors.highlight + '15' }}
                 >
-                  <Icon name="Clock" size={24} color={colors.highlight} />
+                  <Icon name="Users" size={24} color={colors.highlight} />
                 </View>
                 <View className="flex-1">
-                  <ThemedText className="font-semibold">Sessions start 1 hour after landing</ThemedText>
+                  <ThemedText className="font-semibold">Share a boat, split the cost</ThemedText>
                   <ThemedText className="text-sm opacity-50">
-                    Enough time to clear customs and arrive relaxed
+                    Book per-seat and join other crew from your flight
                   </ThemedText>
                 </View>
               </View>
@@ -234,6 +234,9 @@ const FlightCard = React.memo(function FlightCard({ flight, availableSlots, crew
   const colors = useThemeColors();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+
+  // Get first activity for pricing display
+  const suggestedActivity = ACTIVITIES[0]; // E-Foil as primary suggestion
 
   const statusConfig = {
     'On time': { bg: 'rgba(34, 197, 94, 0.2)', color: '#22C55E' },
@@ -344,30 +347,48 @@ const FlightCard = React.memo(function FlightCard({ flight, availableSlots, crew
           </View>
         </View>
 
+        {/* Pricing and Availability */}
+        <View
+          className="flex-row items-center justify-between py-3 px-3 rounded-xl mb-3"
+          style={{ backgroundColor: colors.highlight + '10' }}
+        >
+          <View className="flex-row items-center">
+            <Icon name="Waves" size={18} color={colors.highlight} />
+            <ThemedText className="ml-2 font-semibold">E-Foil Sessions</ThemedText>
+          </View>
+          <View className="flex-row items-center">
+            <ThemedText className="font-bold" style={{ color: colors.highlight }}>
+              From ${suggestedActivity.seatPriceFromUsd}/seat
+            </ThemedText>
+          </View>
+        </View>
+
         {/* Bottom Row: Time + CTA */}
-        <View 
+        <View
           className="flex-row items-center justify-between pt-3"
-          style={{ 
-            borderTopWidth: 1, 
+          style={{
+            borderTopWidth: 1,
             borderTopColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
           }}
         >
-          <View className="flex-row items-center">
-            <View 
-              className="w-8 h-8 rounded-full items-center justify-center mr-2"
-              style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }}
-            >
-              <Icon name="Clock" size={16} color={colors.icon} />
+          <View>
+            <View className="flex-row items-center">
+              <Icon name="Clock" size={14} color={colors.placeholder} />
+              <ThemedText className="font-semibold text-lg ml-2">{flight.timeLocal}</ThemedText>
             </View>
-            <ThemedText className="font-semibold text-lg">{flight.timeLocal}</ThemedText>
+            {availableSlots > 0 && (
+              <ThemedText className="text-xs opacity-50 mt-0.5">
+                {availableSlots} slot{availableSlots !== 1 ? 's' : ''} available after landing
+              </ThemedText>
+            )}
           </View>
 
           <View
-            className="flex-row items-center px-4 py-2 rounded-full"
+            className="flex-row items-center px-4 py-2.5 rounded-full"
             style={{ backgroundColor: colors.highlight }}
           >
             <ThemedText className="text-white font-semibold text-sm mr-1">
-              Book Experience
+              View Trips
             </ThemedText>
             <Icon name="ChevronRight" size={16} color="white" />
           </View>

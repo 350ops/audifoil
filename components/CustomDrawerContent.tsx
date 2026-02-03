@@ -60,9 +60,15 @@ export default function CustomDrawerContent() {
 
                 {/* Main Navigation */}
                 <View className='flex-col pb-4 mb-4 border-b border-border'>
-                    <NavItem href="/" icon="Home" label="Home" />
-                    <NavItem href="/arrivals" icon="Plane" label="Arrivals" />
-                    <NavItem href="/screens/my-bookings" icon="CalendarCheck" label="My Bookings" badge={bookings.length > 0 ? bookings.length : undefined} />
+                    <NavItem href="/" icon="Sparkles" label="Explore" description="Discover experiences" />
+                    <NavItem href="/(drawer)/(tabs)/activities" icon="Waves" label="Activities" description="Browse & book per-seat" />
+                    <NavItem href="/(drawer)/(tabs)/bookings" icon="CalendarCheck" label="My Bookings" badge={bookings.length > 0 ? bookings.length : undefined} />
+                    <NavItem href="/(drawer)/(tabs)/crew" icon="Plane" label="Crew Shortcut" description="Book by your flight" />
+                </View>
+
+                {/* Help Section */}
+                <View className='flex-col pb-4 mb-4 border-b border-border'>
+                    <ThemedText className="text-xs uppercase opacity-40 mb-2 tracking-wider">Help</ThemedText>
                     <NavItem href="/screens/how-it-works" icon="HelpCircle" label="How It Works" />
                 </View>
 
