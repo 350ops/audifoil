@@ -10,7 +10,6 @@ import { ActionSheetRef } from 'react-native-actions-sheet';
 import React, { useRef } from 'react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRevenueCat } from '@/contexts/RevenueCatContext';
 import { useEfoil } from '@/contexts/EfoilContext';
 import ThemeToggle from './ThemeToggle';
 import useThemeColors from '@/contexts/ThemeColors';
@@ -21,7 +20,6 @@ export default function CustomDrawerContent() {
     const colors = useThemeColors();
     const { t } = useTranslation();
     const { profile, signOut } = useAuth();
-    const { isProUser } = useRevenueCat();
     const { bookings } = useEfoil();
     const displayName = profile?.first_name || 'Traveler';
 
@@ -48,12 +46,7 @@ export default function CustomDrawerContent() {
                         size="lg"
                     />
                     <View className='ml-3 flex-1'>
-                        <View className='flex-row items-center'>
-                            <ThemedText className="font-semibold text-lg">{displayName}</ThemedText>
-                            {isProUser && (
-                                <Text className='text-xs rounded-full bg-highlight text-white px-2 py-1 ml-2'>Pro</Text>
-                            )}
-                        </View>
+                        <ThemedText className="font-semibold text-lg">{displayName}</ThemedText>
                         <ThemedText className="text-sm opacity-50">{profile?.email || 'Guest'}</ThemedText>
                     </View>
                 </View>

@@ -4,7 +4,6 @@ import { Text, ActivityIndicator, TouchableOpacity, View, Pressable } from 'reac
 import { Link, router } from 'expo-router';
 import Icon, { IconName } from './Icon';
 import useThemeColors from '@/contexts/ThemeColors';
-import { colors } from '@/mockData';
 
 type RoundedOption = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
 
@@ -12,7 +11,7 @@ interface ButtonProps {
   title?: string;
   onPress?: () => void;
   loading?: boolean;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'cta';
   size?: 'small' | 'medium' | 'large';
   rounded?: RoundedOption;
   href?: string;
@@ -49,6 +48,7 @@ export const Button: React.FC<ButtonProps> = ({
     secondary: 'bg-secondary',
     outline: 'border border-border bg-transparent',
     ghost: 'bg-transparent',
+    cta: 'bg-highlight', // Airbnb-style pink CTA
   };
   
   const buttonSize = {

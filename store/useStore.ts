@@ -1,17 +1,29 @@
-import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { create } from 'zustand';
+
 import {
   Activity,
-  ActivitySlot,
   ActivityBooking,
   ActivityCategory,
+  ActivitySlot,
   ACTIVITIES,
   generateActivitySlots,
-  getActivityById,
 } from '@/data/activities';
-import { Flight, Slot, Booking, DemoUser } from '@/data/types';
-import { loadBookings, saveBookings, createBooking, addBooking } from '@/data/bookings';
+import { loadBookings, createBooking, addBooking } from '@/data/bookings';
+import { CrewLayover, getCrewExperienceConstraint } from '@/data/flightsMle';
 import { generateSlotsForFlight } from '@/data/slots';
+import {
+  BookingInsert,
+  createBooking as createDbBooking,
+  DbActivity,
+  DbBooking,
+  fetchActivityBySlug,
+  fetchDatesWithTrips,
+  FormattedTrip,
+  formatTripsForUI,
+  getOrCreateTripsForDate,
+} from '@/data/tripsDb';
+import { Booking, DemoUser, Flight, Slot } from '@/data/types';
 
 const ACTIVITY_BOOKINGS_KEY = 'foilTribe Adventures_activity_bookings';
 
@@ -31,7 +43,7 @@ interface AppState {
   selectedActivity: Activity | null;
   setSelectedActivity: (activity: Activity | null) => void;
 
-  // Generated slots for selected activity
+  // Generated slots for selected activity (legacy mock data)
   activitySlots: ActivitySlot[];
   generateActivitySlots: (activity: Activity) => void;
 
@@ -50,7 +62,7 @@ interface AppState {
     activity: Activity,
     slot: ActivitySlot,
     guests: number,
-    userInfo: { name: string; email: string; whatsapp: string }
+    userInfo: { name: string; email: string; whatsapp: string; airlineCode?: string }
   ) => Promise<ActivityBooking>;
 
   // Latest activity booking (for success screen)
@@ -67,6 +79,43 @@ interface AppState {
 
   // Reset activity selection
   resetActivitySelection: () => void;
+
+  // ==========================================
+  // DATABASE TRIPS (NEW)
+  // ==========================================
+
+  // Database activity (loaded from Supabase)
+  dbActivity: DbActivity | null;
+  setDbActivity: (activity: DbActivity | null) => void;
+
+  // Database trips for selected date
+  dbTrips: FormattedTrip[];
+  setDbTrips: (trips: FormattedTrip[]) => void;
+
+  // Dates that have trips available
+  datesWithTrips: string[];
+  setDatesWithTrips: (dates: string[]) => void;
+
+  // Loading states
+  tripsLoading: boolean;
+  setTripsLoading: (loading: boolean) => void;
+
+  // Fetch activity from database by slug
+  fetchDbActivity: (slug: string) => Promise<DbActivity | null>;
+
+  // Fetch trips for a specific date
+  fetchTripsForDate: (date: string) => Promise<FormattedTrip[]>;
+
+  // Fetch dates with available trips
+  fetchDatesWithTrips: (startDate: string, endDate: string) => Promise<string[]>;
+
+  // Create a booking in the database
+  createDbBooking: (
+    tripId: string,
+    guests: number,
+    totalPrice: number,
+    userInfo: { name: string; email?: string; whatsapp?: string; airlineCode?: string }
+  ) => Promise<DbBooking | null>;
 
   // ==========================================
   // CREW SHORTCUT (SECONDARY - Legacy flights)
@@ -87,7 +136,11 @@ interface AppState {
   // Flight bookings (legacy)
   bookings: Booking[];
   loadBookingsFromStorage: () => Promise<void>;
-  addNewBooking: (flight: Flight, slot: Slot, userInfo: { name: string; email: string; whatsapp: string }) => Promise<Booking>;
+  addNewBooking: (
+    flight: Flight,
+    slot: Slot,
+    userInfo: { name: string; email: string; whatsapp: string }
+  ) => Promise<Booking>;
 
   // Latest booking (for success screen)
   latestBooking: Booking | null;
@@ -95,6 +148,10 @@ interface AppState {
 
   // Reset selection
   resetSelection: () => void;
+
+  // Crew layover (arrival + departure + date) — used for "Crew" → experiences
+  selectedCrewLayover: CrewLayover | null;
+  setSelectedCrewLayover: (layover: CrewLayover | null) => void;
 
   // ==========================================
   // LOADING STATES
@@ -140,8 +197,21 @@ export const useStore = create<AppState>((set, get) => ({
 
   activitySlots: [],
   generateActivitySlots: (activity) => {
-    const slots = generateActivitySlots(activity, 3); // 3 days ahead
-    set({ activitySlots: slots });
+    const layover = get().selectedCrewLayover;
+    if (layover) {
+      const { dateStr, dateLabel, earliestStartTimeLocal, latestEndTimeLocal } =
+        getCrewExperienceConstraint(layover);
+      const slots = generateActivitySlots(activity, 1, {
+        forDate: dateStr,
+        dateLabel,
+        earliestStartTime: earliestStartTimeLocal,
+        latestEndTime: latestEndTimeLocal,
+      });
+      set({ activitySlots: slots });
+    } else {
+      const slots = generateActivitySlots(activity, 3);
+      set({ activitySlots: slots });
+    }
   },
 
   selectedActivitySlot: null,
@@ -203,13 +273,84 @@ export const useStore = create<AppState>((set, get) => ({
   searchQuery: '',
   setSearchQuery: (query) => set({ searchQuery: query }),
 
-  resetActivitySelection: () => set({
-    selectedActivity: null,
-    selectedActivitySlot: null,
-    activitySlots: [],
-    guestCount: 1,
-    latestActivityBooking: null,
-  }),
+  resetActivitySelection: () =>
+    set({
+      selectedActivity: null,
+      selectedActivitySlot: null,
+      activitySlots: [],
+      guestCount: 1,
+      latestActivityBooking: null,
+      dbActivity: null,
+      dbTrips: [],
+      datesWithTrips: [],
+    }),
+
+  // ==========================================
+  // DATABASE TRIPS
+  // ==========================================
+
+  dbActivity: null,
+  setDbActivity: (activity) => set({ dbActivity: activity }),
+
+  dbTrips: [],
+  setDbTrips: (trips) => set({ dbTrips: trips }),
+
+  datesWithTrips: [],
+  setDatesWithTrips: (dates) => set({ datesWithTrips: dates }),
+
+  tripsLoading: false,
+  setTripsLoading: (loading) => set({ tripsLoading: loading }),
+
+  fetchDbActivity: async (slug) => {
+    const activity = await fetchActivityBySlug(slug);
+    set({ dbActivity: activity });
+    return activity;
+  },
+
+  fetchTripsForDate: async (date) => {
+    const { dbActivity, selectedActivity } = get();
+    if (!dbActivity) return [];
+
+    set({ tripsLoading: true, selectedActivitySlot: null });
+
+    const dbTrips = await getOrCreateTripsForDate(
+      dbActivity.id,
+      dbActivity.slug,
+      date,
+      dbActivity.duration_min,
+      dbActivity.max_guests,
+      dbActivity.is_sunset ?? false
+    );
+
+    const formatted = await formatTripsForUI(dbTrips, dbActivity);
+    set({ dbTrips: formatted, tripsLoading: false });
+    return formatted;
+  },
+
+  fetchDatesWithTrips: async (startDate, endDate) => {
+    const { dbActivity } = get();
+    if (!dbActivity) return [];
+
+    const dates = await fetchDatesWithTrips(dbActivity.id, startDate, endDate);
+    set({ datesWithTrips: dates });
+    return dates;
+  },
+
+  createDbBooking: async (tripId, guests, totalPrice, userInfo) => {
+    const booking: BookingInsert = {
+      trip_id: tripId,
+      guest_count: guests,
+      total_price: totalPrice,
+      user_name: userInfo.name,
+      user_email: userInfo.email,
+      user_whatsapp: userInfo.whatsapp,
+      airline_code: userInfo.airlineCode,
+      status: 'confirmed',
+    };
+
+    const result = await createDbBooking(booking);
+    return result;
+  },
 
   // ==========================================
   // CREW SHORTCUT (Legacy)
@@ -248,12 +389,16 @@ export const useStore = create<AppState>((set, get) => ({
   latestBooking: null,
   setLatestBooking: (booking) => set({ latestBooking: booking }),
 
-  resetSelection: () => set({
-    selectedFlight: null,
-    selectedSlot: null,
-    currentSlots: [],
-    latestBooking: null,
-  }),
+  resetSelection: () =>
+    set({
+      selectedFlight: null,
+      selectedSlot: null,
+      currentSlots: [],
+      latestBooking: null,
+    }),
+
+  selectedCrewLayover: null,
+  setSelectedCrewLayover: (layover) => set({ selectedCrewLayover: layover }),
 
   // ==========================================
   // LOADING

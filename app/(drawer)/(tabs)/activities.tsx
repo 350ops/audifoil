@@ -22,6 +22,8 @@ import {
   ActivityCategory,
   ACTIVITIES,
   CATEGORY_INFO,
+  MALDIVES_ADVENTURE_ID,
+  formatDurationHours,
 } from '@/data/activities';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -55,7 +57,7 @@ export default function ActivitiesScreen() {
     setCategoryFilter(category);
   }, [setCategoryFilter]);
 
-  // Filter and sort activities
+  // Filter and sort activities — Maldives Adventure always first when visible
   const filteredActivities = useMemo(() => {
     let result = [...ACTIVITIES];
 
@@ -74,19 +76,26 @@ export default function ActivitiesScreen() {
       );
     }
 
-    // Sort
+    // Sort (keep Maldives Adventure first when in list)
+    const mainFirst = (a: Activity, b: Activity) => {
+      if (a.id === MALDIVES_ADVENTURE_ID) return -1;
+      if (b.id === MALDIVES_ADVENTURE_ID) return 1;
+      if (a.id === 'efoil-session' && b.id !== MALDIVES_ADVENTURE_ID) return -1;
+      if (b.id === 'efoil-session' && a.id !== MALDIVES_ADVENTURE_ID) return 1;
+      return 0;
+    };
     switch (sortBy) {
       case 'popular':
-        result.sort((a, b) => b.bookingsThisWeek - a.bookingsThisWeek);
+        result.sort((a, b) => mainFirst(a, b) || b.bookingsThisWeek - a.bookingsThisWeek);
         break;
       case 'price_low':
-        result.sort((a, b) => a.priceFromUsd - b.priceFromUsd);
+        result.sort((a, b) => mainFirst(a, b) || a.priceFromUsd - b.priceFromUsd);
         break;
       case 'price_high':
-        result.sort((a, b) => b.priceFromUsd - a.priceFromUsd);
+        result.sort((a, b) => mainFirst(a, b) || b.priceFromUsd - a.priceFromUsd);
         break;
       case 'duration':
-        result.sort((a, b) => a.durationMin - b.durationMin);
+        result.sort((a, b) => mainFirst(a, b) || a.durationMin - b.durationMin);
         break;
     }
 
@@ -136,8 +145,9 @@ export default function ActivitiesScreen() {
       </View>
 
       {/* Category Filters */}
-      <CardScroller space={8} className="pb-3">
-        {categories.map(cat => (
+      <View className="px-4">
+        <CardScroller space={8} className="pb-3">
+          {categories.map(cat => (
           <Chip
             key={cat}
             label={cat === 'ALL' ? 'All' : CATEGORY_INFO[cat].name}
@@ -146,7 +156,8 @@ export default function ActivitiesScreen() {
             onPress={() => handleCategoryPress(cat)}
           />
         ))}
-      </CardScroller>
+        </CardScroller>
+      </View>
 
       {/* Sort Options */}
       <View className="px-4 pb-3 flex-row items-center justify-between">
@@ -212,9 +223,16 @@ export default function ActivitiesScreen() {
   );
 }
 
+// Show price in list only for main experience and Audi e-foil
+function shouldShowPrice(activityId: string): boolean {
+  return activityId === MALDIVES_ADVENTURE_ID || activityId === 'efoil-session';
+}
+
 // Activity List Card Component
 function ActivityListCard({ activity, onPress }: { activity: Activity; onPress: () => void }) {
   const colors = useThemeColors();
+  const showPrice = shouldShowPrice(activity.id);
+  const durationLabel = formatDurationHours(activity.durationMin);
 
   return (
     <Pressable
@@ -237,10 +255,9 @@ function ActivityListCard({ activity, onPress }: { activity: Activity; onPress: 
         >
           {/* Badges */}
           <View className="flex-row items-center mb-2">
-            {activity.isTrending && (
-              <View className="bg-red-500/90 px-2 py-1 rounded-full flex-row items-center mr-2">
-                <Icon name="Flame" size={10} color="white" />
-                <ThemedText className="text-white text-xs font-semibold ml-1">Trending</ThemedText>
+            {activity.id === MALDIVES_ADVENTURE_ID && (
+              <View className="bg-white/25 px-2 py-1 rounded-full mr-2">
+                <ThemedText className="text-white text-xs font-semibold">Main experience</ThemedText>
               </View>
             )}
             {activity.isPrivate && (
@@ -264,7 +281,7 @@ function ActivityListCard({ activity, onPress }: { activity: Activity; onPress: 
       {/* Card Footer */}
       <View className="bg-secondary p-4">
         <View className="flex-row items-center justify-between">
-          {/* Rating & Duration */}
+          {/* Rating & Duration (always in hours) */}
           <View className="flex-row items-center">
             <View className="flex-row items-center mr-4">
               <Icon name="Star" size={14} color="#FFD700" fill="#FFD700" />
@@ -273,17 +290,19 @@ function ActivityListCard({ activity, onPress }: { activity: Activity; onPress: 
             </View>
             <View className="flex-row items-center">
               <Icon name="Clock" size={14} color={colors.placeholder} />
-              <ThemedText className="opacity-60 ml-1">{activity.durationMin} min</ThemedText>
+              <ThemedText className="opacity-60 ml-1" style={{ color: colors.textMuted }}>{durationLabel}</ThemedText>
             </View>
           </View>
 
-          {/* Price */}
-          <View className="items-end">
-            <ThemedText className="text-xs opacity-50">From</ThemedText>
-            <ThemedText className="font-bold text-lg" style={{ color: colors.highlight }}>
-              ${activity.priceFromUsd}
-            </ThemedText>
-          </View>
+          {/* Price — only for Maldives Adventure and Audi e-foil */}
+          {showPrice && (
+            <View className="items-end">
+              <ThemedText className="text-xs" style={{ color: colors.textMuted }}>From</ThemedText>
+              <ThemedText className="font-bold text-lg" style={{ color: colors.highlight }}>
+                ${activity.priceFromUsd}
+              </ThemedText>
+            </View>
+          )}
         </View>
 
         {/* Tags */}

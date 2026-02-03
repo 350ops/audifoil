@@ -5,8 +5,8 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { NotesProvider } from '@/contexts/NotesContext';
-import { RevenueCatProvider } from '@/contexts/RevenueCatContext';
 import { EfoilProvider } from '@/contexts/EfoilContext';
+import StripePaymentProvider from '@/contexts/StripeContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Platform } from 'react-native';
 import useThemeColors from '@/contexts/ThemeColors';
@@ -39,7 +39,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView className={`bg-background ${Platform.OS === 'ios' ? 'pb-0 ' : ''}`} style={{ flex: 1 }}>
       <AuthProvider>
-        <RevenueCatProvider>
+        <StripePaymentProvider>
           <NotesProvider>
             <EfoilProvider>
               <LanguageProvider>
@@ -49,7 +49,7 @@ export default function RootLayout() {
               </LanguageProvider>
             </EfoilProvider>
           </NotesProvider>
-        </RevenueCatProvider>
+        </StripePaymentProvider>
       </AuthProvider>
     </GestureHandlerRootView>
   );

@@ -182,10 +182,10 @@ export default function OnboardingScreen() {
 
                     {/* Buttons at bottom */}
                     <View style={{ paddingBottom: insets.bottom + 24 }} className="px-6">
-                        {/* Main CTA */}
+                        {/* Main CTA — Airbnb-style rounded pill */}
                         <Pressable
                             onPress={handleAppleSignIn}
-                            className='w-full rounded-2xl flex flex-row items-center justify-center py-4 mb-4'
+                            className='w-full rounded-full flex flex-row items-center justify-center py-4 mb-4'
                             style={{ backgroundColor: colors.highlight }}
                         >
                             <Icon name="Sparkles" size={20} color="white" />
@@ -278,6 +278,8 @@ export default function OnboardingScreen() {
                                 handleAppleSignIn();
                             }}
                             className="w-full"
+                            variant="cta"
+                            rounded="full"
                         />
                         <Button
                             title="Cancel"

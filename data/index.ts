@@ -1,9 +1,12 @@
 // Data module exports
 export * from './types';
 export * from './flights';
+export * from './flightsMle';
 export * from './slots';
 export * from './bookings';
 export * from './airlineLogos';
+export * from './tripsDb';
+export * from './pricing';
 
 // Price constants
 export const SLOT_PRICE = 150;

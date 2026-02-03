@@ -1,0 +1,643 @@
+{
+    "meta": {
+      "count": 33,
+      "links": {
+        "self": "https://test.api.amadeus.com/v1/airport/direct-destinations?departureAirportCode=MLE"
+      }
+    },
+    "data": [
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "ALMATY",
+        "iataCode": "ALA",
+        "geoCode": {
+          "latitude": 43.35195,
+          "longitude": 77.04056
+        },
+        "address": {
+          "countryName": "KAZAKHSTAN",
+          "countryCode": "KZ",
+          "regionCode": "EURAS"
+        },
+        "timeZone": {
+          "offSet": "+05:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "ABU DHABI",
+        "iataCode": "AUH",
+        "geoCode": {
+          "latitude": 24.43306,
+          "longitude": 54.65112
+        },
+        "address": {
+          "countryName": "UNITED ARAB EMIRATES",
+          "countryCode": "AE",
+          "regionCode": "MEAST"
+        },
+        "timeZone": {
+          "offSet": "+04:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "BAHRAIN",
+        "iataCode": "BAH",
+        "geoCode": {
+          "latitude": 26.27084,
+          "longitude": 50.63362
+        },
+        "address": {
+          "countryName": "BAHRAIN",
+          "countryCode": "BH",
+          "regionCode": "MEAST"
+        },
+        "timeZone": {
+          "offSet": "+03:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "BANGKOK",
+        "iataCode": "BKK",
+        "geoCode": {
+          "latitude": 13.69139,
+          "longitude": 100.7508
+        },
+        "address": {
+          "countryName": "THAILAND",
+          "countryCode": "TH",
+          "regionCode": "SEASI"
+        },
+        "timeZone": {
+          "offSet": "+07:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "BENGALURU",
+        "iataCode": "BLR",
+        "geoCode": {
+          "latitude": 13.20084,
+          "longitude": 77.70889
+        },
+        "address": {
+          "countryName": "INDIA",
+          "countryCode": "IN",
+          "stateCode": "KA",
+          "regionCode": "ASIA"
+        },
+        "timeZone": {
+          "offSet": "+05:30",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "MUMBAI",
+        "iataCode": "BOM",
+        "geoCode": {
+          "latitude": 19.08862,
+          "longitude": 72.86806
+        },
+        "address": {
+          "countryName": "INDIA",
+          "countryCode": "IN",
+          "stateCode": "MH",
+          "regionCode": "ASIA"
+        },
+        "timeZone": {
+          "offSet": "+05:30",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "COLOMBO",
+        "iataCode": "CMB",
+        "geoCode": {
+          "latitude": 7.18084,
+          "longitude": 79.88417
+        },
+        "address": {
+          "countryName": "SRI LANKA",
+          "countryCode": "LK",
+          "regionCode": "ASIA"
+        },
+        "timeZone": {
+          "offSet": "+05:30",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "KOCHI",
+        "iataCode": "COK",
+        "geoCode": {
+          "latitude": 10.15389,
+          "longitude": 76.40695
+        },
+        "address": {
+          "countryName": "INDIA",
+          "countryCode": "IN",
+          "stateCode": "KL",
+          "regionCode": "ASIA"
+        },
+        "timeZone": {
+          "offSet": "+05:30",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "DHAKA",
+        "iataCode": "DAC",
+        "geoCode": {
+          "latitude": 23.84334,
+          "longitude": 90.39778
+        },
+        "address": {
+          "countryName": "BANGLADESH",
+          "countryCode": "BD",
+          "regionCode": "ASIA"
+        },
+        "timeZone": {
+          "offSet": "+06:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "KUDAHUVADHOO",
+        "iataCode": "DDD",
+        "geoCode": {
+          "latitude": 2.66584,
+          "longitude": 72.885
+        },
+        "address": {
+          "countryName": "MALDIVES",
+          "countryCode": "MV",
+          "regionCode": "IOCEA"
+        },
+        "timeZone": {
+          "offSet": "+05:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "DELHI",
+        "iataCode": "DEL",
+        "geoCode": {
+          "latitude": 28.56639,
+          "longitude": 77.10306
+        },
+        "address": {
+          "countryName": "INDIA",
+          "countryCode": "IN",
+          "stateCode": "DL",
+          "regionCode": "ASIA"
+        },
+        "timeZone": {
+          "offSet": "+05:30",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "DOHA",
+        "iataCode": "DOH",
+        "geoCode": {
+          "latitude": 25.26486,
+          "longitude": 51.56356
+        },
+        "address": {
+          "countryName": "QATAR",
+          "countryCode": "QA",
+          "regionCode": "MEAST"
+        },
+        "timeZone": {
+          "offSet": "+03:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "DHARAVANDHOO ISLAND",
+        "iataCode": "DRV",
+        "geoCode": {
+          "latitude": 5.15695,
+          "longitude": 73.13028
+        },
+        "address": {
+          "countryName": "MALDIVES",
+          "countryCode": "MV",
+          "regionCode": "IOCEA"
+        },
+        "timeZone": {
+          "offSet": "+05:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "DUBAI",
+        "iataCode": "DXB",
+        "geoCode": {
+          "latitude": 25.25278,
+          "longitude": 55.36445
+        },
+        "address": {
+          "countryName": "UNITED ARAB EMIRATES",
+          "countryCode": "AE",
+          "regionCode": "MEAST"
+        },
+        "timeZone": {
+          "offSet": "+04:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "FRANKFURT",
+        "iataCode": "FRA",
+        "geoCode": {
+          "latitude": 50.04056,
+          "longitude": 8.55612
+        },
+        "address": {
+          "countryName": "GERMANY",
+          "countryCode": "DE",
+          "regionCode": "EUROP"
+        },
+        "timeZone": {
+          "offSet": "+01:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "HAMBANTOTA",
+        "iataCode": "HRI",
+        "geoCode": {
+          "latitude": 6.28389,
+          "longitude": 81.12389
+        },
+        "address": {
+          "countryName": "SRI LANKA",
+          "countryCode": "LK",
+          "regionCode": "ASIA"
+        },
+        "timeZone": {
+          "offSet": "+05:30",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "HYDERABAD",
+        "iataCode": "HYD",
+        "geoCode": {
+          "latitude": 17.23139,
+          "longitude": 78.42973
+        },
+        "address": {
+          "countryName": "INDIA",
+          "countryCode": "IN",
+          "stateCode": "TG",
+          "regionCode": "ASIA"
+        },
+        "timeZone": {
+          "offSet": "+05:30",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "ISTANBUL",
+        "iataCode": "IST",
+        "geoCode": {
+          "latitude": 41.26028,
+          "longitude": 28.74195
+        },
+        "address": {
+          "countryName": "TURKIYE",
+          "countryCode": "TR",
+          "regionCode": "EURAS"
+        },
+        "timeZone": {
+          "offSet": "+03:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "KUALA LUMPUR",
+        "iataCode": "KUL",
+        "geoCode": {
+          "latitude": 2.74556,
+          "longitude": 101.71
+        },
+        "address": {
+          "countryName": "MALAYSIA",
+          "countryCode": "MY",
+          "regionCode": "SEASI"
+        },
+        "timeZone": {
+          "offSet": "+08:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "LONDON",
+        "iataCode": "LON",
+        "geoCode": {
+          "latitude": 51.5,
+          "longitude": -0.16666
+        },
+        "address": {
+          "countryName": "UNITED KINGDOM",
+          "countryCode": "GB",
+          "regionCode": "EUROP"
+        },
+        "timeZone": {
+          "offSet": "+00:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "MADRID",
+        "iataCode": "MAD",
+        "geoCode": {
+          "latitude": 40.49195,
+          "longitude": -3.56944
+        },
+        "address": {
+          "countryName": "SPAIN",
+          "countryCode": "ES",
+          "regionCode": "EUROP"
+        },
+        "timeZone": {
+          "offSet": "+01:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "MILAN",
+        "iataCode": "MIL",
+        "geoCode": {
+          "latitude": 45.46417,
+          "longitude": 9.18945
+        },
+        "address": {
+          "countryName": "ITALY",
+          "countryCode": "IT",
+          "regionCode": "EUROP"
+        },
+        "timeZone": {
+          "offSet": "+01:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "MOSCOW",
+        "iataCode": "MOW",
+        "geoCode": {
+          "latitude": 55.75,
+          "longitude": 37.7
+        },
+        "address": {
+          "countryName": "RUSSIA",
+          "countryCode": "RU",
+          "regionCode": "EURAS"
+        },
+        "timeZone": {
+          "offSet": "+03:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "MAAFARU",
+        "iataCode": "NMF",
+        "geoCode": {
+          "latitude": 5.82223,
+          "longitude": 73.47473
+        },
+        "address": {
+          "countryName": "MALDIVES",
+          "countryCode": "MV",
+          "regionCode": "IOCEA"
+        },
+        "timeZone": {
+          "offSet": "+05:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "PARIS",
+        "iataCode": "PAR",
+        "geoCode": {
+          "latitude": 48.85334,
+          "longitude": 2.34889
+        },
+        "address": {
+          "countryName": "FRANCE",
+          "countryCode": "FR",
+          "regionCode": "EUROP"
+        },
+        "timeZone": {
+          "offSet": "+01:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "ROME",
+        "iataCode": "ROM",
+        "geoCode": {
+          "latitude": 41.89195,
+          "longitude": 12.51139
+        },
+        "address": {
+          "countryName": "ITALY",
+          "countryCode": "IT",
+          "regionCode": "EUROP"
+        },
+        "timeZone": {
+          "offSet": "+01:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "RIYADH",
+        "iataCode": "RUH",
+        "geoCode": {
+          "latitude": 24.95778,
+          "longitude": 46.69889
+        },
+        "address": {
+          "countryName": "SAUDI ARABIA",
+          "countryCode": "SA",
+          "regionCode": "MEAST"
+        },
+        "timeZone": {
+          "offSet": "+03:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "MAHE ISLAND",
+        "iataCode": "SEZ",
+        "geoCode": {
+          "latitude": -4.67444,
+          "longitude": 55.52195
+        },
+        "address": {
+          "countryName": "SEYCHELLES",
+          "countryCode": "SC",
+          "regionCode": "IOCEA"
+        },
+        "timeZone": {
+          "offSet": "+04:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "SINGAPORE",
+        "iataCode": "SIN",
+        "geoCode": {
+          "latitude": 1.35028,
+          "longitude": 103.9945
+        },
+        "address": {
+          "countryName": "SINGAPORE",
+          "countryCode": "SG",
+          "regionCode": "SEASI"
+        },
+        "timeZone": {
+          "offSet": "+08:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "THIRUVANANTHAPURAM",
+        "iataCode": "TRV",
+        "geoCode": {
+          "latitude": 8.48223,
+          "longitude": 76.92
+        },
+        "address": {
+          "countryName": "INDIA",
+          "countryCode": "IN",
+          "stateCode": "KL",
+          "regionCode": "ASIA"
+        },
+        "timeZone": {
+          "offSet": "+05:30",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "MAAMIGILI ISLAND",
+        "iataCode": "VAM",
+        "geoCode": {
+          "latitude": 3.47056,
+          "longitude": 72.83584
+        },
+        "address": {
+          "countryName": "MALDIVES",
+          "countryCode": "MV",
+          "regionCode": "IOCEA"
+        },
+        "timeZone": {
+          "offSet": "+05:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "VIENNA",
+        "iataCode": "VIE",
+        "geoCode": {
+          "latitude": 48.12223,
+          "longitude": 16.5575
+        },
+        "address": {
+          "countryName": "AUSTRIA",
+          "countryCode": "AT",
+          "regionCode": "EUROP"
+        },
+        "timeZone": {
+          "offSet": "+01:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      },
+      {
+        "type": "location",
+        "subtype": "city",
+        "name": "ZURICH",
+        "iataCode": "ZRH",
+        "geoCode": {
+          "latitude": 47.45278,
+          "longitude": 8.56056
+        },
+        "address": {
+          "countryName": "SWITZERLAND",
+          "countryCode": "CH",
+          "regionCode": "EUROP"
+        },
+        "timeZone": {
+          "offSet": "+01:00",
+          "referenceLocalDateTime": "2026-02-03T19:04:41"
+        }
+      }
+    ]
+  }

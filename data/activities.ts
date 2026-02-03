@@ -127,15 +127,77 @@ export const MEDIA = {
   },
 };
 
-// Activities catalog
+// Main experience: 5h cruise, $80 — shown first; add-ons shown on detail
+export const MALDIVES_ADVENTURE_ID = 'maldives-adventure';
+
+// Format duration for display (always hours)
+export function formatDurationHours(durationMin: number): string {
+  const hours = durationMin / 60;
+  return hours >= 1 ? `${hours} hour${hours !== 1 ? 's' : ''}` : `${durationMin} min`;
+}
+
+// Activities catalog — Maldives Adventure first, then Audi e-foil (with price), then others (no price in list)
 export const ACTIVITIES: Activity[] = [
+  {
+    id: MALDIVES_ADVENTURE_ID,
+    title: 'Maldives Adventure',
+    subtitle: 'The ultimate day on the water',
+    category: 'BOAT',
+    durationMin: 300,
+    priceFromUsd: 80,
+    rating: 4.9,
+    reviewCount: 312,
+    maxGuests: 6,
+    minGuests: 1,
+    skillLevel: 'all',
+    isPrivate: false,
+    media: [
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.lagoonBoat },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.dolphin },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.swimmingFish },
+      { type: 'image', uri: MEDIA.sandbank.aerial },
+    ],
+    tags: ['5 hours', 'Dolphins', 'Snorkel', 'Sandbank', 'Sunset'],
+    highlights: [
+      'Swim with dolphins in the wild',
+      'Reef sharks & tropical fish while snorkelling',
+      'Pristine sandbank stop',
+      'Picnic lunch onboard',
+      'Golden-hour sunsets',
+      'All gear & hotel pickup included',
+    ],
+    whatYoullDo: [
+      'Cruise to dolphin territory and swim alongside spinner dolphins',
+      'Snorkel vibrant reefs with reef sharks and tropical fish',
+      'Stop at a picture-perfect sandbank for photos and swimming',
+      'Enjoy a picnic lunch on board with ocean views',
+      'End the day with golden-hour sunsets over the Indian Ocean',
+    ],
+    included: [
+      '5-hour cruise (3h option available)',
+      'Snorkelling gear & instruction',
+      'Picnic lunch & refreshments',
+      'Hotel pickup & drop-off',
+      'Professional captain & crew',
+      'All safety equipment',
+    ],
+    safety: ['Life jackets for all', 'Experienced crew', 'Weather-dependent departure'],
+    meetingPoint: 'Malé Harbor — hotel pickup available',
+    socialProof: [
+      { label: 'Crew favorite', type: 'crew' },
+      { label: 'Best value in the Maldives', type: 'popular' },
+    ],
+    bookingsThisWeek: 48,
+    isFeatured: true,
+    isTrending: true,
+  },
   {
     id: 'efoil-session',
     title: 'Audi E-Foil Experience',
-    subtitle: 'Fly above the crystal lagoon',
+    subtitle: '2 hours in an idyllic turquoise lagoon',
     category: 'EFOIL',
-    durationMin: 300,
-    priceFromUsd: 150,
+    durationMin: 120,
+    priceFromUsd: 280,
     rating: 4.9,
     reviewCount: 127,
     maxGuests: 1,
@@ -148,30 +210,32 @@ export const ACTIVITIES: Activity[] = [
       { type: 'image', uri: MEDIA.efoil.lagoon },
       { type: 'image', uri: MEDIA.efoil.action2 },
     ],
-    tags: ['45 min', 'Private', 'Beginner friendly', 'Instructor included'],
-    highlights: ['Premium Audi e-foil board', 'Personal instructor', 'GoPro footage included'],
+    tags: ['2 hours', 'Private', 'Instructor', 'Drone & 360'],
+    highlights: [
+      'Private instructor for the full session',
+      'Boat transfer to idyllic turquoise lagoon',
+      'Drone footage of your ride',
+      '360° camera attached to the board — keep all footage',
+    ],
     whatYoullDo: [
-      'Learn the basics of hydrofoil technology with your personal instructor',
-      'Master balance and control as you rise above the water',
-      'Experience the thrill of gliding silently over the lagoon',
+      'Boat transfer to a secluded turquoise lagoon',
+      'Learn to fly on the Audi e-foil with your private instructor',
+      'Get professional drone footage and 360° camera footage from the board',
+      'Take home all your footage as part of the experience',
     ],
     included: [
-      '45-minute private session',
-      'Professional instructor',
-      'All safety equipment',
-      'Wetsuit & life jacket',
-      'GoPro footage',
-      'Refreshments',
+      '2-hour private session',
+      'Boat transfer to lagoon',
+      'Private instructor',
+      'Drone aerial footage',
+      'GoPro 360 camera on board — all footage included',
+      'All safety equipment & wetsuit',
     ],
-    safety: [
-      'Life jacket required at all times',
-      'Instructor stays within 10m',
-      'Calm lagoon conditions only',
-    ],
-    meetingPoint: 'Malé Lagoon Dock, North Pier',
+    safety: ['Life jacket required at all times', 'Instructor stays with you', 'Calm lagoon only'],
+    meetingPoint: 'Malé Lagoon Dock — boat to lagoon',
     socialProof: [
       { label: 'Booked by 3 crews today', type: 'crew' },
-      { label: 'Popular at sunset', type: 'popular' },
+      { label: 'Unique in the Maldives', type: 'popular' },
     ],
     bookingsThisWeek: 24,
     isFeatured: true,
@@ -186,7 +250,7 @@ export const ACTIVITIES: Activity[] = [
     priceFromUsd: 300,
     rating: 4.8,
     reviewCount: 89,
-    maxGuests: 8,
+    maxGuests: 6,
     minGuests: 2,
     skillLevel: 'all',
     isPrivate: false,
@@ -197,7 +261,11 @@ export const ACTIVITIES: Activity[] = [
       { type: 'image', uri: MEDIA.boat.deck },
     ],
     tags: ['2 hours', '2-8 guests', 'Sunset', 'Drinks included'],
-    highlights: ['Traditional Maldivian dhoni boat', 'Champagne & canapés', 'Stunning sunset views'],
+    highlights: [
+      'Traditional Maldivian dhoni boat',
+      'Champagne & canapés',
+      'Stunning sunset views',
+    ],
     whatYoullDo: [
       'Board a beautifully restored traditional dhoni boat',
       'Cruise through the atolls as the sun sets',
@@ -211,11 +279,7 @@ export const ACTIVITIES: Activity[] = [
       'Professional crew',
       'Bluetooth speaker',
     ],
-    safety: [
-      'Life jackets available',
-      'Experienced captain',
-      'Weather-dependent departure',
-    ],
+    safety: ['Life jackets available', 'Experienced captain', 'Weather-dependent departure'],
     meetingPoint: 'Malé Harbor, Sunset Pier',
     socialProof: [
       { label: 'Emirates crew favorite', type: 'crew' },
@@ -259,11 +323,7 @@ export const ACTIVITIES: Activity[] = [
       'Fresh coconut water',
       'Marine life briefing',
     ],
-    safety: [
-      'Shallow reef (max 5m)',
-      'Guide stays with group',
-      'Reef-safe sunscreen only',
-    ],
+    safety: ['Shallow reef (max 5m)', 'Guide stays with group', 'Reef-safe sunscreen only'],
     meetingPoint: 'Beach Club, Main Jetty',
     socialProof: [
       { label: 'Turtle sightings daily', type: 'popular' },
@@ -292,7 +352,11 @@ export const ACTIVITIES: Activity[] = [
       { type: 'image', uri: MEDIA.boat.deck },
     ],
     tags: ['2.5 hours', '2-6 guests', 'Sunset', 'BBQ option'],
-    highlights: ['Traditional hand-line fishing', 'Spectacular sunset views', 'Cook your catch option'],
+    highlights: [
+      'Traditional hand-line fishing',
+      'Spectacular sunset views',
+      'Cook your catch option',
+    ],
     whatYoullDo: [
       'Learn traditional Maldivian line fishing techniques',
       'Fish the outer reef as the sun sets',
@@ -306,12 +370,8 @@ export const ACTIVITIES: Activity[] = [
       'Experienced fisherman guide',
       'BBQ your catch (optional)',
     ],
-    safety: [
-      'Life jackets provided',
-      'First aid on board',
-      'Catch & release encouraged',
-    ],
-    meetingPoint: 'Fisherman\'s Wharf, East Pier',
+    safety: ['Life jackets provided', 'First aid on board', 'Catch & release encouraged'],
+    meetingPoint: "Fisherman's Wharf, East Pier",
     socialProof: [
       { label: 'Biggest catch: 12kg tuna', type: 'popular' },
       { label: 'Flydubai crew regular', type: 'crew' },
@@ -354,11 +414,7 @@ export const ACTIVITIES: Activity[] = [
       'Snorkel gear',
       'Butler service',
     ],
-    safety: [
-      'Shallow surrounding waters',
-      'Radio contact with base',
-      'Sun protection provided',
-    ],
+    safety: ['Shallow surrounding waters', 'Radio contact with base', 'Sun protection provided'],
     meetingPoint: 'VIP Lounge, Marina',
     socialProof: [
       { label: 'Perfect 5.0 rating', type: 'popular' },
@@ -376,7 +432,7 @@ export const ACTIVITIES: Activity[] = [
     priceFromUsd: 180,
     rating: 4.8,
     reviewCount: 98,
-    maxGuests: 12,
+    maxGuests: 6,
     minGuests: 2,
     skillLevel: 'all',
     isPrivate: false,
@@ -418,19 +474,19 @@ export const ACTIVITIES: Activity[] = [
 
 // Helper functions
 export function getActivityById(id: string): Activity | undefined {
-  return ACTIVITIES.find(a => a.id === id);
+  return ACTIVITIES.find((a) => a.id === id);
 }
 
 export function getActivitiesByCategory(category: ActivityCategory): Activity[] {
-  return ACTIVITIES.filter(a => a.category === category);
+  return ACTIVITIES.filter((a) => a.category === category);
 }
 
 export function getFeaturedActivities(): Activity[] {
-  return ACTIVITIES.filter(a => a.isFeatured);
+  return ACTIVITIES.filter((a) => a.isFeatured);
 }
 
 export function getTrendingActivities(): Activity[] {
-  const trending = ACTIVITIES.filter(a => a.isTrending);
+  const trending = ACTIVITIES.filter((a) => a.isTrending);
   // Custom order: dolphins, snorkeling, efoil
   const order = ['dolphin-cruise', 'snorkel-lagoon', 'efoil-session'];
   return trending.sort((a, b) => {
@@ -443,60 +499,92 @@ export function getTrendingActivities(): Activity[] {
 }
 
 export function getSunsetActivities(): Activity[] {
-  return ACTIVITIES.filter(a => a.isSunset);
+  return ACTIVITIES.filter((a) => a.isSunset);
 }
 
 export function getWaterSportsActivities(): Activity[] {
-  return ACTIVITIES.filter(a => a.category === 'EFOIL' || a.category === 'SNORKEL');
+  return ACTIVITIES.filter((a) => a.category === 'EFOIL' || a.category === 'SNORKEL');
 }
 
 export function getPrivateExperiences(): Activity[] {
-  return ACTIVITIES.filter(a => a.isPrivate);
+  return ACTIVITIES.filter((a) => a.isPrivate);
 }
 
 export function getBoatExperiences(): Activity[] {
-  return ACTIVITIES.filter(a => a.category === 'BOAT' || a.category === 'FISHING');
+  return ACTIVITIES.filter((a) => a.category === 'BOAT' || a.category === 'FISHING');
+}
+
+export interface GenerateSlotsOptions {
+  /** Single date (YYYY-MM-DD) — generate only this day (e.g. crew layover date) */
+  forDate?: string;
+  /** Label for forDate (e.g. "Mon, Feb 9") */
+  dateLabel?: string;
+  /** Only include slots that start at or after this time (HH:mm) — after crew arrival + buffer */
+  earliestStartTime?: string;
+  /** Only include slots that end at or before this time (HH:mm) — before crew departure − buffer */
+  latestEndTime?: string;
 }
 
 // Generate time slots for an activity
-export function generateActivitySlots(activity: Activity, daysAhead: number = 2): ActivitySlot[] {
+export function generateActivitySlots(
+  activity: Activity,
+  daysAhead: number = 2,
+  options?: GenerateSlotsOptions
+): ActivitySlot[] {
   const slots: ActivitySlot[] = [];
   const now = new Date();
+  const { forDate, dateLabel: optionDateLabel, earliestStartTime, latestEndTime } = options ?? {};
 
-  for (let d = 0; d < daysAhead; d++) {
-    const date = new Date(now);
-    date.setDate(date.getDate() + d);
-    const dateStr = date.toISOString().split('T')[0];
-    const dateLabel = d === 0 ? 'Today' : d === 1 ? 'Tomorrow' : date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  const dateRanges: { dateStr: string; dateLabel: string }[] = forDate
+    ? [{ dateStr: forDate, dateLabel: optionDateLabel ?? forDate }]
+    : Array.from({ length: daysAhead }, (_, d) => {
+        const date = new Date(now);
+        date.setDate(date.getDate() + d);
+        const dateStr = date.toISOString().split('T')[0];
+        const dateLabel =
+          d === 0
+            ? 'Today'
+            : d === 1
+              ? 'Tomorrow'
+              : date.toLocaleDateString('en-US', {
+                  weekday: 'short',
+                  month: 'short',
+                  day: 'numeric',
+                });
+        return { dateStr, dateLabel };
+      });
 
-    // Generate slots based on activity type
+  for (const { dateStr, dateLabel } of dateRanges) {
     const startHours = activity.isSunset
       ? [16, 17, 18]
       : activity.id === 'dolphin-cruise'
         ? [6, 7, 8]
         : [9, 10, 11, 14, 15, 16, 17];
 
-    startHours.forEach((hour, idx) => {
+    startHours.forEach((hour) => {
       const startTime = `${hour.toString().padStart(2, '0')}:00`;
       const endMinutes = hour * 60 + activity.durationMin;
       const endHour = Math.floor(endMinutes / 60);
       const endMin = endMinutes % 60;
       const endTime = `${endHour.toString().padStart(2, '0')}:${endMin.toString().padStart(2, '0')}`;
 
+      if (earliestStartTime && startTime < earliestStartTime) return;
+      if (latestEndTime && endTime > latestEndTime) return;
+
       const isSunsetSlot = hour >= 17;
       const isPopular = isSunsetSlot || hour === 10;
 
-      // Simulate booking data
       const maxSpots = activity.isPrivate ? 1 : activity.maxGuests;
       const bookedCount = Math.floor(Math.random() * (maxSpots + 1));
       const spotsRemaining = Math.max(0, maxSpots - bookedCount);
 
-      // Generate mock booked-by data
       const crews = ['Emirates', 'Qatar', 'Etihad', 'Turkish', 'Flydubai', 'SriLankan'];
       const bookedBy: { label: string; airlineCode?: string }[] = [];
       if (bookedCount > 0) {
-        const randomCrews = crews.sort(() => Math.random() - 0.5).slice(0, Math.min(bookedCount, 2));
-        randomCrews.forEach(crew => {
+        const randomCrews = crews
+          .sort(() => Math.random() - 0.5)
+          .slice(0, Math.min(bookedCount, 2));
+        randomCrews.forEach((crew) => {
           bookedBy.push({ label: `${crew} crew`, airlineCode: crew.substring(0, 2).toUpperCase() });
         });
         if (bookedCount > 2) {
@@ -537,11 +625,14 @@ export const CATEGORY_INFO: Record<ActivityCategory, { name: string; icon: strin
 // Promo codes
 export const PROMO_CODES: Record<string, { discount: number; label: string }> = {
   CREW25: { discount: 0.25, label: 'Crew Discount (25%)' },
-  PARADISE10: { discount: 0.10, label: 'Paradise Welcome (10%)' },
+  PARADISE10: { discount: 0.1, label: 'Paradise Welcome (10%)' },
   SUNSET15: { discount: 0.15, label: 'Sunset Special (15%)' },
 };
 
-export function applyPromoCode(code: string, price: number): { finalPrice: number; discount: number; label: string } | null {
+export function applyPromoCode(
+  code: string,
+  price: number
+): { finalPrice: number; discount: number; label: string } | null {
   const promo = PROMO_CODES[code.toUpperCase()];
   if (!promo) return null;
 

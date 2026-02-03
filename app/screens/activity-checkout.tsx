@@ -1,5 +1,21 @@
-import React, { useState } from 'react';
-import { View, ScrollView, TextInput, Modal, ActivityIndicator, Image, Alert, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
+import React, { useState, useMemo, useCallback } from 'react';
+import {
+  View,
+  ScrollView,
+  TextInput,
+  Modal,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  Share,
+} from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import * as Haptics from 'expo-haptics';
+import { router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import Header from '@/components/Header';
 import ThemedText from '@/components/ThemedText';
 import AnimatedView from '@/components/AnimatedView';
@@ -8,10 +24,13 @@ import { Button } from '@/components/Button';
 import { shadowPresets } from '@/utils/useShadow';
 import useThemeColors from '@/contexts/ThemeColors';
 import { useStore } from '@/store/useStore';
-import { applyPromoCode, PROMO_CODES } from '@/data/activities';
-import { router } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
+import { useStripePayments, dollarsToCents } from '@/contexts/StripeContext';
+import {
+  getSingleTicketPrice,
+  getFriendInviteInfo,
+  MIN_GUESTS_FOR_BASE_PRICE,
+} from '@/data/pricing';
+import { applyPromoCode } from '@/data/activities';
 
 export default function ActivityCheckoutScreen() {
   const colors = useThemeColors();
@@ -22,7 +41,11 @@ export default function ActivityCheckoutScreen() {
     guestCount,
     addActivityBooking,
     demoUser,
+    dbTrips,
   } = useStore();
+
+  // Stripe payment hooks
+  const { isProcessing, initializePaymentSheet, presentPaymentSheet } = useStripePayments();
 
   // Form state
   const [name, setName] = useState(demoUser?.name || '');
@@ -35,74 +58,78 @@ export default function ActivityCheckoutScreen() {
   const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
   const [touched, setTouched] = useState<{ name?: boolean; email?: boolean }>({});
 
-  // Payment modal state
+  // Payment state
+  const [paymentStep, setPaymentStep] = useState<'idle' | 'initializing' | 'ready' | 'processing' | 'success' | 'error'>('idle');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentStep, setPaymentStep] = useState<'faceid' | 'processing' | 'success'>('faceid');
+  const [shareableLink, setShareableLink] = useState<string | null>(null);
+  const [showInviteSection, setShowInviteSection] = useState(false);
 
-  if (!selectedActivity || !selectedActivitySlot) {
-    return (
-      <View className="flex-1 bg-background items-center justify-center">
-        <ThemedText>No booking details found</ThemedText>
-        <Button title="Start Over" onPress={() => router.replace('/')} className="mt-4" />
-      </View>
-    );
-  }
+  // Get trip info
+  const tripInfo = useMemo(() => {
+    if (!selectedActivitySlot || !selectedActivity) return null;
 
-  const basePrice = selectedActivitySlot.price * guestCount;
-  const discountAmount = promoApplied ? basePrice * (promoApplied.discount / basePrice) : 0;
+    const dbTrip = dbTrips.find((t) => t.id === selectedActivitySlot.id);
+    const bookedCount = dbTrip?.bookedCount ?? 0;
+    const maxCapacity = selectedActivity.maxGuests;
+
+    return {
+      bookedCount,
+      maxCapacity,
+      spotsRemaining: maxCapacity - bookedCount,
+      needsMorePeople: bookedCount + guestCount < MIN_GUESTS_FOR_BASE_PRICE,
+      friendsNeeded: Math.max(0, MIN_GUESTS_FOR_BASE_PRICE - bookedCount - guestCount),
+    };
+  }, [selectedActivitySlot, selectedActivity, dbTrips, guestCount]);
+
+  // Single ticket pricing - everyone pays the base rate
+  const ticketPrice = getSingleTicketPrice(); // $80
+  const totalPrice = ticketPrice * guestCount;
   const finalPrice = promoApplied
-    ? basePrice - (basePrice * (promoApplied.discount / basePrice))
-    : basePrice;
+    ? totalPrice - (totalPrice * promoApplied.discount) / 100
+    : totalPrice;
+  const actualDiscount = totalPrice - finalPrice;
 
-  // Calculate actual discount
-  const actualDiscount = promoApplied ? basePrice - finalPrice : 0;
+  // Get friend invite info (safe even if activity is null)
+  const inviteInfo = useMemo(() => {
+    if (!selectedActivity || !selectedActivitySlot) return null;
+    return getFriendInviteInfo(
+      tripInfo?.bookedCount ?? 0,
+      selectedActivity.maxGuests,
+      selectedActivity.title,
+      selectedActivitySlot.dateLabel,
+      selectedActivitySlot.startTime
+    );
+  }, [selectedActivity, selectedActivitySlot, tripInfo?.bookedCount]);
 
-  // Email validation
-  const validateEmail = (email: string) => {
+  // Validation functions
+  const validateEmail = useCallback((emailStr: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+    return emailRegex.test(emailStr);
+  }, []);
 
-  // Validate form
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     const newErrors: { name?: string; email?: string } = {};
-
-    if (!name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-
-    if (!email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!validateEmail(email)) {
-      newErrors.email = 'Please enter a valid email';
-    }
-
+    if (!name.trim()) newErrors.name = 'Name is required';
+    if (!email.trim()) newErrors.email = 'Email is required';
+    else if (!validateEmail(email)) newErrors.email = 'Please enter a valid email';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [name, email, validateEmail]);
 
-  const handleBlur = (field: 'name' | 'email') => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-
-    if (field === 'name' && !name.trim()) {
-      setErrors(prev => ({ ...prev, name: 'Name is required' }));
-    } else if (field === 'name') {
-      setErrors(prev => ({ ...prev, name: undefined }));
+  const handleBlur = useCallback((field: 'name' | 'email') => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    if (field === 'name') {
+      setErrors((prev) => ({ ...prev, name: !name.trim() ? 'Name is required' : undefined }));
     }
-
     if (field === 'email') {
-      if (!email.trim()) {
-        setErrors(prev => ({ ...prev, email: 'Email is required' }));
-      } else if (!validateEmail(email)) {
-        setErrors(prev => ({ ...prev, email: 'Please enter a valid email' }));
-      } else {
-        setErrors(prev => ({ ...prev, email: undefined }));
-      }
+      if (!email.trim()) setErrors((prev) => ({ ...prev, email: 'Email is required' }));
+      else if (!validateEmail(email)) setErrors((prev) => ({ ...prev, email: 'Please enter a valid email' }));
+      else setErrors((prev) => ({ ...prev, email: undefined }));
     }
-  };
+  }, [name, email, validateEmail]);
 
-  const handleApplyPromo = () => {
-    const result = applyPromoCode(promoCode, basePrice);
+  const handleApplyPromo = useCallback(() => {
+    const result = applyPromoCode(promoCode, totalPrice);
     if (result) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setPromoApplied({ discount: result.discount, label: result.label });
@@ -110,52 +137,177 @@ export default function ActivityCheckoutScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Invalid Code', 'This promo code is not valid. Try CREW25 for a crew discount!');
     }
-  };
+  }, [promoCode, totalPrice]);
 
-  const handleApplePay = async () => {
+  // Initialize Stripe Payment Sheet
+  const initPayment = useCallback(async () => {
+    if (!selectedActivity || !selectedActivitySlot) return false;
+    
     if (!validateForm()) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setTouched({ name: true, email: true });
-      return;
+      return false;
     }
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setPaymentStep('initializing');
     setShowPaymentModal(true);
-    setPaymentStep('faceid');
 
-    try {
-      // Simulate Face ID
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setPaymentStep('processing');
+    const success = await initializePaymentSheet({
+      tripId: selectedActivitySlot.id,
+      amount: dollarsToCents(finalPrice),
+      currency: 'usd',
+      customerEmail: email,
+      customerName: name,
+      description: `${selectedActivity.title} - ${selectedActivitySlot.dateLabel} at ${selectedActivitySlot.startTime}`,
+      metadata: {
+        activityId: selectedActivity.id,
+        tripDate: selectedActivitySlot.date,
+        tripTime: selectedActivitySlot.startTime,
+        guestCount: guestCount.toString(),
+      },
+    });
 
-      // Simulate processing
-      await new Promise(resolve => setTimeout(resolve, 1500));
+    if (success) {
+      setPaymentStep('ready');
+      return true;
+    } else {
+      setPaymentStep('error');
+      return false;
+    }
+  }, [selectedActivity, selectedActivitySlot, email, name, finalPrice, guestCount, initializePaymentSheet, validateForm]);
 
-      // Create booking
-      await addActivityBooking(
-        selectedActivity,
-        selectedActivitySlot,
-        guestCount,
-        { name, email, whatsapp }
-      );
+  // Handle payment
+  const handlePayment = useCallback(async () => {
+    if (!selectedActivity || !selectedActivitySlot) return;
+    
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
+    // Initialize payment if not already done
+    if (paymentStep !== 'ready') {
+      const initialized = await initPayment();
+      if (!initialized) return;
+    }
+
+    setPaymentStep('processing');
+
+    const result = await presentPaymentSheet();
+
+    if (result.success) {
       setPaymentStep('success');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-      // Wait for success animation
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Create booking record
+      await addActivityBooking(selectedActivity, selectedActivitySlot, guestCount, {
+        name,
+        email,
+        whatsapp,
+      });
 
-      setShowPaymentModal(false);
-      router.replace('/screens/activity-success');
-    } catch (error) {
-      setShowPaymentModal(false);
+      // Show success for a moment then navigate
+      setTimeout(() => {
+        setShowPaymentModal(false);
+        router.replace('/screens/activity-success');
+      }, 1500);
+    } else {
+      setPaymentStep('error');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('Booking Failed', 'Something went wrong. Please try again.');
+      
+      if (result.error !== 'Payment cancelled') {
+        Alert.alert('Payment Failed', result.error || 'Something went wrong. Please try again.');
+      }
+      
+      setTimeout(() => {
+        setShowPaymentModal(false);
+        setPaymentStep('idle');
+      }, 500);
     }
-  };
+  }, [selectedActivity, selectedActivitySlot, paymentStep, initPayment, presentPaymentSheet, addActivityBooking, guestCount, name, email, whatsapp]);
+
+  // Generate shareable link for friends
+  const generateShareLink = useCallback(async () => {
+    if (!selectedActivity || !selectedActivitySlot) return;
+    
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    try {
+      const response = await fetch('/api/payment-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tripId: selectedActivitySlot.id,
+          tripDate: selectedActivitySlot.dateLabel,
+          tripTime: selectedActivitySlot.startTime,
+          activityTitle: selectedActivity.title,
+          priceInCents: dollarsToCents(ticketPrice),
+          inviterName: name || 'A friend',
+        }),
+      });
+
+      if (response.ok) {
+        const { paymentLinkUrl } = await response.json();
+        setShareableLink(paymentLinkUrl);
+        setShowInviteSection(true);
+      } else {
+        // Fallback to app deep link
+        const fallbackLink = `foiltribe://join?trip=${selectedActivitySlot.id}&price=${ticketPrice}`;
+        setShareableLink(fallbackLink);
+        setShowInviteSection(true);
+      }
+    } catch {
+      // Fallback link
+      const fallbackLink = `https://foiltribe.com/join?trip=${selectedActivitySlot.id}&price=${ticketPrice}`;
+      setShareableLink(fallbackLink);
+      setShowInviteSection(true);
+    }
+  }, [selectedActivity, selectedActivitySlot, ticketPrice, name]);
+
+  // Share with friends
+  const handleShare = useCallback(async () => {
+    if (!selectedActivity || !inviteInfo) return;
+    
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
+    const message = inviteInfo.shareMessage + (shareableLink ? `\n\nBook here: ${shareableLink}` : '');
+    
+    try {
+      await Share.share({
+        message,
+        title: `Join me on ${selectedActivity.title}!`,
+      });
+    } catch {
+      // Share cancelled or failed
+    }
+  }, [selectedActivity, inviteInfo, shareableLink]);
+
+  // Copy link
+  const handleCopyLink = useCallback(async () => {
+    if (shareableLink) {
+      await Clipboard.setStringAsync(shareableLink);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert('Copied!', 'Payment link copied to clipboard');
+    }
+  }, [shareableLink]);
 
   const isFormValid = name.trim().length > 0 && email.trim().length > 0;
+
+  // Early return if no selection - redirect back to activities
+  if (!selectedActivity || !selectedActivitySlot) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background px-6">
+        <Icon name="AlertCircle" size={48} color={colors.textMuted} />
+        <ThemedText className="mt-4 text-lg font-semibold">Booking Session Expired</ThemedText>
+        <ThemedText className="mt-2 text-center" style={{ color: colors.textMuted }}>
+          Your booking session has expired or was not properly initialized. Please select an activity again.
+        </ThemedText>
+        <Button 
+          title="Browse Activities" 
+          onPress={() => router.replace('/(drawer)/(tabs)/activities')} 
+          className="mt-6"
+          iconStart="ArrowLeft"
+        />
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-background">
@@ -190,9 +342,9 @@ export default function ActivityCheckoutScreen() {
                 </View>
                 <View className="px-4 pb-4 flex-row items-center justify-between">
                   <View className="flex-row items-center">
-                    <Icon name="Users" size={16} color={colors.placeholder} />
+                    <Icon name="User" size={16} color={colors.placeholder} />
                     <ThemedText className="ml-2 opacity-60">
-                      {guestCount} guest{guestCount !== 1 ? 's' : ''}
+                      {guestCount} ticket{guestCount !== 1 ? 's' : ''}
                     </ThemedText>
                   </View>
                   <View className="flex-row items-center">
@@ -200,6 +352,43 @@ export default function ActivityCheckoutScreen() {
                     <ThemedText className="ml-2 opacity-60">{selectedActivity.durationMin} min</ThemedText>
                   </View>
                 </View>
+              </View>
+            </AnimatedView>
+          </View>
+
+          {/* Pricing Notice - Single Ticket Model */}
+          <View className="mt-6">
+            <AnimatedView animation="scaleIn" delay={50}>
+              <View
+                className="bg-secondary rounded-2xl p-4"
+                style={[shadowPresets.card, { borderWidth: 1, borderColor: colors.highlight + '30' }]}
+              >
+                <View className="flex-row items-center mb-3">
+                  <Icon name="Ticket" size={20} color={colors.highlight} />
+                  <ThemedText className="font-bold text-lg ml-2">Your Ticket</ThemedText>
+                </View>
+
+                <View className="flex-row items-baseline">
+                  <ThemedText className="text-3xl font-bold" style={{ color: colors.highlight }}>
+                    ${ticketPrice}
+                  </ThemedText>
+                  <ThemedText className="ml-2 opacity-60">/person</ThemedText>
+                </View>
+
+                <ThemedText className="mt-2 text-sm" style={{ color: colors.textMuted }}>
+                  You pay for your ticket only. Invite friends to join - they'll pay for their own tickets.
+                </ThemedText>
+
+                {tripInfo && tripInfo.needsMorePeople && (
+                  <View className="mt-4 p-3 rounded-xl" style={{ backgroundColor: colors.highlight + '10' }}>
+                    <View className="flex-row items-center">
+                      <Icon name="Users" size={16} color={colors.highlight} />
+                      <ThemedText className="ml-2 text-sm" style={{ color: colors.highlight }}>
+                        {tripInfo.friendsNeeded} more {tripInfo.friendsNeeded === 1 ? 'person' : 'people'} needed to fill the group
+                      </ThemedText>
+                    </View>
+                  </View>
+                )}
               </View>
             </AnimatedView>
           </View>
@@ -215,9 +404,7 @@ export default function ActivityCheckoutScreen() {
                 value={name}
                 onChangeText={(text) => {
                   setName(text);
-                  if (touched.name && text.trim()) {
-                    setErrors(prev => ({ ...prev, name: undefined }));
-                  }
+                  if (touched.name && text.trim()) setErrors((prev) => ({ ...prev, name: undefined }));
                 }}
                 onBlur={() => handleBlur('name')}
                 icon="User"
@@ -230,9 +417,7 @@ export default function ActivityCheckoutScreen() {
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
-                  if (touched.email && validateEmail(text)) {
-                    setErrors(prev => ({ ...prev, email: undefined }));
-                  }
+                  if (touched.email && validateEmail(text)) setErrors((prev) => ({ ...prev, email: undefined }));
                 }}
                 onBlur={() => handleBlur('email')}
                 icon="Mail"
@@ -288,15 +473,77 @@ export default function ActivityCheckoutScreen() {
             )}
           </View>
 
+          {/* Invite Friends Section */}
+          {tripInfo && tripInfo.needsMorePeople && (
+            <View className="mt-6">
+              <AnimatedView animation="scaleIn" delay={100}>
+                <View className="bg-secondary rounded-2xl overflow-hidden" style={shadowPresets.card}>
+                  <View className="p-4">
+                    <View className="flex-row items-center mb-3">
+                      <Icon name="Share2" size={20} color={colors.highlight} />
+                      <ThemedText className="font-bold text-lg ml-2">Invite Friends</ThemedText>
+                    </View>
+
+                    <ThemedText className="mb-4" style={{ color: colors.textMuted }}>
+                      Share a payment link with friends so they can book their own tickets and join your trip.
+                    </ThemedText>
+
+                    {!showInviteSection ? (
+                      <Button
+                        title="Generate Invite Link"
+                        iconStart="Link"
+                        variant="outline"
+                        onPress={generateShareLink}
+                      />
+                    ) : (
+                      <View className="gap-3">
+                        {shareableLink && (
+                          <View
+                            className="bg-background rounded-xl p-3 flex-row items-center"
+                            style={{ borderWidth: 1, borderColor: colors.border }}
+                          >
+                            <ThemedText className="flex-1 text-sm" numberOfLines={1}>
+                              {shareableLink}
+                            </ThemedText>
+                            <Pressable onPress={handleCopyLink} className="ml-2 p-2">
+                              <Icon name="Copy" size={18} color={colors.highlight} />
+                            </Pressable>
+                          </View>
+                        )}
+
+                        <View className="flex-row gap-3">
+                          <Button
+                            title="Share"
+                            iconStart="Share"
+                            variant="primary"
+                            onPress={handleShare}
+                            className="flex-1"
+                          />
+                          <Button
+                            title="Copy"
+                            iconStart="Copy"
+                            variant="outline"
+                            onPress={handleCopyLink}
+                            className="flex-1"
+                          />
+                        </View>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              </AnimatedView>
+            </View>
+          )}
+
           {/* Price Summary */}
           <View className="mt-6">
             <ThemedText className="font-bold text-lg mb-3">Price Summary</ThemedText>
             <View className="bg-secondary rounded-xl p-4" style={shadowPresets.card}>
               <View className="flex-row justify-between mb-3">
                 <ThemedText className="opacity-60">
-                  {selectedActivity.title} × {guestCount}
+                  Ticket × {guestCount}
                 </ThemedText>
-                <ThemedText className="font-medium">${basePrice}</ThemedText>
+                <ThemedText className="font-medium">${totalPrice}</ThemedText>
               </View>
               {promoApplied && (
                 <View className="flex-row justify-between mb-3">
@@ -309,7 +556,7 @@ export default function ActivityCheckoutScreen() {
               <View className="flex-row justify-between pt-3 border-t border-border">
                 <ThemedText className="font-bold text-lg">Total</ThemedText>
                 <ThemedText className="font-bold text-2xl" style={{ color: colors.highlight }}>
-                  ${(basePrice - actualDiscount).toFixed(2)}
+                  ${finalPrice.toFixed(2)}
                 </ThemedText>
               </View>
             </View>
@@ -341,51 +588,40 @@ export default function ActivityCheckoutScreen() {
       >
         <View className="flex-row items-center justify-between mb-4">
           <ThemedText className="opacity-50">Total</ThemedText>
-          <ThemedText className="font-bold text-2xl">${(basePrice - actualDiscount).toFixed(2)}</ThemedText>
+          <ThemedText className="font-bold text-2xl">${finalPrice.toFixed(2)}</ThemedText>
         </View>
 
-        {/* Apple Pay Button */}
-        <Pressable
-          onPress={handleApplePay}
-          disabled={!isFormValid}
-          className="overflow-hidden rounded-2xl"
-          style={[shadowPresets.medium, { opacity: isFormValid ? 1 : 0.5 }]}
-        >
-          <Image
-            source={require('@/assets/img/apple-pay.png')}
-            style={{ width: '100%', height: 56 }}
-            resizeMode="contain"
-          />
-        </Pressable>
+        <Button
+          title={isProcessing ? 'Processing...' : `Pay $${finalPrice.toFixed(2)}`}
+          onPress={handlePayment}
+          disabled={!isFormValid || isProcessing}
+          iconStart={isProcessing ? undefined : 'CreditCard'}
+          loading={isProcessing}
+          size="large"
+          variant="cta"
+          rounded="full"
+        />
 
         <ThemedText className="text-center text-sm opacity-40 mt-3">
-          Demo mode - no real payment
+          Secure payment powered by Stripe
         </ThemedText>
       </View>
 
-      {/* Apple Pay Modal */}
+      {/* Payment Modal */}
       <Modal visible={showPaymentModal} transparent animationType="fade">
         <View className="flex-1 bg-black/70 items-center justify-center">
-          <View
-            className="bg-white rounded-3xl p-8 mx-8 items-center"
-            style={{ minWidth: 280 }}
-          >
-            {paymentStep === 'faceid' && (
+          <View className="bg-white rounded-3xl p-8 mx-8 items-center" style={{ minWidth: 280 }}>
+            {paymentStep === 'initializing' && (
               <>
-                <Icon name="ScanFace" size={64} color="#000" />
-                <ThemedText className="text-xl font-bold mt-4 text-black">Confirm with Face ID</ThemedText>
-                <ThemedText className="text-center opacity-60 mt-2 text-black">
-                  Double-click to pay ${(basePrice - actualDiscount).toFixed(2)}
-                </ThemedText>
+                <ActivityIndicator size="large" color="#000" />
+                <ThemedText className="text-xl font-bold mt-4 text-black">Preparing Payment...</ThemedText>
               </>
             )}
             {paymentStep === 'processing' && (
               <>
                 <ActivityIndicator size="large" color="#000" />
                 <ThemedText className="text-xl font-bold mt-4 text-black">Processing...</ThemedText>
-                <ThemedText className="text-center opacity-60 mt-2 text-black">
-                  Please wait
-                </ThemedText>
+                <ThemedText className="text-center opacity-60 mt-2 text-black">Please wait</ThemedText>
               </>
             )}
             {paymentStep === 'success' && (
@@ -399,6 +635,17 @@ export default function ActivityCheckoutScreen() {
                 </ThemedText>
               </>
             )}
+            {paymentStep === 'error' && (
+              <>
+                <View className="w-16 h-16 rounded-full bg-red-500 items-center justify-center">
+                  <Icon name="X" size={32} color="white" strokeWidth={3} />
+                </View>
+                <ThemedText className="text-xl font-bold mt-4 text-black">Payment Failed</ThemedText>
+                <ThemedText className="text-center opacity-60 mt-2 text-black">
+                  Please try again
+                </ThemedText>
+              </>
+            )}
           </View>
         </View>
       </Modal>
@@ -406,6 +653,7 @@ export default function ActivityCheckoutScreen() {
   );
 }
 
+// Form Input Component
 function FormInput({
   label,
   placeholder,
@@ -437,10 +685,7 @@ function FormInput({
       </ThemedText>
       <View
         className="bg-secondary rounded-xl px-4 py-3 flex-row items-center"
-        style={[
-          shadowPresets.small,
-          hasError && { borderWidth: 1, borderColor: '#EF4444' }
-        ]}
+        style={[shadowPresets.small, hasError && { borderWidth: 1, borderColor: '#EF4444' }]}
       >
         <Icon name={icon as any} size={20} color={hasError ? '#EF4444' : colors.placeholder} />
         <TextInput

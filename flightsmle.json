@@ -1,0 +1,1022 @@
+[
+    {
+    "route": "MLE-DXB",
+    "date": "2026-02-09",
+    "airline": "EK",
+    "flightNumber": "EK653",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T23:00:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-10T02:05:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-09",
+    "airline": "FZ",
+    "flightNumber": "FZ1570",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T23:30:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-10T02:50:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-09",
+    "airline": "EK",
+    "flightNumber": "EK2211",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T23:30:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-10T02:50:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-09",
+    "airline": "B4",
+    "flightNumber": "B490",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T23:55:00",
+    "arrivalAirport": "DWC",
+    "arrivalTime": "2026-02-10T03:30:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-09",
+    "airline": "Q4",
+    "flightNumber": "Q49806",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T23:55:00",
+    "arrivalAirport": "DWC",
+    "arrivalTime": "2026-02-10T03:30:00"
+  },
+  {
+    "route": "MLE-IST",
+    "date": "2026-02-09",
+    "airline": "TK",
+    "flightNumber": "TK735",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T21:55:00",
+    "arrivalAirport": "IST",
+    "arrivalTime": "2026-02-10T04:40:00"
+  },
+  {
+    "route": "MLE-KUL",
+    "date": "2026-02-09",
+    "airline": "MH",
+    "flightNumber": "MH484",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T12:00:00",
+    "arrivalAirport": "KUL",
+    "arrivalTime": "2026-02-09T19:45:00"
+  },
+  {
+    "route": "MLE-KUL",
+    "date": "2026-02-09",
+    "airline": "OD",
+    "flightNumber": "OD294",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T12:45:00",
+    "arrivalAirport": "KUL",
+    "arrivalTime": "2026-02-09T20:30:00"
+  },
+  {
+    "route": "MLE-KUL",
+    "date": "2026-02-09",
+    "airline": "MH",
+    "flightNumber": "MH486",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T23:40:00",
+    "arrivalAirport": "KUL",
+    "arrivalTime": "2026-02-10T07:25:00"
+  },
+  {
+    "route": "MLE-LON",
+    "date": "2026-02-09",
+    "airline": "VS",
+    "flightNumber": "VS385",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T13:25:00",
+    "arrivalAirport": "LHR",
+    "arrivalTime": "2026-02-09T19:40:00"
+  },
+  {
+    "route": "MLE-ROM",
+    "date": "2026-02-09",
+    "airline": "AZ",
+    "flightNumber": "AZ777",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T13:25:00",
+    "arrivalAirport": "FCO",
+    "arrivalTime": "2026-02-09T19:50:00"
+  },
+  {
+    "route": "MLE-RUH",
+    "date": "2026-02-09",
+    "airline": "SV",
+    "flightNumber": "SV839",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T15:25:00",
+    "arrivalAirport": "RUH",
+    "arrivalTime": "2026-02-09T18:40:00"
+  },
+  {
+    "route": "MLE-SIN",
+    "date": "2026-02-09",
+    "airline": "SQ",
+    "flightNumber": "SQ431",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T12:55:00",
+    "arrivalAirport": "SIN",
+    "arrivalTime": "2026-02-09T20:45:00"
+  },
+  {
+    "route": "MLE-SIN",
+    "date": "2026-02-09",
+    "airline": "SQ",
+    "flightNumber": "SQ437",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T23:30:00",
+    "arrivalAirport": "SIN",
+    "arrivalTime": "2026-02-10T07:15:00"
+  },
+  {
+    "route": "MLE-TRV",
+    "date": "2026-02-09",
+    "airline": "X1",
+    "flightNumber": "X15865",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T08:30:00",
+    "arrivalAirport": "TRV",
+    "arrivalTime": "2026-02-09T10:15:00"
+  },
+  {
+    "route": "MLE-VIE",
+    "date": "2026-02-09",
+    "airline": "OS",
+    "flightNumber": "OS22",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-09T10:25:00",
+    "arrivalAirport": "VIE",
+    "arrivalTime": "2026-02-09T16:10:00"
+  },
+  {
+    "route": "RUH-MLE",
+    "date": "2026-02-09",
+    "airline": "SV",
+    "flightNumber": "SV838",
+    "departureAirport": "RUH",
+    "departureTime": "2026-02-09T07:05:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-09T14:00:00"
+  },
+  {
+    "route": "SIN-MLE",
+    "date": "2026-02-09",
+    "airline": "SQ",
+    "flightNumber": "SQ432",
+    "departureAirport": "SIN",
+    "departureTime": "2026-02-09T10:05:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-09T11:40:00"
+  },
+  {
+    "route": "SIN-MLE",
+    "date": "2026-02-09",
+    "airline": "SQ",
+    "flightNumber": "SQ438",
+    "departureAirport": "SIN",
+    "departureTime": "2026-02-09T20:40:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-09T22:15:00"
+  },
+  {
+    "route": "TRV-MLE",
+    "date": "2026-02-09",
+    "airline": "X1",
+    "flightNumber": "X15866",
+    "departureAirport": "TRV",
+    "departureTime": "2026-02-09T11:15:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-09T12:00:00"
+  },
+  {
+    "route": "VIE-MLE",
+    "date": "2026-02-09",
+    "airline": "OS",
+    "flightNumber": "OS21",
+    "departureAirport": "VIE",
+    "departureTime": "2026-02-09T19:50:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T08:45:00"
+  },
+  {
+    "route": "ZRH-MLE",
+    "date": "2026-02-09",
+    "airline": "LX",
+    "flightNumber": "LX8066",
+    "departureAirport": "ZRH",
+    "departureTime": "2026-02-09T18:10:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T07:50:00"
+  },
+  {
+    "route": "AUH-MLE",
+    "date": "2026-02-10",
+    "airline": "EY",
+    "flightNumber": "EY372",
+    "departureAirport": "AUH",
+    "departureTime": "2026-02-10T02:05:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T07:25:00"
+  },
+  {
+    "route": "AUH-MLE",
+    "date": "2026-02-10",
+    "airline": "EY",
+    "flightNumber": "EY376",
+    "departureAirport": "AUH",
+    "departureTime": "2026-02-10T08:40:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T13:50:00"
+  },
+  {
+    "route": "AUH-MLE",
+    "date": "2026-02-10",
+    "airline": "EY",
+    "flightNumber": "EY378",
+    "departureAirport": "AUH",
+    "departureTime": "2026-02-10T23:55:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-11T05:05:00"
+  },
+  {
+    "route": "BAH-MLE",
+    "date": "2026-02-10",
+    "airline": "GF",
+    "flightNumber": "GF144",
+    "departureAirport": "BAH",
+    "departureTime": "2026-02-10T23:45:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-11T06:35:00"
+  },
+  {
+    "route": "CMB-MLE",
+    "date": "2026-02-10",
+    "airline": "A1",
+    "flightNumber": "A15193",
+    "departureAirport": "CMB",
+    "departureTime": "2026-02-10T06:35:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T07:30:00"
+  },
+  {
+    "route": "CMB-MLE",
+    "date": "2026-02-10",
+    "airline": "W2",
+    "flightNumber": "W21841",
+    "departureAirport": "CMB",
+    "departureTime": "2026-02-10T06:35:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T07:30:00"
+  },
+  {
+    "route": "CMB-MLE",
+    "date": "2026-02-10",
+    "airline": "UL",
+    "flightNumber": "UL101",
+    "departureAirport": "CMB",
+    "departureTime": "2026-02-10T07:20:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T08:15:00"
+  },
+  {
+    "route": "CMB-MLE",
+    "date": "2026-02-10",
+    "airline": "FZ",
+    "flightNumber": "FZ1026",
+    "departureAirport": "CMB",
+    "departureTime": "2026-02-10T11:15:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T12:15:00"
+  },
+  {
+    "route": "CMB-MLE",
+    "date": "2026-02-10",
+    "airline": "UL",
+    "flightNumber": "UL115",
+    "departureAirport": "CMB",
+    "departureTime": "2026-02-10T13:30:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T14:25:00"
+  },
+  {
+    "route": "CMB-MLE",
+    "date": "2026-02-10",
+    "airline": "A1",
+    "flightNumber": "A15195",
+    "departureAirport": "CMB",
+    "departureTime": "2026-02-10T14:40:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T15:35:00"
+  },
+  {
+    "route": "CMB-MLE",
+    "date": "2026-02-10",
+    "airline": "W2",
+    "flightNumber": "W21843",
+    "departureAirport": "CMB",
+    "departureTime": "2026-02-10T14:40:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T15:35:00"
+  },
+  {
+    "route": "CMB-MLE",
+    "date": "2026-02-10",
+    "airline": "X1",
+    "flightNumber": "X11203",
+    "departureAirport": "CMB",
+    "departureTime": "2026-02-10T14:40:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T15:35:00"
+  },
+  {
+    "route": "CMB-MLE",
+    "date": "2026-02-10",
+    "airline": "CZ",
+    "flightNumber": "CZ2393",
+    "departureAirport": "CMB",
+    "departureTime": "2026-02-10T16:40:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T17:45:00"
+  },
+  {
+    "route": "CMB-MLE",
+    "date": "2026-02-10",
+    "airline": "GF",
+    "flightNumber": "GF145",
+    "departureAirport": "CMB",
+    "departureTime": "2026-02-10T16:55:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T18:00:00"
+  },
+  {
+    "route": "CMB-MLE",
+    "date": "2026-02-10",
+    "airline": "UL",
+    "flightNumber": "UL103",
+    "departureAirport": "CMB",
+    "departureTime": "2026-02-10T18:50:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T19:45:00"
+  },
+  {
+    "route": "CMB-MLE",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK653",
+    "departureAirport": "CMB",
+    "departureTime": "2026-02-10T20:15:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T21:20:00"
+  },
+  {
+    "route": "DEL-MLE",
+    "date": "2026-02-10",
+    "airline": "AI",
+    "flightNumber": "AI2239",
+    "departureAirport": "DEL",
+    "departureTime": "2026-02-10T07:55:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T11:50:00"
+  },
+  {
+    "route": "DOH-MLE",
+    "date": "2026-02-10",
+    "airline": "QR",
+    "flightNumber": "QR676",
+    "departureAirport": "DOH",
+    "departureTime": "2026-02-10T01:10:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T07:50:00"
+  },
+  {
+    "route": "DOH-MLE",
+    "date": "2026-02-10",
+    "airline": "QR",
+    "flightNumber": "QR670",
+    "departureAirport": "DOH",
+    "departureTime": "2026-02-10T01:45:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T08:25:00"
+  },
+  {
+    "route": "DOH-MLE",
+    "date": "2026-02-10",
+    "airline": "QR",
+    "flightNumber": "QR674",
+    "departureAirport": "DOH",
+    "departureTime": "2026-02-10T08:10:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T14:50:00"
+  },
+  {
+    "route": "DXB-MLE",
+    "date": "2026-02-10",
+    "airline": "FZ",
+    "flightNumber": "FZ1207",
+    "departureAirport": "DXB",
+    "departureTime": "2026-02-10T01:30:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T06:45:00"
+  },
+  {
+    "route": "DXB-MLE",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK2248",
+    "departureAirport": "DXB",
+    "departureTime": "2026-02-10T01:30:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T06:45:00"
+  },
+  {
+    "route": "DXB-MLE",
+    "date": "2026-02-10",
+    "airline": "FZ",
+    "flightNumber": "FZ1025",
+    "departureAirport": "DXB",
+    "departureTime": "2026-02-10T02:00:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T07:15:00"
+  },
+  {
+    "route": "DXB-MLE",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK2454",
+    "departureAirport": "DXB",
+    "departureTime": "2026-02-10T02:00:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T07:15:00"
+  },
+  {
+    "route": "DXB-MLE",
+    "date": "2026-02-10",
+    "airline": "B4",
+    "flightNumber": "B491",
+    "departureAirport": "DWC",
+    "departureTime": "2026-02-10T02:10:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T07:40:00"
+  },
+  {
+    "route": "DXB-MLE",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK656",
+    "departureAirport": "DXB",
+    "departureTime": "2026-02-10T02:30:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T07:35:00"
+  },
+  {
+    "route": "DXB-MLE",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK658",
+    "departureAirport": "DXB",
+    "departureTime": "2026-02-10T04:20:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T09:25:00"
+  },
+  {
+    "route": "DXB-MLE",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK652",
+    "departureAirport": "DXB",
+    "departureTime": "2026-02-10T09:40:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T14:55:00"
+  },
+  {
+    "route": "DXB-MLE",
+    "date": "2026-02-10",
+    "airline": "FZ",
+    "flightNumber": "FZ1569",
+    "departureAirport": "DXB",
+    "departureTime": "2026-02-10T10:10:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T15:25:00"
+  },
+  {
+    "route": "DXB-MLE",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK2210",
+    "departureAirport": "DXB",
+    "departureTime": "2026-02-10T10:10:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T15:25:00"
+  },
+  {
+    "route": "DXB-MLE",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK660",
+    "departureAirport": "DXB",
+    "departureTime": "2026-02-10T10:15:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T15:30:00"
+  },
+  {
+    "route": "FRA-MLE",
+    "date": "2026-02-10",
+    "airline": "LH",
+    "flightNumber": "LH4312",
+    "departureAirport": "FRA",
+    "departureTime": "2026-02-10T19:10:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-11T09:00:00"
+  },
+  {
+    "route": "FRA-MLE",
+    "date": "2026-02-10",
+    "airline": "DE",
+    "flightNumber": "DE2320",
+    "departureAirport": "FRA",
+    "departureTime": "2026-02-10T19:40:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-11T10:00:00"
+  },
+  {
+    "route": "IST-MLE",
+    "date": "2026-02-10",
+    "airline": "TK",
+    "flightNumber": "TK734",
+    "departureAirport": "IST",
+    "departureTime": "2026-02-10T02:35:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T12:35:00"
+  },
+  {
+    "route": "KUL-MLE",
+    "date": "2026-02-10",
+    "airline": "MH",
+    "flightNumber": "MH485",
+    "departureAirport": "KUL",
+    "departureTime": "2026-02-10T09:40:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T11:00:00"
+  },
+  {
+    "route": "KUL-MLE",
+    "date": "2026-02-10",
+    "airline": "OD",
+    "flightNumber": "OD295",
+    "departureAirport": "KUL",
+    "departureTime": "2026-02-10T21:00:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T22:15:00"
+  },
+  {
+    "route": "LON-MLE",
+    "date": "2026-02-10",
+    "airline": "VS",
+    "flightNumber": "VS384",
+    "departureAirport": "LHR",
+    "departureTime": "2026-02-10T19:50:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-11T11:15:00"
+  },
+  {
+    "route": "MLE-AUH",
+    "date": "2026-02-10",
+    "airline": "EY",
+    "flightNumber": "EY373",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T09:10:00",
+    "arrivalAirport": "AUH",
+    "arrivalTime": "2026-02-10T12:35:00"
+  },
+  {
+    "route": "MLE-AUH",
+    "date": "2026-02-10",
+    "airline": "EY",
+    "flightNumber": "EY379",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T09:35:00",
+    "arrivalAirport": "AUH",
+    "arrivalTime": "2026-02-10T12:45:00"
+  },
+  {
+    "route": "MLE-AUH",
+    "date": "2026-02-10",
+    "airline": "EY",
+    "flightNumber": "EY377",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T19:15:00",
+    "arrivalAirport": "AUH",
+    "arrivalTime": "2026-02-10T22:25:00"
+  },
+  {
+    "route": "MLE-BAH",
+    "date": "2026-02-10",
+    "airline": "GF",
+    "flightNumber": "GF145",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T19:00:00",
+    "arrivalAirport": "BAH",
+    "arrivalTime": "2026-02-10T22:10:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "GF",
+    "flightNumber": "GF144",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T07:35:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T09:45:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "FZ",
+    "flightNumber": "FZ1025",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T08:15:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T10:15:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "A1",
+    "flightNumber": "A15194",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T08:30:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T10:25:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "X1",
+    "flightNumber": "X11202",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T08:30:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T10:25:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "W2",
+    "flightNumber": "W21842",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T08:30:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T10:25:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "UL",
+    "flightNumber": "UL102",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T09:25:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T11:20:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "UL",
+    "flightNumber": "UL116",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T15:35:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T17:30:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK652",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T16:25:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T18:25:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "A1",
+    "flightNumber": "A15196",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T16:35:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T18:30:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "X1",
+    "flightNumber": "X11201",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T16:35:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T18:30:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "W2",
+    "flightNumber": "W21844",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T16:35:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T18:30:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "CZ",
+    "flightNumber": "CZ2394",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T18:50:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T21:00:00"
+  },
+  {
+    "route": "MLE-CMB",
+    "date": "2026-02-10",
+    "airline": "UL",
+    "flightNumber": "UL104",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T20:55:00",
+    "arrivalAirport": "CMB",
+    "arrivalTime": "2026-02-10T22:50:00"
+  },
+  {
+    "route": "MLE-DEL",
+    "date": "2026-02-10",
+    "airline": "AI",
+    "flightNumber": "AI2240",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T12:50:00",
+    "arrivalAirport": "DEL",
+    "arrivalTime": "2026-02-10T17:20:00"
+  },
+  {
+    "route": "MLE-DOH",
+    "date": "2026-02-10",
+    "airline": "QR",
+    "flightNumber": "QR677",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T09:40:00",
+    "arrivalAirport": "DOH",
+    "arrivalTime": "2026-02-10T12:25:00"
+  },
+  {
+    "route": "MLE-DOH",
+    "date": "2026-02-10",
+    "airline": "QR",
+    "flightNumber": "QR671",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T20:45:00",
+    "arrivalAirport": "DOH",
+    "arrivalTime": "2026-02-10T23:30:00"
+  },
+  {
+    "route": "MLE-DOH",
+    "date": "2026-02-10",
+    "airline": "QR",
+    "flightNumber": "QR675",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T21:05:00",
+    "arrivalAirport": "DOH",
+    "arrivalTime": "2026-02-10T23:50:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK657",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T09:05:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-10T12:20:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-10",
+    "airline": "FZ",
+    "flightNumber": "FZ1208",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T10:15:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-10T13:40:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK2249",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T10:15:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-10T13:40:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK659",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T10:55:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-10T14:05:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-10",
+    "airline": "FZ",
+    "flightNumber": "FZ1026",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T13:15:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-10T16:45:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK2455",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T13:15:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-10T16:45:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK661",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T18:20:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-10T21:30:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK653",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T23:00:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-11T02:05:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-10",
+    "airline": "FZ",
+    "flightNumber": "FZ1570",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T23:30:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-11T02:50:00"
+  },
+  {
+    "route": "MLE-DXB",
+    "date": "2026-02-10",
+    "airline": "EK",
+    "flightNumber": "EK2211",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T23:30:00",
+    "arrivalAirport": "DXB",
+    "arrivalTime": "2026-02-11T02:50:00"
+  },
+  {
+    "route": "MLE-FRA",
+    "date": "2026-02-10",
+    "airline": "DE",
+    "flightNumber": "DE2321",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T12:00:00",
+    "arrivalAirport": "FRA",
+    "arrivalTime": "2026-02-10T18:30:00"
+  },
+  {
+    "route": "MLE-IST",
+    "date": "2026-02-10",
+    "airline": "TK",
+    "flightNumber": "TK741",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T09:15:00",
+    "arrivalAirport": "IST",
+    "arrivalTime": "2026-02-10T15:45:00"
+  },
+  {
+    "route": "MLE-IST",
+    "date": "2026-02-10",
+    "airline": "TK",
+    "flightNumber": "TK735",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T21:55:00",
+    "arrivalAirport": "IST",
+    "arrivalTime": "2026-02-11T04:40:00"
+  },
+  {
+    "route": "MLE-KUL",
+    "date": "2026-02-10",
+    "airline": "MH",
+    "flightNumber": "MH484",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T12:00:00",
+    "arrivalAirport": "KUL",
+    "arrivalTime": "2026-02-10T19:45:00"
+  },
+  {
+    "route": "MLE-KUL",
+    "date": "2026-02-10",
+    "airline": "OD",
+    "flightNumber": "OD296",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T22:55:00",
+    "arrivalAirport": "KUL",
+    "arrivalTime": "2026-02-11T06:30:00"
+  },
+  {
+    "route": "MLE-LON",
+    "date": "2026-02-10",
+    "airline": "VS",
+    "flightNumber": "VS385",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T13:25:00",
+    "arrivalAirport": "LHR",
+    "arrivalTime": "2026-02-10T19:40:00"
+  },
+  {
+    "route": "MLE-SIN",
+    "date": "2026-02-10",
+    "airline": "SQ",
+    "flightNumber": "SQ431",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T12:55:00",
+    "arrivalAirport": "SIN",
+    "arrivalTime": "2026-02-10T20:45:00"
+  },
+  {
+    "route": "MLE-SIN",
+    "date": "2026-02-10",
+    "airline": "SQ",
+    "flightNumber": "SQ437",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T23:30:00",
+    "arrivalAirport": "SIN",
+    "arrivalTime": "2026-02-11T07:15:00"
+  },
+  {
+    "route": "MLE-VIE",
+    "date": "2026-02-10",
+    "airline": "OS",
+    "flightNumber": "OS22",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T10:25:00",
+    "arrivalAirport": "VIE",
+    "arrivalTime": "2026-02-10T16:10:00"
+  },
+  {
+    "route": "MLE-ZRH",
+    "date": "2026-02-10",
+    "airline": "LX",
+    "flightNumber": "LX8067",
+    "departureAirport": "MLE",
+    "departureTime": "2026-02-10T09:30:00",
+    "arrivalAirport": "ZRH",
+    "arrivalTime": "2026-02-10T16:15:00"
+  },
+  {
+    "route": "SIN-MLE",
+    "date": "2026-02-10",
+    "airline": "SQ",
+    "flightNumber": "SQ432",
+    "departureAirport": "SIN",
+    "departureTime": "2026-02-10T10:05:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T11:40:00"
+  },
+  {
+    "route": "SIN-MLE",
+    "date": "2026-02-10",
+    "airline": "SQ",
+    "flightNumber": "SQ438",
+    "departureAirport": "SIN",
+    "departureTime": "2026-02-10T20:40:00",
+    "arrivalAirport": "MLE",
+    "arrivalTime": "2026-02-10T22:15:00"
+  }
+]

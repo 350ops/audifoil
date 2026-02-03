@@ -1,19 +1,33 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { View, ScrollView, Pressable, FlatList } from 'react-native';
-import Header from '@/components/Header';
-import ThemedText from '@/components/ThemedText';
-import AnimatedView from '@/components/AnimatedView';
-import Icon from '@/components/Icon';
-import { Chip } from '@/components/Chip';
-import { CardScroller } from '@/components/CardScroller';
-import { Button } from '@/components/Button';
-import { shadowPresets } from '@/utils/useShadow';
-import useThemeColors from '@/contexts/ThemeColors';
-import { useStore } from '@/store/useStore';
-import { ActivitySlot } from '@/data/activities';
-import { router } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
+import { router } from 'expo-router';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import AnimatedView from '@/components/AnimatedView';
+import { Button } from '@/components/Button';
+import Header from '@/components/Header';
+import Icon from '@/components/Icon';
+import PriceTierIndicator, { PriceDropIndicator } from '@/components/PriceTierIndicator';
+import ThemedText from '@/components/ThemedText';
+import { TripCalendar } from '@/components/TripCalendar';
+import TripCard from '@/components/TripCard';
+import useThemeColors from '@/contexts/ThemeColors';
+import { ActivitySlot, formatDurationHours } from '@/data/activities';
+import { getCrewExperienceConstraint } from '@/data/flightsMle';
+import { getPriceTierInfo } from '@/data/pricing';
+import {
+  DbActivity,
+  fetchActivityBySlug,
+  fetchDatesWithTrips,
+  formatDateLabel,
+  FormattedTrip,
+  formatTripsForUI,
+  getNextNDays,
+  getOrCreateTripsForDate,
+} from '@/data/tripsDb';
+import { useStore } from '@/store/useStore';
+import { shadowPresets } from '@/utils/useShadow';
 
 export default function SelectTimeScreen() {
   const colors = useThemeColors();
@@ -25,17 +39,130 @@ export default function SelectTimeScreen() {
     setSelectedActivitySlot,
     guestCount,
     setGuestCount,
+    selectedCrewLayover,
   } = useStore();
-  const [selectedDate, setSelectedDate] = useState<string>('Today');
 
-  const handleSlotSelect = useCallback((slot: ActivitySlot) => {
-    if (slot.spotsRemaining > 0) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setSelectedActivitySlot(slot);
-    } else {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+  // Database state
+  const [dbActivity, setDbActivity] = useState<DbActivity | null>(null);
+  const [trips, setTrips] = useState<FormattedTrip[]>([]);
+  const [datesWithTrips, setDatesWithTrips] = useState<string[]>([]);
+  const [loadingTrips, setLoadingTrips] = useState(false);
+  const [loadingDates, setLoadingDates] = useState(false);
+  const [useDatabase, setUseDatabase] = useState(false);
+
+  // Selected date (YYYY-MM-DD format for database, label for legacy)
+  const crewDateStr =
+    selectedCrewLayover != null ? getCrewExperienceConstraint(selectedCrewLayover).dateStr : null;
+  const [selectedDateStr, setSelectedDateStr] = useState<string | null>(crewDateStr);
+
+  // For legacy mode (mock data)
+  const crewDateLabel =
+    selectedCrewLayover != null ? getCrewExperienceConstraint(selectedCrewLayover).dateLabel : null;
+  const [selectedDateLabel, setSelectedDateLabel] = useState<string>(crewDateLabel ?? 'Today');
+
+  // Calculate date range for calendar
+  const dateRange = useMemo(() => {
+    const dates = getNextNDays(90);
+    return { start: dates[0], end: dates[dates.length - 1] };
+  }, []);
+
+  // Try to load activity from database
+  useEffect(() => {
+    async function loadDbActivity() {
+      if (!selectedActivity) return;
+
+      // Map activity ID to slug
+      const slug = selectedActivity.id;
+      const activity = await fetchActivityBySlug(slug);
+
+      if (activity) {
+        setDbActivity(activity);
+        setUseDatabase(true);
+
+        // Load dates with trips
+        setLoadingDates(true);
+        const dates = await fetchDatesWithTrips(activity.id, dateRange.start, dateRange.end);
+        setDatesWithTrips(dates);
+        setLoadingDates(false);
+
+        // If crew has a date selected, load trips for that date
+        if (crewDateStr) {
+          setSelectedDateStr(crewDateStr);
+          loadTripsForDate(activity, crewDateStr);
+        }
+      } else {
+        // Fall back to mock data
+        setUseDatabase(false);
+      }
     }
-  }, [setSelectedActivitySlot]);
+
+    loadDbActivity();
+  }, [selectedActivity?.id]);
+
+  // Load trips when date changes (database mode)
+  const loadTripsForDate = useCallback(
+    async (activity: DbActivity, dateStr: string) => {
+      setLoadingTrips(true);
+      setSelectedActivitySlot(null);
+
+      const dbTrips = await getOrCreateTripsForDate(
+        activity.id,
+        activity.slug,
+        dateStr,
+        activity.duration_min,
+        activity.max_guests,
+        activity.is_sunset ?? false
+      );
+
+      const formatted = await formatTripsForUI(dbTrips, activity);
+      setTrips(formatted);
+      setLoadingTrips(false);
+    },
+    [setSelectedActivitySlot]
+  );
+
+  // Handle date selection from calendar
+  const handleDateSelect = useCallback(
+    (dateStr: string) => {
+      Haptics.selectionAsync();
+      setSelectedDateStr(dateStr);
+      setSelectedActivitySlot(null);
+
+      if (useDatabase && dbActivity) {
+        loadTripsForDate(dbActivity, dateStr);
+      }
+    },
+    [useDatabase, dbActivity, loadTripsForDate, setSelectedActivitySlot]
+  );
+
+  // Handle trip selection
+  const handleTripSelect = useCallback(
+    (trip: FormattedTrip | ActivitySlot) => {
+      if (trip.spotsRemaining > 0) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        // Convert FormattedTrip to ActivitySlot format if needed
+        const slot: ActivitySlot = {
+          id: trip.id,
+          activityId: 'activityId' in trip ? trip.activityId : (trip as ActivitySlot).activityId,
+          startTime: trip.startTime,
+          endTime: trip.endTime,
+          date: 'date' in trip ? trip.date : (trip as ActivitySlot).date,
+          dateLabel: 'dateLabel' in trip ? trip.dateLabel : (trip as ActivitySlot).dateLabel,
+          spotsRemaining: trip.spotsRemaining,
+          maxSpots: trip.maxSpots,
+          isPrivate: trip.isPrivate,
+          isSunset: trip.isSunset,
+          isPopular: trip.isPopular,
+          price: trip.price,
+          bookedBy: trip.bookedBy,
+        };
+        setSelectedActivitySlot(slot);
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      }
+    },
+    [setSelectedActivitySlot]
+  );
 
   const handleContinue = useCallback(() => {
     if (selectedActivitySlot) {
@@ -44,20 +171,23 @@ export default function SelectTimeScreen() {
     }
   }, [selectedActivitySlot]);
 
-  // Get unique dates
-  const dates = useMemo(() => {
-    const uniqueDates = [...new Set(activitySlots.map(s => s.dateLabel))];
-    return uniqueDates;
-  }, [activitySlots]);
+  // Legacy mode: Filter slots by selected date
+  const legacyFilteredSlots = useMemo(() => {
+    return activitySlots.filter((s) => s.dateLabel === selectedDateLabel);
+  }, [activitySlots, selectedDateLabel]);
 
-  // Filter slots by selected date
-  const filteredSlots = useMemo(() => {
-    return activitySlots.filter(s => s.dateLabel === selectedDate);
-  }, [activitySlots, selectedDate]);
+  // Sync legacy date selection
+  useEffect(() => {
+    if (!useDatabase && crewDateLabel && activitySlots.length > 0) {
+      const labels = [...new Set(activitySlots.map((s) => s.dateLabel))];
+      if (labels.includes(crewDateLabel)) setSelectedDateLabel(crewDateLabel);
+      else if (labels[0]) setSelectedDateLabel(labels[0]);
+    }
+  }, [crewDateLabel, activitySlots, selectedCrewLayover, useDatabase]);
 
   if (!selectedActivity) {
     return (
-      <View className="flex-1 bg-background items-center justify-center">
+      <View className="flex-1 items-center justify-center bg-background">
         <ThemedText>No activity selected</ThemedText>
         <Button title="Go Back" onPress={() => router.back()} className="mt-4" />
       </View>
@@ -67,38 +197,138 @@ export default function SelectTimeScreen() {
   const maxGuests = selectedActivity.maxGuests;
   const minGuests = selectedActivity.minGuests;
 
+  // Determine which trips to display
+  const displayTrips = useDatabase ? trips : legacyFilteredSlots;
+  const displayDateLabel = useDatabase
+    ? selectedDateStr
+      ? formatDateLabel(selectedDateStr)
+      : 'Select a date'
+    : selectedDateLabel;
+
   return (
     <View className="flex-1 bg-background">
-      <Header showBackButton title="Select Time" />
+      <Header showBackButton title="Select Date" />
 
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: insets.bottom + 180 }}
-      >
+        contentContainerStyle={{ paddingBottom: insets.bottom + 180 }}>
         {/* Activity Summary */}
         <View className="px-4 pt-4">
           <AnimatedView animation="scaleIn">
-            <View className="bg-secondary rounded-2xl p-4 flex-row items-center" style={shadowPresets.card}>
+            <View
+              className="flex-row items-center rounded-2xl bg-secondary p-4"
+              style={shadowPresets.card}>
               <View
-                className="w-14 h-14 rounded-xl items-center justify-center mr-4"
-                style={{ backgroundColor: colors.highlight + '15' }}
-              >
+                className="mr-4 h-14 w-14 items-center justify-center rounded-xl"
+                style={{ backgroundColor: colors.highlight + '15' }}>
                 <Icon name="Waves" size={28} color={colors.highlight} />
               </View>
               <View className="flex-1">
-                <ThemedText className="font-bold text-lg">{selectedActivity.title}</ThemedText>
-                <ThemedText className="opacity-50">{selectedActivity.durationMin} min · ${selectedActivity.priceFromUsd}/person</ThemedText>
+                <ThemedText className="text-lg font-bold" style={{ color: colors.text }}>
+                  {selectedActivity.title}
+                </ThemedText>
+                <ThemedText style={{ color: colors.textMuted }}>
+                  {formatDurationHours(selectedActivity.durationMin)} · $
+                  {selectedActivity.priceFromUsd}/person
+                </ThemedText>
               </View>
             </View>
           </AnimatedView>
         </View>
 
-        {/* Guest Count Selector */}
-        {maxGuests > 1 && (
-          <View className="px-4 mt-6">
-            <ThemedText className="text-lg font-bold mb-3">Number of Guests</ThemedText>
-            <View className="bg-secondary rounded-2xl p-4 flex-row items-center justify-between" style={shadowPresets.card}>
+        {/* Calendar Date Selector */}
+        <View className="mt-6 px-4">
+          <ThemedText className="mb-3 text-lg font-bold" style={{ color: colors.text }}>
+            Choose a Date
+          </ThemedText>
+          <TripCalendar
+            value={selectedDateStr}
+            onChange={handleDateSelect}
+            datesWithTrips={datesWithTrips}
+            loading={loadingDates}
+            minDate={dateRange.start}
+            maxDate={dateRange.end}
+          />
+        </View>
+
+        {/* Trips for Selected Date */}
+        {selectedDateStr && (
+          <View className="mt-6 px-4">
+            <View className="mb-3 flex-row items-center justify-between">
+              <ThemedText className="text-lg font-bold" style={{ color: colors.text }}>
+                Trips on {displayDateLabel}
+              </ThemedText>
+              <View className="flex-row items-center gap-3">
+                <View className="flex-row items-center">
+                  <Icon name="Users" size={14} color={colors.highlight} />
+                  <ThemedText className="ml-1 text-sm" style={{ color: colors.textMuted }}>
+                    Group
+                  </ThemedText>
+                </View>
+                <View className="flex-row items-center">
+                  <Icon name="Sunset" size={14} color="#F59E0B" />
+                  <ThemedText className="ml-1 text-sm" style={{ color: colors.textMuted }}>
+                    Sunset
+                  </ThemedText>
+                </View>
+              </View>
+            </View>
+
+            {loadingTrips ? (
+              <View className="items-center py-12">
+                <ActivityIndicator size="large" color={colors.highlight} />
+                <ThemedText className="mt-4" style={{ color: colors.textMuted }}>
+                  Loading available trips...
+                </ThemedText>
+              </View>
+            ) : (
+              <>
+                <View className="gap-3">
+                  {displayTrips.map((trip, index) => (
+                    <AnimatedView key={trip.id} animation="scaleIn" delay={index * 40}>
+                      {useDatabase && 'bookedCount' in trip ? (
+                        <TripCard
+                          trip={trip as FormattedTrip}
+                          isSelected={selectedActivitySlot?.id === trip.id}
+                          onPress={() => handleTripSelect(trip)}
+                        />
+                      ) : (
+                        <LegacyTripCard
+                          trip={trip}
+                          isSelected={selectedActivitySlot?.id === trip.id}
+                          onPress={() => handleTripSelect(trip)}
+                        />
+                      )}
+                    </AnimatedView>
+                  ))}
+                </View>
+
+                {displayTrips.length === 0 && (
+                  <View className="items-center py-12">
+                    <Icon name="Calendar" size={48} color={colors.placeholder} />
+                    <ThemedText className="mt-4 text-lg font-semibold">
+                      No trips available
+                    </ThemedText>
+                    <ThemedText className="mt-1 text-center opacity-50">
+                      Try selecting a different date
+                    </ThemedText>
+                  </View>
+                )}
+              </>
+            )}
+          </View>
+        )}
+
+        {/* Guest Count Selector - After selecting trip */}
+        {selectedActivitySlot && maxGuests > 1 && (
+          <View className="mt-6 px-4">
+            <ThemedText className="mb-3 text-lg font-bold" style={{ color: colors.text }}>
+              Number of Guests
+            </ThemedText>
+            <View
+              className="flex-row items-center justify-between rounded-2xl bg-secondary p-4"
+              style={shadowPresets.card}>
               <View className="flex-row items-center">
                 <Icon name="Users" size={20} color={colors.highlight} />
                 <ThemedText className="ml-3">
@@ -113,12 +343,18 @@ export default function SelectTimeScreen() {
                       setGuestCount(guestCount - 1);
                     }
                   }}
-                  className="w-10 h-10 rounded-full items-center justify-center"
-                  style={{ backgroundColor: guestCount > minGuests ? colors.highlight + '15' : colors.border }}
-                >
-                  <Icon name="Minus" size={20} color={guestCount > minGuests ? colors.highlight : colors.placeholder} />
+                  className="h-10 w-10 items-center justify-center rounded-full"
+                  style={{
+                    backgroundColor:
+                      guestCount > minGuests ? colors.highlight + '15' : colors.border,
+                  }}>
+                  <Icon
+                    name="Minus"
+                    size={20}
+                    color={guestCount > minGuests ? colors.highlight : colors.placeholder}
+                  />
                 </Pressable>
-                <ThemedText className="font-bold text-xl mx-4">{guestCount}</ThemedText>
+                <ThemedText className="mx-4 text-xl font-bold">{guestCount}</ThemedText>
                 <Pressable
                   onPress={() => {
                     if (guestCount < maxGuests) {
@@ -126,83 +362,57 @@ export default function SelectTimeScreen() {
                       setGuestCount(guestCount + 1);
                     }
                   }}
-                  className="w-10 h-10 rounded-full items-center justify-center"
-                  style={{ backgroundColor: guestCount < maxGuests ? colors.highlight + '15' : colors.border }}
-                >
-                  <Icon name="Plus" size={20} color={guestCount < maxGuests ? colors.highlight : colors.placeholder} />
+                  className="h-10 w-10 items-center justify-center rounded-full"
+                  style={{
+                    backgroundColor:
+                      guestCount < maxGuests ? colors.highlight + '15' : colors.border,
+                  }}>
+                  <Icon
+                    name="Plus"
+                    size={20}
+                    color={guestCount < maxGuests ? colors.highlight : colors.placeholder}
+                  />
                 </Pressable>
               </View>
             </View>
           </View>
         )}
 
-        {/* Date Selector */}
-        <View className="mt-6">
-          <View className="px-4 mb-3">
-            <ThemedText className="text-lg font-bold">Select Date</ThemedText>
+        {/* Dynamic Pricing Info */}
+        {useDatabase && (
+          <View className="mt-6 px-4">
+            <ThemedText className="mb-3 text-lg font-bold" style={{ color: colors.text }}>
+              Group Pricing
+            </ThemedText>
+            <PriceTierIndicator currentGuests={0} newGuests={1} />
           </View>
-          <CardScroller space={10}>
-            {dates.map(date => (
-              <Chip
-                key={date}
-                label={date}
-                isSelected={selectedDate === date}
-                onPress={() => {
-                  Haptics.selectionAsync();
-                  setSelectedDate(date);
-                }}
-              />
-            ))}
-          </CardScroller>
-        </View>
-
-        {/* Time Slots Grid */}
-        <View className="px-4 mt-6">
-          <View className="flex-row items-center justify-between mb-3">
-            <ThemedText className="text-lg font-bold">Available Times</ThemedText>
-            <View className="flex-row items-center">
-              <Icon name="Sunset" size={14} color="#F59E0B" />
-              <ThemedText className="text-sm opacity-50 ml-1">Sunset slot</ThemedText>
-            </View>
-          </View>
-
-          <View className="gap-3">
-            {filteredSlots.map((slot, index) => (
-              <AnimatedView key={slot.id} animation="scaleIn" delay={index * 40}>
-                <SlotCard
-                  slot={slot}
-                  isSelected={selectedActivitySlot?.id === slot.id}
-                  onPress={() => handleSlotSelect(slot)}
-                />
-              </AnimatedView>
-            ))}
-          </View>
-
-          {filteredSlots.length === 0 && (
-            <View className="items-center py-12">
-              <Icon name="Calendar" size={48} color={colors.placeholder} />
-              <ThemedText className="text-lg font-semibold mt-4">No slots available</ThemedText>
-              <ThemedText className="opacity-50 text-center mt-1">
-                Try selecting a different date
-              </ThemedText>
-            </View>
-          )}
-        </View>
+        )}
 
         {/* Legend */}
-        <View className="px-4 mt-6">
-          <View className="bg-secondary rounded-xl p-4 flex-row items-center justify-around" style={shadowPresets.small}>
+        <View className="mt-6 px-4">
+          <View
+            className="flex-row items-center justify-around rounded-xl bg-secondary p-4"
+            style={shadowPresets.small}>
             <View className="flex-row items-center">
-              <View className="w-3 h-3 rounded-full bg-green-500 mr-2" />
-              <ThemedText className="text-sm opacity-60">Available</ThemedText>
+              <Icon name="TrendingDown" size={12} color={colors.highlight} />
+              <ThemedText className="ml-1 text-sm" style={{ color: colors.textMuted }}>
+                Price drops
+              </ThemedText>
             </View>
             <View className="flex-row items-center">
-              <View className="w-3 h-3 rounded-full bg-red-400 mr-2" />
-              <ThemedText className="text-sm opacity-60">Full</ThemedText>
+              <View
+                className="mr-2 h-3 w-3 rounded-full"
+                style={{ backgroundColor: colors.highlight }}
+              />
+              <ThemedText className="text-sm" style={{ color: colors.textMuted }}>
+                Best rate
+              </ThemedText>
             </View>
             <View className="flex-row items-center">
-              <Icon name="Flame" size={12} color="#EF4444" />
-              <ThemedText className="text-sm opacity-60 ml-1">Popular</ThemedText>
+              <Icon name="Sunset" size={12} color="#F59E0B" />
+              <ThemedText className="ml-1 text-sm" style={{ color: colors.textMuted }}>
+                Sunset
+              </ThemedText>
             </View>
           </View>
         </View>
@@ -210,35 +420,67 @@ export default function SelectTimeScreen() {
 
       {/* Bottom CTA */}
       <View
-        className="absolute bottom-0 left-0 right-0 bg-background border-t border-border px-4 pt-4"
-        style={[shadowPresets.large, { paddingBottom: insets.bottom + 16 }]}
-      >
+        className="absolute bottom-0 left-0 right-0 border-t border-border bg-background px-4 pt-4"
+        style={[shadowPresets.large, { paddingBottom: insets.bottom + 16 }]}>
         {selectedActivitySlot ? (
           <>
-            <View className="flex-row items-center justify-between mb-4">
-              <View>
-                <ThemedText className="text-sm opacity-50">Selected</ThemedText>
-                <ThemedText className="font-bold text-lg">
-                  {selectedActivitySlot.startTime} - {selectedActivitySlot.endTime}
-                </ThemedText>
-              </View>
-              <View className="items-end">
-                <ThemedText className="text-sm opacity-50">Total</ThemedText>
-                <ThemedText className="font-bold text-2xl" style={{ color: colors.highlight }}>
-                  ${selectedActivitySlot.price * guestCount}
-                </ThemedText>
-              </View>
-            </View>
-            <Button
-              title="Continue to Checkout"
-              onPress={handleContinue}
-              iconEnd="ArrowRight"
-              size="large"
-            />
+            {/* Dynamic pricing info */}
+            {(() => {
+              const selectedTrip = displayTrips.find((t) => t.id === selectedActivitySlot.id);
+              const bookedCount =
+                selectedTrip && 'bookedCount' in selectedTrip
+                  ? (selectedTrip as FormattedTrip).bookedCount
+                  : 0;
+              const tierInfo = getPriceTierInfo(bookedCount, guestCount);
+              const totalPrice = tierInfo.currentPrice * guestCount;
+
+              return (
+                <>
+                  <View className="mb-4 flex-row items-center justify-between">
+                    <View>
+                      <ThemedText className="text-sm" style={{ color: colors.textMuted }}>
+                        {selectedActivitySlot.startTime} - {selectedActivitySlot.endTime}
+                      </ThemedText>
+                      <View className="flex-row items-center gap-2">
+                        <ThemedText className="text-lg font-bold" style={{ color: colors.text }}>
+                          ${tierInfo.currentPrice}/person
+                        </ThemedText>
+                        {guestCount > 1 && (
+                          <ThemedText className="text-sm" style={{ color: colors.textMuted }}>
+                            × {guestCount}
+                          </ThemedText>
+                        )}
+                      </View>
+                      {!tierInfo.isAtBasePrice && (
+                        <PriceDropIndicator currentGuests={bookedCount} newGuests={guestCount} />
+                      )}
+                    </View>
+                    <View className="items-end">
+                      <ThemedText className="text-sm" style={{ color: colors.textMuted }}>
+                        Total
+                      </ThemedText>
+                      <ThemedText className="text-2xl font-bold" style={{ color: colors.highlight }}>
+                        ${totalPrice}
+                      </ThemedText>
+                    </View>
+                  </View>
+                  <Button
+                    title="Continue to Checkout"
+                    onPress={handleContinue}
+                    iconEnd="ArrowRight"
+                    size="large"
+                    variant="cta"
+                    rounded="full"
+                  />
+                </>
+              );
+            })()}
           </>
         ) : (
           <View className="items-center py-2">
-            <ThemedText className="opacity-50">Select a time slot to continue</ThemedText>
+            <ThemedText style={{ color: colors.textMuted }}>
+              {selectedDateStr ? 'Select a trip to continue' : 'Select a date to see trips'}
+            </ThemedText>
           </View>
         )}
       </View>
@@ -246,20 +488,24 @@ export default function SelectTimeScreen() {
   );
 }
 
-// Slot Card Component
-function SlotCard({ slot, isSelected, onPress }: {
-  slot: ActivitySlot;
+// Legacy Trip Card Component (for mock data fallback)
+function LegacyTripCard({
+  trip,
+  isSelected,
+  onPress,
+}: {
+  trip: FormattedTrip | ActivitySlot;
   isSelected: boolean;
   onPress: () => void;
 }) {
   const colors = useThemeColors();
-  const isAvailable = slot.spotsRemaining > 0;
+  const isAvailable = trip.spotsRemaining > 0;
 
   return (
     <Pressable
       onPress={onPress}
       disabled={!isAvailable}
-      className="rounded-2xl overflow-hidden"
+      className="overflow-hidden rounded-2xl"
       style={({ pressed }) => [
         shadowPresets.card,
         {
@@ -268,62 +514,58 @@ function SlotCard({ slot, isSelected, onPress }: {
           transform: [{ scale: pressed && isAvailable ? 0.97 : 1 }],
           borderWidth: isSelected ? 2 : 1,
           borderColor: isSelected ? colors.highlight : colors.border,
-        }
-      ]}
-    >
-      <View className="p-4 flex-row items-center">
+        },
+      ]}>
+      <View className="flex-row items-center p-4">
         {/* Left: Time Block */}
-        <View 
-          className="w-20 h-20 rounded-xl items-center justify-center mr-4"
-          style={{ backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : colors.highlight + '10' }}
-        >
+        <View
+          className="mr-4 h-20 w-20 items-center justify-center rounded-xl"
+          style={{
+            backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : colors.highlight + '10',
+          }}>
           <ThemedText
-            className="font-bold text-xl"
-            style={isSelected ? { color: 'white' } : { color: colors.highlight }}
-          >
-            {slot.startTime}
+            className="text-xl font-bold"
+            style={isSelected ? { color: 'white' } : { color: colors.highlight }}>
+            {trip.startTime}
           </ThemedText>
           <ThemedText
-            className="text-xs mt-0.5"
-            style={{ color: isSelected ? 'rgba(255,255,255,0.7)' : colors.placeholder }}
-          >
-            to {slot.endTime}
+            className="mt-0.5 text-xs"
+            style={{ color: isSelected ? 'rgba(255,255,255,0.7)' : colors.placeholder }}>
+            to {trip.endTime}
           </ThemedText>
         </View>
 
         {/* Middle: Details */}
         <View className="flex-1">
           {/* Crew joining badges */}
-          {slot.bookedBy.length > 0 ? (
-            <View className="flex-row flex-wrap gap-1.5 mb-2">
-              {slot.bookedBy.slice(0, 3).map((booking, i) => (
+          {trip.bookedBy.length > 0 ? (
+            <View className="mb-2 flex-row flex-wrap gap-1.5">
+              {trip.bookedBy.slice(0, 3).map((booking, i) => (
                 <View
                   key={i}
-                  className="px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : colors.highlight + '15' }}
-                >
+                  className="rounded-full px-2 py-0.5"
+                  style={{
+                    backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : colors.highlight + '15',
+                  }}>
                   <ThemedText
                     className="text-xs font-medium"
-                    style={isSelected ? { color: 'white' } : { color: colors.highlight }}
-                  >
+                    style={isSelected ? { color: 'white' } : { color: colors.highlight }}>
                     {booking.label}
                   </ThemedText>
                 </View>
               ))}
-              {slot.bookedBy.length > 3 && (
+              {trip.bookedBy.length > 3 && (
                 <ThemedText
                   className="text-xs"
-                  style={{ color: isSelected ? 'rgba(255,255,255,0.6)' : colors.placeholder }}
-                >
-                  +{slot.bookedBy.length - 3} more
+                  style={{ color: isSelected ? 'rgba(255,255,255,0.6)' : colors.placeholder }}>
+                  +{trip.bookedBy.length - 3} more
                 </ThemedText>
               )}
             </View>
           ) : (
             <ThemedText
-              className="text-sm mb-2"
-              style={{ color: isSelected ? 'rgba(255,255,255,0.6)' : colors.placeholder }}
-            >
+              className="mb-2 text-sm"
+              style={{ color: isSelected ? 'rgba(255,255,255,0.6)' : colors.placeholder }}>
               No crew yet - be the first!
             </ThemedText>
           )}
@@ -331,14 +573,13 @@ function SlotCard({ slot, isSelected, onPress }: {
           {/* Availability */}
           <View className="flex-row items-center">
             <View
-              className="w-2 h-2 rounded-full mr-1.5"
+              className="mr-1.5 h-2 w-2 rounded-full"
               style={{ backgroundColor: isAvailable ? '#22C55E' : '#EF4444' }}
             />
             <ThemedText
               className="text-sm"
-              style={{ color: isSelected ? 'rgba(255,255,255,0.8)' : colors.placeholder }}
-            >
-              {isAvailable ? `${slot.spotsRemaining} spots available` : 'Fully booked'}
+              style={{ color: isSelected ? 'rgba(255,255,255,0.8)' : colors.placeholder }}>
+              {isAvailable ? `${trip.spotsRemaining} spots available` : 'Fully booked'}
             </ThemedText>
           </View>
         </View>
@@ -346,17 +587,16 @@ function SlotCard({ slot, isSelected, onPress }: {
         {/* Right: Price + Icons */}
         <View className="items-end">
           <ThemedText
-            className="font-bold text-xl"
-            style={isSelected ? { color: 'white' } : { color: colors.highlight }}
-          >
-            ${slot.price}
+            className="text-xl font-bold"
+            style={isSelected ? { color: 'white' } : { color: colors.highlight }}>
+            ${trip.price}
           </ThemedText>
-          {(slot.isSunset || slot.isPopular) && (
-            <View className="flex-row items-center gap-1 mt-1">
-              {slot.isSunset && (
+          {(trip.isSunset || trip.isPopular) && (
+            <View className="mt-1 flex-row items-center gap-1">
+              {trip.isSunset && (
                 <Icon name="Sunset" size={16} color={isSelected ? 'white' : '#F59E0B'} />
               )}
-              {slot.isPopular && (
+              {trip.isPopular && (
                 <Icon name="Flame" size={16} color={isSelected ? 'white' : '#EF4444'} />
               )}
             </View>

@@ -25,6 +25,13 @@
           "icon": "./assets/icon.png",
           "color": "#0077B6"
         }
+      ],
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.mmdev13.foiltribeadventures",
+          "enableGooglePay": true
+        }
       ]
     ],
     "orientation": "portrait",
@@ -43,8 +50,10 @@
       "bundleIdentifier": "com.mmdev13.foiltribeadventures",
       "usesAppleSignIn": true,
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "Use the camera to scan payment cards."
+      },
+      "appleTeamId": "ANAZ4TXPX5"
     },
     "android": {
       "adaptiveIcon": {
