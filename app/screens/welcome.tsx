@@ -4,7 +4,7 @@ import ThemedText from '@/components/ThemedText';
 import { router } from 'expo-router';
 import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
+// LinearGradient removed - using solid black overlay
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
@@ -37,14 +37,6 @@ const GOOGLE_IOS_CLIENT_ID = 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com';
 
 const { width, height } = Dimensions.get('window');
 
-// Ocean-inspired gradient colors for animated background
-const oceanColors = [
-    '#0077B6', // Deep ocean blue
-    '#00A6F4', // Bright ocean blue
-    '#48CAE4', // Lagoon
-    '#90E0EF', // Light aqua
-    '#00B4D8', // Turquoise
-];
 
 export default function OnboardingScreen() {
     const { t } = useTranslation();
@@ -164,16 +156,12 @@ export default function OnboardingScreen() {
         <View className='flex-1'>
             {/* Background Image */}
             <ImageBackground
-                source={require('@/assets/img/efoil.jpg')}
+                source={require('@/assets/img/dolphin.jpg')}
                 className="flex-1"
                 resizeMode="cover"
             >
-                {/* Gradient Overlay */}
-                <LinearGradient
-                    colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.4)', 'rgba(0,0,0,0.95)']}
-                    locations={[0, 0.4, 0.85]}
-                    className="flex-1"
-                >
+                {/* Black Overlay */}
+                <View className="flex-1 bg-black/50">
                     {/* Logo at top */}
                     <View style={{ paddingTop: insets.top + 20 }} className="px-6 flex-row items-center">
                         <Animated.View style={waveAnimatedStyle}>
@@ -182,8 +170,8 @@ export default function OnboardingScreen() {
                         <Text className="text-white text-2xl font-bold ml-3">foilTribe Adventures</Text>
                     </View>
 
-                    {/* Main Content */}
-                    <View className="flex-1 justify-end px-6 pb-8">
+                    {/* Main Content - centered */}
+                    <View className="flex-1 justify-center px-6">
                         <Text className='text-5xl font-bold text-white w-full leading-tight'>
                             Experience the{'\n'}Maldives
                         </Text>
@@ -192,8 +180,8 @@ export default function OnboardingScreen() {
                         </Text>
                     </View>
 
-                    {/* Buttons */}
-                    <View style={{ paddingBottom: insets.bottom + 16 }} className="px-6">
+                    {/* Buttons at bottom */}
+                    <View style={{ paddingBottom: insets.bottom + 24 }} className="px-6">
                         {/* Main CTA */}
                         <Pressable
                             onPress={handleAppleSignIn}
@@ -264,7 +252,7 @@ export default function OnboardingScreen() {
                             </Pressable>
                         )}
                     </View>
-                </LinearGradient>
+                </View>
             </ImageBackground>
 
             {/* ActionSheet for Expo Go limitations */}
