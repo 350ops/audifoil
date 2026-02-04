@@ -115,13 +115,6 @@ function StripePaymentProviderInner({ children }: { children: React.ReactNode })
           email: params.customerEmail,
         },
         returnURL: 'foiltribe://stripe-redirect',
-        applePay: {
-          merchantCountryCode: 'US',
-        },
-        googlePay: {
-          merchantCountryCode: 'US',
-          testEnv: __DEV__,
-        },
       });
 
       if (error) {
@@ -239,7 +232,6 @@ export default function StripePaymentProvider({ children }: { children: React.Re
   return (
     <StripeProvider
       publishableKey={PUBLISHABLE_KEY}
-      merchantIdentifier="merchant.com.mmdev13.foiltribemv"
       urlScheme="foiltribe"
     >
       <StripePaymentProviderInner>{children}</StripePaymentProviderInner>

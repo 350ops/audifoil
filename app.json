@@ -29,7 +29,6 @@
       [
         "@stripe/stripe-react-native",
         {
-          "merchantIdentifier": "merchant.com.mmdev13.foiltribemv",
           "enableGooglePay": true
         }
       ]

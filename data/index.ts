@@ -5,7 +5,42 @@ export * from './flightsMle';
 export * from './slots';
 export * from './bookings';
 export * from './airlineLogos';
-export * from './tripsDb';
+// Re-export tripsDb with explicit names to avoid conflict with bookings.createBooking
+export {
+  // Types
+  type DbActivity,
+  type DbTrip,
+  type DbBooking,
+  type TripInsert,
+  type BookingInsert,
+  type BookingType,
+  type TripBookingStatus,
+  type TripWithActivity,
+  type BookingWithDetails,
+  type FormattedTrip,
+  // Activity functions
+  fetchActivities,
+  fetchActivityBySlug,
+  fetchActivityById,
+  // Trip functions
+  fetchTripsForDate,
+  fetchTripsForDateRange,
+  fetchDatesWithTrips,
+  createTrip,
+  getOrCreateTripsForDate,
+  // Booking functions (renamed to avoid conflict)
+  fetchBookingsForTrip,
+  fetchUserBookings,
+  createBooking as createDbBooking,
+  fetchBookingByCode,
+  // Formatting helpers
+  formatDateLabel,
+  formatTime,
+  formatTripsForUI,
+  // Utility functions
+  getNextNDays,
+  isDateInPast,
+} from './tripsDb';
 export * from './pricing';
 
 // Price constants
