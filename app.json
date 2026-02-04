@@ -29,7 +29,7 @@
       [
         "@stripe/stripe-react-native",
         {
-          "merchantIdentifier": "merchant.com.mmdev13.foiltribeadventures",
+          "merchantIdentifier": "merchant.com.mmdev13.foiltribemv",
           "enableGooglePay": true
         }
       ]
@@ -47,7 +47,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mmdev13.foiltribeadventures",
+      "bundleIdentifier": "com.mmdev13.foiltribemv",
       "usesAppleSignIn": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,

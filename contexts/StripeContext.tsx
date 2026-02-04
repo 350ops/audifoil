@@ -239,7 +239,7 @@ export default function StripePaymentProvider({ children }: { children: React.Re
   return (
     <StripeProvider
       publishableKey={PUBLISHABLE_KEY}
-      merchantIdentifier="merchant.com.mmdev13.foiltribeadventures"
+      merchantIdentifier="merchant.com.mmdev13.foiltribemv"
       urlScheme="foiltribe"
     >
       <StripePaymentProviderInner>{children}</StripePaymentProviderInner>

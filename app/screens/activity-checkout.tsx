@@ -85,7 +85,7 @@ export default function ActivityCheckoutScreen() {
   const ticketPrice = getSingleTicketPrice(); // $80
   const totalPrice = ticketPrice * guestCount;
   const finalPrice = promoApplied
-    ? totalPrice - (totalPrice * promoApplied.discount) / 100
+    ? totalPrice - promoApplied.discount
     : totalPrice;
   const actualDiscount = totalPrice - finalPrice;
 
