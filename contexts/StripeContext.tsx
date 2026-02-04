@@ -55,11 +55,26 @@ interface StripeContextType {
 
 const StripeContext = createContext<StripeContextType | null>(null);
 
+// Mock implementation for when Stripe is not available
+const mockStripeContext: StripeContextType = {
+  isReady: false,
+  isProcessing: false,
+  isMockMode: true,
+  initializePaymentSheet: async () => {
+    Alert.alert('Payment Unavailable', 'Payment system is not configured. Please contact support.');
+    return false;
+  },
+  presentPaymentSheet: async () => ({ success: false, error: 'Payment unavailable' }),
+  generateShareableLink: async () => 'https://foiltribe.com',
+};
+
 // Hook to use Stripe context
 export function useStripePayments() {
   const context = useContext(StripeContext);
+  // Return mock if context not available (prevents crash)
   if (!context) {
-    throw new Error('useStripePayments must be used within a StripePaymentProvider');
+    console.warn('[Stripe] Context not available, using mock');
+    return mockStripeContext;
   }
   return context;
 }
@@ -225,18 +240,33 @@ function StripePaymentProviderInner({ children }: { children: React.ReactNode })
 // Main provider that wraps children with StripeProvider
 export default function StripePaymentProvider({ children }: { children: React.ReactNode }) {
   if (!PUBLISHABLE_KEY) {
-    console.error('[Stripe] Missing EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY');
-    return <>{children}</>;
+    console.warn('[Stripe] Missing EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY - payments disabled');
+    // Still provide context with mock implementation
+    return (
+      <StripeContext.Provider value={mockStripeContext}>
+        {children}
+      </StripeContext.Provider>
+    );
   }
 
-  return (
-    <StripeProvider
-      publishableKey={PUBLISHABLE_KEY}
-      urlScheme="foiltribe"
-    >
-      <StripePaymentProviderInner>{children}</StripePaymentProviderInner>
-    </StripeProvider>
-  );
+  try {
+    return (
+      <StripeProvider
+        publishableKey={PUBLISHABLE_KEY}
+        urlScheme="foiltribe"
+      >
+        <StripePaymentProviderInner>{children}</StripePaymentProviderInner>
+      </StripeProvider>
+    );
+  } catch (error) {
+    console.error('[Stripe] Failed to initialize StripeProvider:', error);
+    // Fallback to mock if native module fails
+    return (
+      <StripeContext.Provider value={mockStripeContext}>
+        {children}
+      </StripeContext.Provider>
+    );
+  }
 }
 
 // Helper function to convert dollars to cents
