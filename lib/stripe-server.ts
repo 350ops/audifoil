@@ -8,7 +8,7 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   httpClient: Stripe.createFetchHttpClient(),
   apiVersion: '2024-06-20',
   appInfo: {
-    name: 'foilTribe Adventures',
+    name: 'foiltribe',
     version: '1.0.0',
   },
 });
@@ -22,7 +22,7 @@ export async function createCustomer(email?: string, name?: string): Promise<Str
     email,
     name,
     metadata: {
-      source: 'foilTribe Adventures App',
+      source: 'foiltribe App',
     },
   });
 }

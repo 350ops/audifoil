@@ -4,7 +4,6 @@ import { create } from 'zustand';
 import {
   Activity,
   ActivityBooking,
-  ActivityCategory,
   ActivitySlot,
   ACTIVITIES,
   generateActivitySlots,
@@ -25,7 +24,7 @@ import {
 } from '@/data/tripsDb';
 import { Booking, DemoUser, Flight, Slot } from '@/data/types';
 
-const ACTIVITY_BOOKINGS_KEY = 'foilTribe Adventures_activity_bookings';
+const ACTIVITY_BOOKINGS_KEY = 'foiltribe_activity_bookings';
 
 interface AppState {
   // Demo user
@@ -68,14 +67,6 @@ interface AppState {
   // Latest activity booking (for success screen)
   latestActivityBooking: ActivityBooking | null;
   setLatestActivityBooking: (booking: ActivityBooking | null) => void;
-
-  // Category filter
-  categoryFilter: ActivityCategory | 'ALL';
-  setCategoryFilter: (category: ActivityCategory | 'ALL') => void;
-
-  // Search query
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
 
   // Reset activity selection
   resetActivitySelection: () => void;
@@ -266,12 +257,6 @@ export const useStore = create<AppState>((set, get) => ({
 
   latestActivityBooking: null,
   setLatestActivityBooking: (booking) => set({ latestActivityBooking: booking }),
-
-  categoryFilter: 'ALL',
-  setCategoryFilter: (category) => set({ categoryFilter: category }),
-
-  searchQuery: '',
-  setSearchQuery: (query) => set({ searchQuery: query }),
 
   resetActivitySelection: () =>
     set({

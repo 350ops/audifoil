@@ -8,7 +8,7 @@ import { Button } from '@/components/Button';
 import { shadowPresets } from '@/utils/useShadow';
 import useThemeColors from '@/contexts/ThemeColors';
 import { useStore } from '@/store/useStore';
-import { ActivityBooking } from '@/data/activities';
+import { ActivityBooking, EFOIL_ADDON, MALDIVES_ADVENTURE_ID } from '@/data/activities';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -139,7 +139,7 @@ function BookingCard({ booking, onPress }: { booking: ActivityBooking; onPress: 
     >
       {/* Header with activity image */}
       <ImageBackground
-        source={{ uri: activity.media[0].uri }}
+        source={activity.media[0].localSource || { uri: activity.media[0].uri }}
         style={{ height: 120 }}
         resizeMode="cover"
       >
@@ -200,6 +200,31 @@ function BookingCard({ booking, onPress }: { booking: ActivityBooking; onPress: 
             <ThemedText className="text-sm opacity-50">{activity.meetingPoint}</ThemedText>
           </View>
         </View>
+
+        {/* E-Foil Add-on CTA — only for confirmed Maldives Adventure bookings */}
+        {activity.id === MALDIVES_ADVENTURE_ID &&
+          (booking.status === 'confirmed' || booking.status === 'pending') && (
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              // TODO: Navigate to add-on purchase flow
+            }}
+            className="mt-4 pt-4 border-t border-border flex-row items-center justify-between"
+          >
+            <View className="flex-row items-center flex-1">
+              <View className="w-10 h-10 rounded-xl items-center justify-center mr-3" style={{ backgroundColor: colors.highlight + '15' }}>
+                <Icon name="Zap" size={20} color={colors.highlight} />
+              </View>
+              <View className="flex-1">
+                <ThemedText className="font-semibold">Add E-Foil Experience</ThemedText>
+                <ThemedText className="text-sm opacity-50">
+                  ${EFOIL_ADDON.priceUsd}/person · {EFOIL_ADDON.durationLabel}
+                </ThemedText>
+              </View>
+            </View>
+            <Icon name="ChevronRight" size={20} color={colors.highlight} />
+          </Pressable>
+        )}
       </View>
     </Pressable>
   );

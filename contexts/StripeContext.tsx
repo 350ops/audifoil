@@ -120,7 +120,7 @@ function StripePaymentProviderInner({ children }: { children: React.ReactNode })
 
       // Initialize the payment sheet
       const { error } = await initPaymentSheet({
-        merchantDisplayName: 'foilTribe Adventures',
+        merchantDisplayName: 'foiltribe',
         customerId: customer,
         customerEphemeralKeySecret: ephemeralKey,
         paymentIntentClientSecret: paymentIntent,
@@ -254,6 +254,7 @@ export default function StripePaymentProvider({ children }: { children: React.Re
       <StripeProvider
         publishableKey={PUBLISHABLE_KEY}
         urlScheme="foiltribe"
+        merchantIdentifier="merchant.com.mmdev13.foiltribemv"
       >
         <StripePaymentProviderInner>{children}</StripePaymentProviderInner>
       </StripeProvider>

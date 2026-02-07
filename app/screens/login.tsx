@@ -63,7 +63,7 @@ export default function LoginScreen() {
   const handleSocialLogin = (provider: string) => {
     // Social login is available on welcome screen
     // Add social buttons here if needed for your UI
-    router.push('/screens/welcome');
+    router.push('/');
   };
 
   return (

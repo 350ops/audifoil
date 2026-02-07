@@ -1,329 +1,396 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
-  FlatList,
-  RefreshControl,
+  ScrollView,
   Pressable,
   ImageBackground,
   Dimensions,
-  TextInput,
+  FlatList,
 } from 'react-native';
 import Header from '@/components/Header';
 import ThemedText from '@/components/ThemedText';
 import AnimatedView from '@/components/AnimatedView';
 import Icon from '@/components/Icon';
-import { Chip } from '@/components/Chip';
-import { CardScroller } from '@/components/CardScroller';
+import { Button } from '@/components/Button';
 import { shadowPresets } from '@/utils/useShadow';
 import useThemeColors from '@/contexts/ThemeColors';
 import { useStore } from '@/store/useStore';
 import {
-  Activity,
-  ActivityCategory,
   ACTIVITIES,
-  CATEGORY_INFO,
   MALDIVES_ADVENTURE_ID,
-  formatDurationHours,
+  EXPERIENCE_HIGHLIGHTS,
+  EFOIL_ADDON,
+  MEDIA_PACKAGE,
+  LOCAL_IMAGES,
 } from '@/data/activities';
+import VideoPreview from '@/components/VideoPreview';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 
 const { width } = Dimensions.get('window');
+const IMAGE_HEIGHT = 220;
 
-type SortOption = 'popular' | 'price_low' | 'price_high' | 'duration';
-
-export default function ActivitiesScreen() {
+export default function ExperienceScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
-  const { setSelectedActivity, categoryFilter, setCategoryFilter, searchQuery, setSearchQuery } = useStore();
-  const [refreshing, setRefreshing] = useState(false);
-  const [sortBy, setSortBy] = useState<SortOption>('popular');
+  const { setSelectedActivity, generateActivitySlots } = useStore();
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 600);
-  }, []);
-
-  const handleActivityPress = useCallback((activity: Activity) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setSelectedActivity(activity);
-    router.push('/screens/activity-detail');
+  const handleBookExperience = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const maldivesAdventure = ACTIVITIES.find((a) => a.id === MALDIVES_ADVENTURE_ID);
+    if (maldivesAdventure) {
+      setSelectedActivity(maldivesAdventure);
+      router.push('/screens/activity-detail');
+    }
   }, [setSelectedActivity]);
-
-  const handleCategoryPress = useCallback((category: ActivityCategory | 'ALL') => {
-    Haptics.selectionAsync();
-    setCategoryFilter(category);
-  }, [setCategoryFilter]);
-
-  // Filter and sort activities — Maldives Adventure always first when visible
-  const filteredActivities = useMemo(() => {
-    let result = [...ACTIVITIES];
-
-    // Filter by category
-    if (categoryFilter !== 'ALL') {
-      result = result.filter(a => a.category === categoryFilter);
-    }
-
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(a =>
-        a.title.toLowerCase().includes(query) ||
-        a.subtitle.toLowerCase().includes(query) ||
-        a.tags.some(t => t.toLowerCase().includes(query))
-      );
-    }
-
-    // Sort (keep Maldives Adventure first when in list)
-    const mainFirst = (a: Activity, b: Activity) => {
-      if (a.id === MALDIVES_ADVENTURE_ID) return -1;
-      if (b.id === MALDIVES_ADVENTURE_ID) return 1;
-      if (a.id === 'efoil-session' && b.id !== MALDIVES_ADVENTURE_ID) return -1;
-      if (b.id === 'efoil-session' && a.id !== MALDIVES_ADVENTURE_ID) return 1;
-      return 0;
-    };
-    switch (sortBy) {
-      case 'popular':
-        result.sort((a, b) => mainFirst(a, b) || b.bookingsThisWeek - a.bookingsThisWeek);
-        break;
-      case 'price_low':
-        result.sort((a, b) => mainFirst(a, b) || a.priceFromUsd - b.priceFromUsd);
-        break;
-      case 'price_high':
-        result.sort((a, b) => mainFirst(a, b) || b.priceFromUsd - a.priceFromUsd);
-        break;
-      case 'duration':
-        result.sort((a, b) => mainFirst(a, b) || a.durationMin - b.durationMin);
-        break;
-    }
-
-    return result;
-  }, [categoryFilter, searchQuery, sortBy]);
-
-  const categories: (ActivityCategory | 'ALL')[] = ['ALL', 'EFOIL', 'BOAT', 'SNORKEL', 'FISHING', 'PRIVATE'];
-
-  const renderActivityCard = useCallback(({ item, index }: { item: Activity; index: number }) => (
-    <AnimatedView animation="scaleIn" delay={index * 50}>
-      <ActivityListCard activity={item} onPress={() => handleActivityPress(item)} />
-    </AnimatedView>
-  ), [handleActivityPress]);
-
-  const keyExtractor = useCallback((item: Activity) => item.id, []);
 
   return (
     <View className="flex-1 bg-background">
       <Header
-        title="Activities"
+        title="The Experience"
         rightComponents={[
-          <Icon key="search" name="SlidersHorizontal" size={22} onPress={() => {}} />,
+          <Icon key="share" name="Share" size={22} onPress={() => {}} />,
         ]}
       />
 
-      {/* Search Bar */}
-      <View className="px-4 pt-2 pb-3">
-        <View
-          className="bg-secondary rounded-xl px-4 py-3 flex-row items-center"
-          style={shadowPresets.small}
-        >
-          <Icon name="Search" size={20} color={colors.placeholder} />
-          <TextInput
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Search activities..."
-            placeholderTextColor={colors.placeholder}
-            className="flex-1 ml-3 text-base"
-            style={{ color: colors.text }}
-          />
-          {searchQuery.length > 0 && (
-            <Pressable onPress={() => setSearchQuery('')}>
-              <Icon name="X" size={18} color={colors.placeholder} />
-            </Pressable>
-          )}
-        </View>
-      </View>
-
-      {/* Category Filters */}
-      <View className="px-4">
-        <CardScroller space={8} className="pb-3">
-          {categories.map(cat => (
-          <Chip
-            key={cat}
-            label={cat === 'ALL' ? 'All' : CATEGORY_INFO[cat].name}
-            icon={cat === 'ALL' ? 'Grid3X3' : CATEGORY_INFO[cat].icon}
-            isSelected={categoryFilter === cat}
-            onPress={() => handleCategoryPress(cat)}
-          />
-        ))}
-        </CardScroller>
-      </View>
-
-      {/* Sort Options */}
-      <View className="px-4 pb-3 flex-row items-center justify-between">
-        <ThemedText className="opacity-50">
-          {filteredActivities.length} experience{filteredActivities.length !== 1 ? 's' : ''}
-        </ThemedText>
-        <View className="flex-row items-center">
-          <ThemedText className="opacity-50 mr-2">Sort:</ThemedText>
-          <Pressable
-            onPress={() => {
-              Haptics.selectionAsync();
-              const options: SortOption[] = ['popular', 'price_low', 'price_high', 'duration'];
-              const currentIndex = options.indexOf(sortBy);
-              setSortBy(options[(currentIndex + 1) % options.length]);
-            }}
-            className="flex-row items-center"
-          >
-            <ThemedText className="font-medium" style={{ color: colors.highlight }}>
-              {sortBy === 'popular' ? 'Popular' :
-               sortBy === 'price_low' ? 'Price ↑' :
-               sortBy === 'price_high' ? 'Price ↓' : 'Duration'}
-            </ThemedText>
-            <Icon name="ChevronDown" size={16} color={colors.highlight} />
-          </Pressable>
-        </View>
-      </View>
-
-      {/* Activities List */}
-      <FlatList
-        data={filteredActivities}
-        renderItem={renderActivityCard}
-        keyExtractor={keyExtractor}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: insets.bottom + 100,
-          flexGrow: 1,
-        }}
+      <ScrollView
+        className="flex-1"
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        ListEmptyComponent={
-          <View className="flex-1 items-center justify-center py-16">
-            <Icon name="Search" size={48} color={colors.placeholder} />
-            <ThemedText className="text-xl font-bold mt-4">No activities found</ThemedText>
-            <ThemedText className="opacity-50 text-center mt-2 px-8">
-              Try adjusting your filters or search query
+        contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}
+      >
+        {/* Intro */}
+        <View className="px-4 pt-4 pb-2">
+          <AnimatedView animation="fadeIn" delay={50}>
+            <ThemedText className="text-2xl font-bold">
+              What to Expect
             </ThemedText>
-            <Pressable
-              onPress={() => {
-                setCategoryFilter('ALL');
-                setSearchQuery('');
-              }}
-              className="mt-4 px-6 py-3 rounded-xl"
-              style={{ backgroundColor: colors.highlight }}
+            <ThemedText className="mt-2 opacity-50">
+              Our 5-hour Maldives Adventure packs the best of the Indian Ocean into one unforgettable day. Here's what you'll experience.
+            </ThemedText>
+          </AnimatedView>
+        </View>
+
+        {/* Experience Highlights */}
+        {EXPERIENCE_HIGHLIGHTS.map((highlight, index) => (
+          <AnimatedView
+            key={highlight.id}
+            animation="fadeIn"
+            delay={100 + index * 80}
+          >
+            <HighlightSection highlight={highlight} index={index} />
+          </AnimatedView>
+        ))}
+
+        {/* E-Foil Add-on Section */}
+        <AnimatedView animation="fadeIn" delay={500}>
+          <EfoilAddonSection />
+        </AnimatedView>
+
+        {/* Professional Media Content */}
+        <AnimatedView animation="fadeIn" delay={550}>
+          <MediaContentSection />
+        </AnimatedView>
+
+        {/* Summary / CTA */}
+        <View className="mt-8 px-4">
+          <AnimatedView animation="scaleIn" delay={600}>
+            <View
+              className="items-center rounded-2xl bg-secondary p-6"
+              style={shadowPresets.card}
             >
-              <ThemedText className="text-white font-semibold">Clear Filters</ThemedText>
-            </Pressable>
-          </View>
-        }
-      />
+              <ThemedText className="mb-2 text-xl font-bold">
+                All This. One Trip. From $80.
+              </ThemedText>
+              <ThemedText className="mb-5 text-center opacity-50">
+                Dolphins, snorkeling, sandbank, sunset cruise, lunch, drinks, hotel pickup — all included.
+              </ThemedText>
+              <Button
+                title="Book the Experience"
+                onPress={handleBookExperience}
+                iconEnd="ArrowRight"
+                size="large"
+                variant="cta"
+                rounded="full"
+              />
+            </View>
+          </AnimatedView>
+        </View>
+      </ScrollView>
     </View>
   );
 }
 
-// Show price in list only for main experience and Audi e-foil
-function shouldShowPrice(activityId: string): boolean {
-  return activityId === MALDIVES_ADVENTURE_ID || activityId === 'efoil-session';
-}
+// ──────────────────────────────────────────────
+// Highlight Section — image carousel + text
+// ──────────────────────────────────────────────
 
-// Activity List Card Component
-function ActivityListCard({ activity, onPress }: { activity: Activity; onPress: () => void }) {
+function HighlightSection({
+  highlight,
+  index,
+}: {
+  highlight: (typeof EXPERIENCE_HIGHLIGHTS)[number];
+  index: number;
+}) {
   const colors = useThemeColors();
-  const showPrice = shouldShowPrice(activity.id);
-  const durationLabel = formatDurationHours(activity.durationMin);
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+  const handleScroll = (event: any) => {
+    const i = Math.round(event.nativeEvent.contentOffset.x / width);
+    if (i !== activeIndex) setActiveIndex(i);
+  };
 
   return (
-    <Pressable
-      onPress={onPress}
-      className="mb-4 rounded-2xl overflow-hidden"
-      style={({ pressed }) => [
-        shadowPresets.card,
-        { transform: [{ scale: pressed ? 0.98 : 1 }] }
-      ]}
-    >
-      <ImageBackground
-        source={activity.media[0].localSource ? activity.media[0].localSource : { uri: activity.media[0].uri }}
-        style={{ height: 180 }}
-        resizeMode="cover"
-      >
-        <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.8)']}
-          locations={[0.3, 1]}
-          style={{ flex: 1, justifyContent: 'flex-end', padding: 16 }}
-        >
-          {/* Badges */}
-          <View className="flex-row items-center mb-2">
-            {activity.id === MALDIVES_ADVENTURE_ID && (
-              <View className="bg-white/25 px-2 py-1 rounded-full mr-2">
-                <ThemedText className="text-white text-xs font-semibold">Main experience</ThemedText>
-              </View>
-            )}
-            {activity.isPrivate && (
-              <View className="bg-white/25 px-2 py-1 rounded-full">
-                <ThemedText className="text-white text-xs font-semibold">Private</ThemedText>
-              </View>
-            )}
-            <View className="bg-white/20 px-2 py-1 rounded-full ml-auto">
-              <ThemedText className="text-white text-xs font-medium">
-                {CATEGORY_INFO[activity.category].name}
-              </ThemedText>
-            </View>
-          </View>
-
-          {/* Title */}
-          <ThemedText className="text-white font-bold text-xl">{activity.title}</ThemedText>
-          <ThemedText className="text-white/70 text-sm">{activity.subtitle}</ThemedText>
-        </LinearGradient>
-      </ImageBackground>
-
-      {/* Card Footer */}
-      <View className="bg-secondary p-4">
-        <View className="flex-row items-center justify-between">
-          {/* Rating & Duration (always in hours) */}
-          <View className="flex-row items-center">
-            <View className="flex-row items-center mr-4">
-              <Icon name="Star" size={14} color="#FFD700" fill="#FFD700" />
-              <ThemedText className="font-semibold ml-1">{activity.rating}</ThemedText>
-              <ThemedText className="opacity-50 ml-1">({activity.reviewCount})</ThemedText>
-            </View>
-            <View className="flex-row items-center">
-              <Icon name="Clock" size={14} color={colors.placeholder} />
-              <ThemedText className="opacity-60 ml-1" style={{ color: colors.textMuted }}>{durationLabel}</ThemedText>
-            </View>
-          </View>
-
-          {/* Price — only for Maldives Adventure and Audi e-foil */}
-          {showPrice && (
-            <View className="items-end">
-              <ThemedText className="text-xs" style={{ color: colors.textMuted }}>From</ThemedText>
-              <ThemedText className="font-bold text-lg" style={{ color: colors.highlight }}>
-                ${activity.priceFromUsd}
-              </ThemedText>
-            </View>
+    <View className="mt-6">
+      {/* Image Carousel */}
+      <View style={{ height: IMAGE_HEIGHT }}>
+        <FlatList
+          data={highlight.images}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={handleScroll}
+          keyExtractor={(_, i) => `${highlight.id}-img-${i}`}
+          renderItem={({ item }) => (
+            <ImageBackground
+              source={item}
+              style={{ width, height: IMAGE_HEIGHT }}
+              resizeMode="cover"
+            >
+              <LinearGradient
+                colors={['transparent', 'rgba(0,0,0,0.6)']}
+                locations={[0.5, 1]}
+                style={{ flex: 1, justifyContent: 'flex-end', padding: 16 }}
+              >
+                <View className="flex-row items-center">
+                  <Icon name={highlight.icon as any} size={18} color="white" />
+                  <ThemedText className="ml-2 text-lg font-bold text-white">
+                    {highlight.title}
+                  </ThemedText>
+                </View>
+                <ThemedText className="text-sm text-white/70">
+                  {highlight.subtitle}
+                </ThemedText>
+              </LinearGradient>
+            </ImageBackground>
           )}
+        />
+
+        {/* Pagination dots */}
+        {highlight.images.length > 1 && (
+          <View className="absolute bottom-3 left-0 right-0 flex-row justify-center">
+            {highlight.images.map((_, i) => (
+              <View
+                key={i}
+                className="mx-0.5 rounded-full"
+                style={{
+                  width: i === activeIndex ? 16 : 5,
+                  height: 5,
+                  backgroundColor: i === activeIndex ? 'white' : 'rgba(255,255,255,0.4)',
+                }}
+              />
+            ))}
+          </View>
+        )}
+      </View>
+
+      {/* Description */}
+      <View className="px-4 pt-3">
+        <ThemedText className="leading-relaxed opacity-60">
+          {highlight.description}
+        </ThemedText>
+      </View>
+    </View>
+  );
+}
+
+// ──────────────────────────────────────────────
+// E-Foil Add-on teaser
+// ──────────────────────────────────────────────
+
+function EfoilAddonSection() {
+  const colors = useThemeColors();
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+  const handleScroll = (event: any) => {
+    const i = Math.round(event.nativeEvent.contentOffset.x / width);
+    if (i !== activeIndex) setActiveIndex(i);
+  };
+
+  return (
+    <View className="mt-8">
+      {/* Image carousel */}
+      <View style={{ height: IMAGE_HEIGHT }}>
+        <FlatList
+          data={EFOIL_ADDON.images}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={handleScroll}
+          keyExtractor={(_, i) => `efoil-img-${i}`}
+          renderItem={({ item }) => (
+            <ImageBackground
+              source={item}
+              style={{ width, height: IMAGE_HEIGHT }}
+              resizeMode="cover"
+            >
+              <LinearGradient
+                colors={['transparent', 'rgba(0,0,0,0.7)']}
+                locations={[0.4, 1]}
+                style={{ flex: 1, justifyContent: 'flex-end', padding: 16 }}
+              >
+                <View className="flex-row items-center">
+                  <Icon name="Zap" size={18} color="white" />
+                  <ThemedText className="ml-2 text-lg font-bold text-white">
+                    {EFOIL_ADDON.title}
+                  </ThemedText>
+                </View>
+                <ThemedText className="text-sm text-white/70">
+                  Optional add-on · ${EFOIL_ADDON.priceUsd}/person
+                </ThemedText>
+              </LinearGradient>
+            </ImageBackground>
+          )}
+        />
+
+        {EFOIL_ADDON.images.length > 1 && (
+          <View className="absolute bottom-3 left-0 right-0 flex-row justify-center">
+            {EFOIL_ADDON.images.map((_, i) => (
+              <View
+                key={i}
+                className="mx-0.5 rounded-full"
+                style={{
+                  width: i === activeIndex ? 16 : 5,
+                  height: 5,
+                  backgroundColor: i === activeIndex ? 'white' : 'rgba(255,255,255,0.4)',
+                }}
+              />
+            ))}
+          </View>
+        )}
+      </View>
+
+      {/* Description + includes */}
+      <View className="px-4 pt-3">
+        <View className="mb-3 flex-row items-center">
+          <View
+            className="mr-2 rounded-full px-3 py-1"
+            style={{ backgroundColor: colors.highlight + '20' }}
+          >
+            <ThemedText className="text-xs font-semibold" style={{ color: colors.highlight }}>
+              Optional Add-on
+            </ThemedText>
+          </View>
+          <ThemedText className="font-bold" style={{ color: colors.highlight }}>
+            ${EFOIL_ADDON.priceUsd}
+          </ThemedText>
+          <ThemedText className="ml-1 opacity-50">/ person</ThemedText>
         </View>
 
-        {/* Tags */}
-        <View className="flex-row flex-wrap gap-2 mt-3">
-          {activity.tags.slice(0, 3).map((tag, i) => (
-            <View key={i} className="bg-background px-2 py-1 rounded-lg">
-              <ThemedText className="text-xs opacity-60">{tag}</ThemedText>
+        <ThemedText className="leading-relaxed opacity-60">
+          {EFOIL_ADDON.description}
+        </ThemedText>
+
+        <View className="mt-3 gap-2">
+          {EFOIL_ADDON.includes.map((item, i) => (
+            <View key={i} className="flex-row items-center">
+              <Icon name="Check" size={14} color="#22C55E" />
+              <ThemedText className="ml-2 text-sm opacity-60">{item}</ThemedText>
             </View>
           ))}
         </View>
 
-        {/* Social Proof */}
-        {activity.socialProof[0] && (
-          <View className="flex-row items-center mt-3 pt-3 border-t border-border">
-            <Icon name="Users" size={14} color={colors.placeholder} />
-            <ThemedText className="text-sm opacity-50 ml-2">
-              {activity.socialProof[0].label}
+        <ThemedText className="mt-3 text-sm italic opacity-40">
+          Add it when you book, or anytime before your trip. Anyone in your group can opt in.
+        </ThemedText>
+      </View>
+    </View>
+  );
+}
+
+// ──────────────────────────────────────────────
+// Media content videos
+// ──────────────────────────────────────────────
+
+const MEDIA_VIDEOS = [
+  {
+    source: require('@/assets/img/imagesmaldivesa/videos/foiling-maldives.mp4'),
+    label: 'E-Foil in the Maldives',
+  },
+  {
+    source: require('@/assets/img/imagesmaldivesa/videos/gliding.mp4'),
+    label: 'Gliding above the water',
+  },
+  {
+    source: require('@/assets/img/imagesmaldivesa/videos/boat-trip.mov'),
+    label: 'On the boat',
+  },
+];
+
+// ──────────────────────────────────────────────
+// Professional Media Content section
+// ──────────────────────────────────────────────
+
+function MediaContentSection() {
+  const colors = useThemeColors();
+
+  return (
+    <View className="mt-8 px-4">
+      <View className="overflow-hidden rounded-2xl bg-secondary" style={shadowPresets.card}>
+        {/* Header */}
+        <View className="p-5 pb-3">
+          <View className="mb-2 flex-row items-center">
+            <Icon name="Camera" size={22} color={colors.highlight} />
+            <ThemedText className="ml-2 text-lg font-bold">{MEDIA_PACKAGE.title}</ThemedText>
+          </View>
+          <ThemedText className="leading-relaxed opacity-60">
+            {MEDIA_PACKAGE.description}
+          </ThemedText>
+        </View>
+
+        {/* Video Previews */}
+        <View className="gap-3 px-5 pb-4">
+          {MEDIA_VIDEOS.map((video, i) => (
+            <View key={i}>
+              <VideoPreview
+                source={video.source}
+                height={180}
+                rounded={12}
+              />
+              <ThemedText className="mt-1.5 text-xs opacity-40">{video.label}</ThemedText>
+            </View>
+          ))}
+        </View>
+
+        {/* Equipment grid */}
+        <View className="flex-row flex-wrap px-5 pb-2">
+          {MEDIA_PACKAGE.equipment.map((item) => (
+            <View key={item.label} className="mb-3 w-1/2 flex-row items-center">
+              <View
+                className="mr-2 h-8 w-8 items-center justify-center rounded-lg"
+                style={{ backgroundColor: colors.highlight + '15' }}
+              >
+                <Icon name={item.icon as any} size={16} color={colors.highlight} />
+              </View>
+              <ThemedText className="text-sm">{item.label}</ThemedText>
+            </View>
+          ))}
+        </View>
+
+        {/* Note */}
+        <View
+          className="mx-5 mb-5 rounded-xl p-3"
+          style={{ backgroundColor: colors.highlight + '10' }}
+        >
+          <View className="flex-row items-start">
+            <Icon name="Info" size={16} color={colors.highlight} />
+            <ThemedText className="ml-2 flex-1 text-sm" style={{ color: colors.highlight }}>
+              {MEDIA_PACKAGE.note}
             </ThemedText>
           </View>
-        )}
+        </View>
       </View>
-    </Pressable>
+    </View>
   );
 }

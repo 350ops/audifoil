@@ -53,7 +53,7 @@ export default function SuccessScreen() {
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     await Share.share({
-      message: `🏄‍♂️ I just booked an Audi e-foil session in the Maldives!\n\n✈️ Flight: ${latestBooking.flightNo}\n🕐 Session: ${latestBooking.slotStart} - ${latestBooking.slotEnd}\n📍 Location: Malé Lagoon\n\nJoin me! Book at foilTribe Adventures.com`,
+      message: `🏄‍♂️ I just booked an Audi e-foil session in the Maldives!\n\n✈️ Flight: ${latestBooking.flightNo}\n🕐 Session: ${latestBooking.slotStart} - ${latestBooking.slotEnd}\n📍 Location: Malé Lagoon\n\nJoin me! Book at foiltribe.com`,
     });
   };
 

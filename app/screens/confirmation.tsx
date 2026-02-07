@@ -55,7 +55,7 @@ export default function ConfirmationScreen() {
 
     try {
       await Share.share({
-        message: `I just booked an Audi e-foil session in the Maldives! 🌊\n\nSession: ${booking.slot.startTime} - ${booking.slot.endTime}\nConfirmation: ${booking.confirmationCode}\n\n#foilTribe Adventures #Maldives`,
+        message: `I just booked an Audi e-foil session in the Maldives! 🌊\n\nSession: ${booking.slot.startTime} - ${booking.slot.endTime}\nConfirmation: ${booking.confirmationCode}\n\n#foiltribe #Maldives`,
       });
     } catch (error) {
       console.log('Share error:', error);
@@ -199,7 +199,7 @@ export default function ConfirmationScreen() {
               <NextStepItem
                 number="2"
                 title="Meet Your Instructor"
-                description="Look for blue foilTribe Adventures flags at the lagoon dock"
+                description="Look for the foiltribe team at the dock"
               />
               <NextStepItem
                 number="3"

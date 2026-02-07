@@ -15,9 +15,8 @@ function RootLayoutNav() {
   const colors = useThemeColors();
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
-      <Stack.Screen name="index" />
+      <Stack.Screen name="index" options={{ animation: 'none' }} />
       <Stack.Screen name="(drawer)" />
-      <Stack.Screen name="screens/welcome" options={{ animation: 'none' }} />
       <Stack.Screen name="screens/login" options={{ animation: 'none' }} />
       <Stack.Screen name="screens/signup" options={{ animation: 'none' }} />
       <Stack.Screen name="screens/onboarding" />

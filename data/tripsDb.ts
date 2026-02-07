@@ -85,7 +85,7 @@ export async function fetchActivityBySlug(slug: string): Promise<DbActivity | nu
   const { data, error } = await supabase.from('activities').select('*').eq('slug', slug).single();
 
   if (error) {
-    console.error('Error fetching activity:', error);
+    // Silently return null — database table may not exist yet (using mock data fallback)
     return null;
   }
 

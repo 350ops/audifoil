@@ -19,7 +19,7 @@ export default function SettingsScreen() {
                         <ListLink className='px-4 py-2 border-b border-border' title={t('settings.help')} description={t('settings.helpDesc')} showChevron icon="HelpCircle" href="/screens/help" />
                         <ListLink className='px-4 py-2 border-b border-border' title={t('settings.profile')} description={t('settings.profileDesc')} showChevron icon="Settings" href="/screens/edit-profile" />
                         <ListLink className='px-4 py-2 border-b border-border' title={t('settings.language')} description={t('settings.languageDesc')} showChevron icon="Globe" href="/screens/languages" />
-                        <ListLink className='px-4 py-2' title={t('settings.logout')} showChevron description={t('settings.logoutDesc')} icon="LogOut" href="/screens/welcome" />
+                        <ListLink className='px-4 py-2' title={t('settings.logout')} showChevron description={t('settings.logoutDesc')} icon="LogOut" href="/" />
                     </View>
                 </ThemedScroller>
             </View>

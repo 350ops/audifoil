@@ -33,7 +33,7 @@ export default function CustomDrawerContent() {
                 <View className="flex-row items-center py-6 mb-4">
                     <Icon name="Waves" size={32} color={colors.highlight} />
                     <View className="ml-3">
-                        <ThemedText className="text-xl font-bold">foilTribe Adventures</ThemedText>
+                        <ThemedText className="text-xl font-bold">foiltribe</ThemedText>
                         <ThemedText className="text-sm opacity-50">Maldives Experience</ThemedText>
                     </View>
                 </View>
@@ -76,7 +76,7 @@ export default function CustomDrawerContent() {
 
                 {/* Version */}
                 <View className='flex-row justify-center items-center mt-8 mb-4'>
-                    <ThemedText className='text-xs opacity-30'>foilTribe Adventures v1.0.0 • Demo Mode</ThemedText>
+                    <ThemedText className='text-xs opacity-30'>foiltribe v1.0.0 • Demo Mode</ThemedText>
                 </View>
             </ThemedScroller>
             <SwitchAccountDrawer ref={switchAccountRef} />

@@ -15,9 +15,9 @@ export default function ExpandableScreen() {
             <ThemedScroller className="flex-1 bg-background px-global">
                 <Section title="Basic" titleSize="lg" className="mt-4" />
                 <View className="bg-secondary rounded-2xl">
-                    <Expandable title="What is foilTribe Adventures?" className="px-4" hasBorder={false}>
+                    <Expandable title="What is foiltribe?" className="px-4" hasBorder={false}>
                         <ThemedText className="opacity-80">
-                            foilTribe Adventures is a premium e-foil booking app built with React Native and Expo.
+                            foiltribe is a Maldives adventure booking app built with React Native and Expo.
                             It provides a beautiful, customizable foundation for booking e-foil experiences.
                         </ThemedText>
                     </Expandable>

@@ -76,6 +76,7 @@ import { ImageSourcePropType } from 'react-native';
 
 // Local asset imports
 export const LOCAL_IMAGES = {
+  // Original images
   lagoonBoat: require('@/assets/img/File 1.jpg'),
   swimmingFish: require('@/assets/img/File 2.jpg'),
   seaTurtle: require('@/assets/img/File 3.jpg'),
@@ -83,6 +84,27 @@ export const LOCAL_IMAGES = {
   dolphin: require('@/assets/img/dolphin.jpg'),
   fishing: require('@/assets/img/fishing.jpg'),
   efoil: require('@/assets/img/audi.jpg'),
+
+  // Maldives real photos
+  boat: require('@/assets/img/imagesmaldivesa/boat.png'),
+  boat2: require('@/assets/img/imagesmaldivesa/boat2.png'),
+  boat3: require('@/assets/img/imagesmaldivesa/boat3.png'),
+  crewOnABoat: require('@/assets/img/imagesmaldivesa/crewonaboat.jpeg'),
+  dolphins: require('@/assets/img/imagesmaldivesa/dolphins.png'),
+  efoilMedium: require('@/assets/img/imagesmaldivesa/efoil Medium.png'),
+  efoilNew: require('@/assets/img/imagesmaldivesa/efoil.png'),
+  island: require('@/assets/img/imagesmaldivesa/island.png'),
+  mantas: require('@/assets/img/imagesmaldivesa/mantas.jpg'),
+  reef: require('@/assets/img/imagesmaldivesa/reef3.jpeg'),
+  sandbank: require('@/assets/img/imagesmaldivesa/sandbank.png'),
+  sandbank2: require('@/assets/img/imagesmaldivesa/sandbank2.png'),
+  sandbank3: require('@/assets/img/imagesmaldivesa/sanbank3.jpeg'),
+  sandbank5: require('@/assets/img/imagesmaldivesa/sandbank5.jpeg'),
+  snorkel: require('@/assets/img/imagesmaldivesa/snorkel.png'),
+  snorkel2: require('@/assets/img/imagesmaldivesa/snorkel2.png'),
+  snorkel4: require('@/assets/img/imagesmaldivesa/snorkel4.png'),
+  turtle: require('@/assets/img/imagesmaldivesa/turtle.png'),
+  turtle2: require('@/assets/img/imagesmaldivesa/turtle2.png'),
 };
 
 // High-quality images for activities
@@ -127,8 +149,87 @@ export const MEDIA = {
   },
 };
 
-// Main experience: 5h cruise, $80 — shown first; add-ons shown on detail
+// Main experience: 5h cruise, from $80/person (5 guests) — the core foiltribe trip
 export const MALDIVES_ADVENTURE_ID = 'maldives-adventure';
+
+// E-Foil add-on — optional $150 per person, purchasable at booking or after
+export const EFOIL_ADDON = {
+  id: 'efoil-addon',
+  title: 'Audi E-Foil Experience',
+  description: 'Fly above the water on an electric hydrofoil surfboard. No experience needed — professional instruction included.',
+  priceUsd: 150,
+  durationLabel: '30 min session',
+  includes: [
+    'Private instruction',
+    'All safety equipment',
+    'Drone footage of your ride',
+    '360° camera on board — footage is yours',
+  ],
+  images: [
+    LOCAL_IMAGES.efoilNew,
+    LOCAL_IMAGES.efoilMedium,
+    LOCAL_IMAGES.efoil,
+  ],
+};
+
+// Professional media content — available upon request
+export const MEDIA_PACKAGE = {
+  id: 'media-package',
+  title: 'Professional Media Content',
+  description: 'Take home cinematic-quality content of your adventure. Our crew captures your trip using professional-grade equipment so you can relive every moment — and make your friends jealous.',
+  equipment: [
+    { icon: 'Video', label: 'GoPro cameras' },
+    { icon: 'Navigation', label: 'Drone aerial footage' },
+    { icon: 'Fish', label: 'Underwater cameras' },
+    { icon: 'RotateCw', label: '360° cameras' },
+  ],
+  note: 'Available upon request — let us know when you book or anytime before the trip.',
+};
+
+// Experience highlights — the activities presented as parts of the Maldives Adventure trip
+export interface ExperienceHighlight {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  images: ImageSourcePropType[];
+  icon: string;
+}
+
+export const EXPERIENCE_HIGHLIGHTS: ExperienceHighlight[] = [
+  {
+    id: 'dolphins',
+    title: 'Swim with Dolphins',
+    subtitle: '95% sighting rate',
+    description: 'Cruise to the dolphin channel and swim alongside pods of wild spinner dolphins. Our captain knows the exact spots where dolphins gather every morning.',
+    images: [LOCAL_IMAGES.dolphins, LOCAL_IMAGES.crewOnABoat],
+    icon: 'Fish',
+  },
+  {
+    id: 'snorkeling',
+    title: 'Reef Snorkeling',
+    subtitle: 'Two pristine reef stops',
+    description: 'Explore vibrant coral gardens teeming with tropical fish, sea turtles, reef sharks, and manta rays. All snorkeling gear provided.',
+    images: [LOCAL_IMAGES.snorkel, LOCAL_IMAGES.turtle, LOCAL_IMAGES.reef, LOCAL_IMAGES.snorkel2, LOCAL_IMAGES.mantas, LOCAL_IMAGES.turtle2, LOCAL_IMAGES.snorkel4],
+    icon: 'Waves',
+  },
+  {
+    id: 'sandbank',
+    title: 'Private Sandbank',
+    subtitle: 'Your own island for an hour',
+    description: 'Step onto a strip of white sand in the middle of the Indian Ocean. Picnic lunch, drinks, swimming, and the best photos you\'ll ever take.',
+    images: [LOCAL_IMAGES.sandbank, LOCAL_IMAGES.sandbank2, LOCAL_IMAGES.sandbank3, LOCAL_IMAGES.sandbank5, LOCAL_IMAGES.island],
+    icon: 'Sun',
+  },
+  {
+    id: 'cruise',
+    title: 'Sunset Cruise',
+    subtitle: 'Golden hour on the Indian Ocean',
+    description: 'End the day cruising back as the sun sets. Music, drinks, and the kind of views that make you forget everything else.',
+    images: [LOCAL_IMAGES.boat, LOCAL_IMAGES.boat3, LOCAL_IMAGES.boat2],
+    icon: 'Sunset',
+  },
+];
 
 // Format duration for display (always hours)
 export function formatDurationHours(durationMin: number): string {
@@ -141,7 +242,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: MALDIVES_ADVENTURE_ID,
     title: 'Maldives Adventure',
-    subtitle: 'The ultimate day on the water',
+    subtitle: 'Your best day in the Maldives — from $80/person',
     category: 'BOAT',
     durationMin: 300,
     priceFromUsd: 80,
@@ -152,40 +253,48 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'all',
     isPrivate: false,
     media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.lagoonBoat },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.dolphin },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.swimmingFish },
-      { type: 'image', uri: MEDIA.sandbank.aerial },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.dolphins },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.snorkel },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.sandbank },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.efoilNew },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.crewOnABoat },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.turtle },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.island },
     ],
-    tags: ['5 hours', 'Dolphins', 'Snorkel', 'Sandbank', 'Sunset'],
+    tags: ['5 hours', 'Dolphins', 'Snorkel', 'Sandbank', 'E-Foil', 'Sunset'],
     highlights: [
-      'Swim with dolphins in the wild',
-      'Reef sharks & tropical fish while snorkelling',
-      'Pristine sandbank stop',
-      'Picnic lunch onboard',
-      'Golden-hour sunsets',
-      'All gear & hotel pickup included',
+      'Swim with wild spinner dolphins (95% sighting rate)',
+      'Snorkel two pristine reefs — sea turtles, reef sharks, tropical fish',
+      'Private sandbank stop with picnic lunch',
+      'Audi e-foil session for every guest (worth $150+ at resorts)',
+      'Professional media content available upon request (drone, GoPro, underwater, 360°)',
+      'Golden-hour sunset cruise back',
     ],
     whatYoullDo: [
-      'Cruise to dolphin territory and swim alongside spinner dolphins',
-      'Snorkel vibrant reefs with reef sharks and tropical fish',
-      'Stop at a picture-perfect sandbank for photos and swimming',
-      'Enjoy a picnic lunch on board with ocean views',
-      'End the day with golden-hour sunsets over the Indian Ocean',
+      'Cruise to the dolphin channel and swim alongside pods of wild spinner dolphins',
+      'Snorkel two vibrant reefs teeming with tropical fish, reef sharks, and sea turtles',
+      'Stop at a picture-perfect private sandbank for photos, swimming, and a picnic lunch',
+      'Fly the Audi e-foil — an electric surfboard that lifts you above the water. No experience needed.',
+      'End the day with a golden-hour sunset cruise back across the Indian Ocean',
     ],
     included: [
-      '5-hour cruise (3h option available)',
-      'Snorkelling gear & instruction',
-      'Picnic lunch & refreshments',
-      'Hotel pickup & drop-off',
+      '5-hour boat adventure (3h option available)',
+      'Dolphin swimming excursion',
+      '2 snorkel reef stops + all gear',
+      'Private sandbank stop + picnic lunch',
+      'Audi e-foil session for every guest',
+      'Professional drone & 360-cam footage',
+      'Hotel pickup & drop-off (Malé / Hulhumalé)',
+      'Drinks, snacks & refreshments all day',
       'Professional captain & crew',
-      'All safety equipment',
+      'Professional media content available upon request',
     ],
     safety: ['Life jackets for all', 'Experienced crew', 'Weather-dependent departure'],
     meetingPoint: 'Malé Harbor — hotel pickup available',
     socialProof: [
-      { label: 'Crew favorite', type: 'crew' },
-      { label: 'Best value in the Maldives', type: 'popular' },
+      { label: 'Cabin crew favorite — 95% rebook', type: 'crew' },
+      { label: 'Best value adventure in the Maldives', type: 'popular' },
     ],
     bookingsThisWeek: 48,
     isFeatured: true,
@@ -205,10 +314,10 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'beginner',
     isPrivate: true,
     media: [
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.efoilNew },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.efoilMedium },
       { type: 'image', uri: '', localSource: LOCAL_IMAGES.efoil },
-      { type: 'image', uri: MEDIA.efoil.action1 },
-      { type: 'image', uri: MEDIA.efoil.lagoon },
-      { type: 'image', uri: MEDIA.efoil.action2 },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat2 },
     ],
     tags: ['2 hours', 'Private', 'Instructor', 'Drone & 360'],
     highlights: [
@@ -255,10 +364,10 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'all',
     isPrivate: false,
     media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.lagoonBoat },
-      { type: 'image', uri: MEDIA.boat.cruise },
-      { type: 'image', uri: MEDIA.boat.yacht },
-      { type: 'image', uri: MEDIA.boat.deck },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat3 },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.island },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.sandbank5 },
     ],
     tags: ['2 hours', '2-8 guests', 'Sunset', 'Drinks included'],
     highlights: [
@@ -303,10 +412,13 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'beginner',
     isPrivate: false,
     media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.swimmingFish },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.seaTurtle },
-      { type: 'image', uri: MEDIA.snorkel.fish },
-      { type: 'image', uri: MEDIA.snorkel.reef },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.snorkel },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.turtle },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.reef },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.snorkel2 },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.turtle2 },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.snorkel4 },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.mantas },
     ],
     tags: ['90 min', '1-6 guests', 'Beginner friendly', 'Equipment provided'],
     highlights: ['House reef teeming with life', 'Sea turtles & rays', 'Professional guide'],
@@ -346,10 +458,10 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'all',
     isPrivate: false,
     media: [
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat2 },
       { type: 'image', uri: '', localSource: LOCAL_IMAGES.fishing },
-      { type: 'image', uri: MEDIA.fishing.boat },
-      { type: 'image', uri: MEDIA.fishing.catch },
-      { type: 'image', uri: MEDIA.boat.deck },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat3 },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.island },
     ],
     tags: ['2.5 hours', '2-6 guests', 'Sunset', 'BBQ option'],
     highlights: [
@@ -393,10 +505,12 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'all',
     isPrivate: true,
     media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.privateIsland },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.lagoonBoat },
-      { type: 'image', uri: MEDIA.sandbank.beach },
-      { type: 'image', uri: MEDIA.maldives.lagoon },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.sandbank },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.sandbank2 },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.sandbank3 },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.sandbank5 },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.island },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat },
     ],
     tags: ['3 hours', '2-4 guests', 'Private', 'Gourmet lunch'],
     highlights: ['Exclusive sandbank access', 'Gourmet picnic setup', 'Champagne & lobster'],
@@ -437,10 +551,10 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'all',
     isPrivate: false,
     media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.dolphin },
-      { type: 'image', uri: MEDIA.dolphin.jumping },
-      { type: 'image', uri: MEDIA.dolphin.sunset },
-      { type: 'image', uri: MEDIA.boat.cruise },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.dolphins },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.crewOnABoat },
+      { type: 'image', uri: '', localSource: LOCAL_IMAGES.island },
     ],
     tags: ['90 min', '2-12 guests', 'Morning', '95% sighting rate'],
     highlights: ['Spinner dolphin pods', '95% sighting guarantee', 'Marine biologist guide'],

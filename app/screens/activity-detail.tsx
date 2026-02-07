@@ -8,7 +8,7 @@ import { Button } from '@/components/Button';
 import { shadowPresets } from '@/utils/useShadow';
 import useThemeColors from '@/contexts/ThemeColors';
 import { useStore } from '@/store/useStore';
-import { MALDIVES_ADVENTURE_ID, formatDurationHours } from '@/data/activities';
+import { MALDIVES_ADVENTURE_ID, EFOIL_ADDON, formatDurationHours } from '@/data/activities';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -33,8 +33,8 @@ export default function ActivityDetailScreen() {
   if (!selectedActivity) {
     return (
       <View className="flex-1 items-center justify-center bg-background">
-        <ThemedText>No activity selected</ThemedText>
-        <Button title="Browse Activities" onPress={() => router.back()} className="mt-4" />
+        <ThemedText>No experience selected</ThemedText>
+        <Button title="Go Back" onPress={() => router.back()} className="mt-4" />
       </View>
     );
   }
@@ -91,29 +91,7 @@ export default function ActivityDetailScreen() {
                   colors={['rgba(0,0,0,0.3)', 'transparent', 'rgba(0,0,0,0.5)']}
                   locations={[0, 0.3, 1]}
                   style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                  {/* E-foil tagline overlay */}
-                  {selectedActivity?.id === 'efoil-session' && (
-                    <View className="items-center">
-                      <ThemedText
-                        className="text-4xl font-bold tracking-widest text-white"
-                        style={{
-                          textShadowColor: 'rgba(0,0,0,0.5)',
-                          textShadowOffset: { width: 0, height: 2 },
-                          textShadowRadius: 4,
-                        }}>
-                        SEEK THE
-                      </ThemedText>
-                      <ThemedText
-                        className="text-4xl font-bold tracking-widest text-white"
-                        style={{
-                          textShadowColor: 'rgba(0,0,0,0.5)',
-                          textShadowOffset: { width: 0, height: 2 },
-                          textShadowRadius: 4,
-                        }}>
-                        CHALLENGE
-                      </ThemedText>
-                    </View>
-                  )}
+                  {/* Reserved for future overlay content */}
                 </LinearGradient>
               </ImageBackground>
             )}
@@ -323,64 +301,59 @@ export default function ActivityDetailScreen() {
             </View>
           </AnimatedView>
 
-          {/* Add-ons — only for Maldives Adventure */}
+          {/* E-Foil Add-on — only for Maldives Adventure */}
           {selectedActivity.id === MALDIVES_ADVENTURE_ID && (
             <AnimatedView animation="fadeIn" delay={650} className="mt-6">
               <ThemedText
                 className="mb-3"
                 style={{ fontSize: 22, fontWeight: '700', color: '#000000', letterSpacing: -0.5 }}>
-                Add-ons
+                Optional Add-on
               </ThemedText>
-              <View className="rounded-2xl bg-secondary p-4" style={shadowPresets.card}>
-                {[
-                  {
-                    title: 'Audi e-foil',
-                    desc: 'Fly above the water',
-                    price: '$70 / 30 min',
-                    sub: '$120 / 1 hour',
-                  },
-                  {
-                    title: 'Fishing',
-                    desc: 'Traditional Maldivian fishing',
-                    price: '$70 total',
-                    sub: null,
-                  },
-                  {
-                    title: 'Drone aerial 4K',
-                    desc: 'Pro video of your trip',
-                    price: '$30 pp',
-                    sub: null,
-                  },
-                  {
-                    title: 'GoPro 360 rental',
-                    desc: 'Keep all your footage',
-                    price: '$25 pp',
-                    sub: null,
-                  },
-                ].map((item) => (
-                  <View
-                    key={item.title}
-                    className={`flex-row items-center justify-between py-3 ${item.title !== 'GoPro 360 rental' ? 'border-b border-border' : ''}`}>
-                    <View className="flex-1">
-                      <ThemedText className="font-semibold" style={{ color: colors.text }}>
-                        {item.title}
-                      </ThemedText>
-                      <ThemedText className="mt-0.5 text-sm" style={{ color: colors.textMuted }}>
-                        {item.desc}
-                      </ThemedText>
-                    </View>
-                    <View className="items-end">
-                      <ThemedText className="font-semibold" style={{ color: colors.text }}>
-                        {item.price}
-                      </ThemedText>
-                      {item.sub && (
-                        <ThemedText className="text-sm" style={{ color: colors.textMuted }}>
-                          {item.sub}
+              <View className="overflow-hidden rounded-2xl bg-secondary" style={shadowPresets.card}>
+                {/* E-Foil hero image */}
+                <ImageBackground
+                  source={EFOIL_ADDON.images[0]}
+                  style={{ height: 140, width: '100%' }}
+                  resizeMode="cover"
+                >
+                  <LinearGradient
+                    colors={['transparent', 'rgba(0,0,0,0.7)']}
+                    locations={[0.3, 1]}
+                    style={{ flex: 1, justifyContent: 'flex-end', padding: 16 }}
+                  >
+                    <View className="flex-row items-center justify-between">
+                      <View>
+                        <ThemedText className="text-lg font-bold text-white">
+                          {EFOIL_ADDON.title}
                         </ThemedText>
-                      )}
+                        <ThemedText className="text-sm text-white/70">
+                          {EFOIL_ADDON.durationLabel}
+                        </ThemedText>
+                      </View>
+                      <View className="rounded-full bg-white/25 px-3 py-1">
+                        <ThemedText className="font-bold text-white">
+                          ${EFOIL_ADDON.priceUsd}
+                        </ThemedText>
+                      </View>
                     </View>
-                  </View>
-                ))}
+                  </LinearGradient>
+                </ImageBackground>
+
+                {/* Description + includes */}
+                <View className="p-4">
+                  <ThemedText className="mb-3" style={{ color: colors.textMuted }}>
+                    {EFOIL_ADDON.description}
+                  </ThemedText>
+                  {EFOIL_ADDON.includes.map((item, i) => (
+                    <View key={i} className="mb-2 flex-row items-center">
+                      <Icon name="Check" size={14} color="#22C55E" />
+                      <ThemedText className="ml-2 text-sm">{item}</ThemedText>
+                    </View>
+                  ))}
+                  <ThemedText className="mt-2 text-sm italic opacity-40">
+                    Anyone in your group can add this at checkout or anytime before the trip.
+                  </ThemedText>
+                </View>
               </View>
             </AnimatedView>
           )}

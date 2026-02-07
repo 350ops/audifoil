@@ -13,13 +13,13 @@ WebBrowser.maybeCompleteAuthSession();
 
 // Demo mode - enabled via environment variable
 const DEMO_MODE_ENABLED = process.env.EXPO_PUBLIC_DEMO_MODE === 'true';
-const DEMO_STORAGE_KEY = '@foilTribe Adventures_demo_mode';
-const DEMO_PROFILE_KEY = '@foilTribe Adventures_demo_profile';
+const DEMO_STORAGE_KEY = '@foiltribe_demo_mode';
+const DEMO_PROFILE_KEY = '@foiltribe_demo_profile';
 
 // Demo user data
 const DEMO_USER: User = {
   id: 'demo-user-id',
-  email: 'maldives@foilTribe Adventures.com',
+  email: 'hello@foiltribe.com',
   app_metadata: {},
   user_metadata: { full_name: 'Demo User' },
   aud: 'authenticated',
@@ -28,7 +28,7 @@ const DEMO_USER: User = {
 
 const DEMO_PROFILE: Profile = {
   id: 'demo-user-id',
-  email: 'maldives@foilTribe Adventures.com',
+  email: 'hello@foiltribe.com',
   first_name: 'Demo',
   last_name: 'User',
   avatar_url: null,
@@ -248,13 +248,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsDemoMode(false);
       setUser(null);
       setProfile(null);
-      router.replace('/screens/welcome');
+      router.replace('/');
       return;
     }
 
     await supabase.auth.signOut();
     setProfile(null);
-    router.replace('/screens/welcome');
+    router.replace('/');
   };
 
   const updateProfile = async (updates: Partial<Profile>) => {

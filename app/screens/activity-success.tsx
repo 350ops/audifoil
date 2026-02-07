@@ -52,7 +52,7 @@ export default function ActivitySuccessScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const { activity, slot } = latestActivityBooking;
     await Share.share({
-      message: `I just booked ${activity.title} in the Maldives!\n\nDate: ${slot.dateLabel}\nTime: ${slot.startTime} - ${slot.endTime}\nLocation: ${activity.meetingPoint}\n\nJoin me! Book at foilTribe Adventures.com`,
+      message: `I just booked ${activity.title} in the Maldives!\n\nDate: ${slot.dateLabel}\nTime: ${slot.startTime} - ${slot.endTime}\nLocation: ${activity.meetingPoint}\n\nJoin me! Book at foiltribe.com`,
     });
   };
 

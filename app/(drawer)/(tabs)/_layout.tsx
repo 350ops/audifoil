@@ -17,13 +17,13 @@ export default function Layout() {
         <Label>Explore</Label>
       </NativeTabs.Trigger>
 
-      {/* Activities Tab - Catalog with filters */}
+      {/* Experience Tab - Showcase of what the trip includes */}
       <NativeTabs.Trigger name="activities">
         <Icon
-          sf={{ default: 'water.waves', selected: 'water.waves' }}
+          sf={{ default: 'safari', selected: 'safari.fill' }}
           drawable="ic_activities"
         />
-        <Label>Activities</Label>
+        <Label>Experience</Label>
       </NativeTabs.Trigger>
 
       {/* Bookings Tab - My bookings */}
@@ -41,7 +41,7 @@ export default function Layout() {
           sf={{ default: 'airplane', selected: 'airplane' }}
           drawable="ic_flight"
         />
-        <Label>Crew</Label>
+        <Label>Airline Crew</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

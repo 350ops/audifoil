@@ -26,11 +26,17 @@ import useThemeColors from '@/contexts/ThemeColors';
 import { useStore } from '@/store/useStore';
 import { useStripePayments, dollarsToCents } from '@/contexts/StripeContext';
 import {
+  PlatformPayButton,
+  PlatformPay,
+  usePlatformPay,
+  confirmPlatformPayPayment,
+} from '@stripe/stripe-react-native';
+import {
   getSingleTicketPrice,
   getFriendInviteInfo,
   MIN_GUESTS_FOR_BASE_PRICE,
 } from '@/data/pricing';
-import { applyPromoCode } from '@/data/activities';
+import { applyPromoCode, EFOIL_ADDON, MALDIVES_ADVENTURE_ID } from '@/data/activities';
 
 export default function ActivityCheckoutScreen() {
   const colors = useThemeColors();
@@ -58,6 +64,23 @@ export default function ActivityCheckoutScreen() {
   const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
   const [touched, setTouched] = useState<{ name?: boolean; email?: boolean }>({});
 
+  // E-Foil add-on state
+  const [efoilCount, setEfoilCount] = useState(0);
+  const isMaldivesAdventure = selectedActivity?.id === MALDIVES_ADVENTURE_ID;
+  const efoilTotal = efoilCount * EFOIL_ADDON.priceUsd;
+
+  // Apple Pay
+  const { isPlatformPaySupported } = usePlatformPay();
+  const [applePaySupported, setApplePaySupported] = useState(false);
+
+  // Check Apple Pay support on mount
+  React.useEffect(() => {
+    (async () => {
+      const supported = await isPlatformPaySupported();
+      setApplePaySupported(supported);
+    })();
+  }, [isPlatformPaySupported]);
+
   // Payment state
   const [paymentStep, setPaymentStep] = useState<'idle' | 'initializing' | 'ready' | 'processing' | 'success' | 'error'>('idle');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -83,7 +106,8 @@ export default function ActivityCheckoutScreen() {
 
   // Single ticket pricing - everyone pays the base rate
   const ticketPrice = getSingleTicketPrice(); // $80
-  const totalPrice = ticketPrice * guestCount;
+  const ticketTotal = ticketPrice * guestCount;
+  const totalPrice = ticketTotal + efoilTotal;
   const finalPrice = promoApplied
     ? totalPrice - promoApplied.discount
     : totalPrice;
@@ -223,6 +247,100 @@ export default function ActivityCheckoutScreen() {
     }
   }, [selectedActivity, selectedActivitySlot, paymentStep, initPayment, presentPaymentSheet, addActivityBooking, guestCount, name, email, whatsapp]);
 
+  // Handle Apple Pay
+  const handleApplePay = useCallback(async () => {
+    if (!selectedActivity || !selectedActivitySlot) return;
+
+    if (!validateForm()) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      setTouched({ name: true, email: true });
+      return;
+    }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setPaymentStep('processing');
+    setShowPaymentModal(true);
+
+    try {
+      // First get the payment intent from the server
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_SUPABASE_URL}/functions/v1/payment-sheet`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY}`,
+            apikey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!,
+          },
+          body: JSON.stringify({
+            amount: dollarsToCents(finalPrice),
+            currency: 'usd',
+            customerEmail: email,
+            customerName: name,
+            description: `${selectedActivity.title} - ${selectedActivitySlot.dateLabel} at ${selectedActivitySlot.startTime}`,
+            tripId: selectedActivitySlot.id,
+            metadata: {
+              activityId: selectedActivity.id,
+              tripDate: selectedActivitySlot.date,
+              tripTime: selectedActivitySlot.startTime,
+              guestCount: guestCount.toString(),
+            },
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error('Failed to create payment intent');
+      const { paymentIntent: clientSecret } = await response.json();
+
+      // Confirm with Apple Pay
+      const { error } = await confirmPlatformPayPayment(clientSecret, {
+        applePay: {
+          cartItems: [
+            {
+              label: selectedActivity.title,
+              amount: finalPrice.toFixed(2),
+              paymentType: PlatformPay.PaymentType.Immediate,
+            },
+          ],
+          merchantCountryCode: 'US',
+          currencyCode: 'USD',
+        },
+      });
+
+      if (error) {
+        if (error.code === 'Canceled') {
+          setPaymentStep('idle');
+          setShowPaymentModal(false);
+          return;
+        }
+        throw new Error(error.message);
+      }
+
+      // Success
+      setPaymentStep('success');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      await addActivityBooking(selectedActivity, selectedActivitySlot, guestCount, {
+        name,
+        email,
+        whatsapp,
+      });
+
+      setTimeout(() => {
+        setShowPaymentModal(false);
+        router.replace('/screens/activity-success');
+      }, 1500);
+    } catch (error: any) {
+      setPaymentStep('error');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert('Payment Failed', error.message || 'Something went wrong. Please try again.');
+      setTimeout(() => {
+        setShowPaymentModal(false);
+        setPaymentStep('idle');
+      }, 500);
+    }
+  }, [selectedActivity, selectedActivitySlot, finalPrice, email, name, whatsapp, guestCount, validateForm, addActivityBooking]);
+
   // Generate shareable link for friends
   const generateShareLink = useCallback(async () => {
     if (!selectedActivity || !selectedActivitySlot) return;
@@ -297,11 +415,11 @@ export default function ActivityCheckoutScreen() {
         <Icon name="AlertCircle" size={48} color={colors.textMuted} />
         <ThemedText className="mt-4 text-lg font-semibold">Booking Session Expired</ThemedText>
         <ThemedText className="mt-2 text-center" style={{ color: colors.textMuted }}>
-          Your booking session has expired or was not properly initialized. Please select an activity again.
+          Your booking session has expired or was not properly initialized. Please try again.
         </ThemedText>
         <Button 
-          title="Browse Activities" 
-          onPress={() => router.replace('/(drawer)/(tabs)/activities')} 
+          title="Go Back" 
+          onPress={() => router.replace('/(drawer)/(tabs)')} 
           className="mt-6"
           iconStart="ArrowLeft"
         />
@@ -473,6 +591,89 @@ export default function ActivityCheckoutScreen() {
             )}
           </View>
 
+          {/* E-Foil Add-on */}
+          {isMaldivesAdventure && (
+            <View className="mt-6">
+              <AnimatedView animation="scaleIn" delay={80}>
+                <View
+                  className="bg-secondary rounded-2xl overflow-hidden"
+                  style={[shadowPresets.card, efoilCount > 0 ? { borderWidth: 2, borderColor: colors.highlight } : {}]}
+                >
+                  <View className="p-4">
+                    <View className="flex-row items-center mb-2">
+                      <Icon name="Zap" size={20} color={colors.highlight} />
+                      <ThemedText className="font-bold text-lg ml-2">{EFOIL_ADDON.title}</ThemedText>
+                    </View>
+
+                    <ThemedText className="text-sm mb-3" style={{ color: colors.textMuted }}>
+                      {EFOIL_ADDON.description}
+                    </ThemedText>
+
+                    <View className="flex-row items-center justify-between">
+                      <View>
+                        <ThemedText className="font-bold text-lg" style={{ color: colors.highlight }}>
+                          ${EFOIL_ADDON.priceUsd}
+                        </ThemedText>
+                        <ThemedText className="text-sm" style={{ color: colors.textMuted }}>
+                          per person · {EFOIL_ADDON.durationLabel}
+                        </ThemedText>
+                      </View>
+
+                      <View className="flex-row items-center gap-3">
+                        <Pressable
+                          onPress={() => {
+                            if (efoilCount > 0) {
+                              Haptics.selectionAsync();
+                              setEfoilCount(efoilCount - 1);
+                            }
+                          }}
+                          className="w-9 h-9 rounded-full items-center justify-center"
+                          style={{ backgroundColor: efoilCount > 0 ? colors.highlight + '20' : colors.border }}
+                        >
+                          <Icon name="Minus" size={16} color={efoilCount > 0 ? colors.highlight : colors.textMuted} />
+                        </Pressable>
+
+                        <ThemedText className="font-bold text-lg" style={{ minWidth: 24, textAlign: 'center' }}>
+                          {efoilCount}
+                        </ThemedText>
+
+                        <Pressable
+                          onPress={() => {
+                            if (efoilCount < guestCount) {
+                              Haptics.selectionAsync();
+                              setEfoilCount(efoilCount + 1);
+                            }
+                          }}
+                          className="w-9 h-9 rounded-full items-center justify-center"
+                          style={{ backgroundColor: efoilCount < guestCount ? colors.highlight + '20' : colors.border }}
+                        >
+                          <Icon name="Plus" size={16} color={efoilCount < guestCount ? colors.highlight : colors.textMuted} />
+                        </Pressable>
+                      </View>
+                    </View>
+
+                    {efoilCount > 0 && (
+                      <View className="mt-3 pt-3 border-t border-border flex-row items-center justify-between">
+                        <ThemedText className="text-sm" style={{ color: colors.textMuted }}>
+                          {efoilCount} × ${EFOIL_ADDON.priceUsd}
+                        </ThemedText>
+                        <ThemedText className="font-bold" style={{ color: colors.highlight }}>
+                          ${efoilTotal}
+                        </ThemedText>
+                      </View>
+                    )}
+
+                    {efoilCount === 0 && (
+                      <ThemedText className="text-xs mt-2 italic opacity-40">
+                        You can also add this after booking — anytime before the trip.
+                      </ThemedText>
+                    )}
+                  </View>
+                </View>
+              </AnimatedView>
+            </View>
+          )}
+
           {/* Invite Friends Section */}
           {tripInfo && tripInfo.needsMorePeople && (
             <View className="mt-6">
@@ -543,8 +744,16 @@ export default function ActivityCheckoutScreen() {
                 <ThemedText className="opacity-60">
                   Ticket × {guestCount}
                 </ThemedText>
-                <ThemedText className="font-medium">${totalPrice}</ThemedText>
+                <ThemedText className="font-medium">${ticketTotal}</ThemedText>
               </View>
+              {efoilCount > 0 && (
+                <View className="flex-row justify-between mb-3">
+                  <ThemedText className="opacity-60">
+                    E-Foil add-on × {efoilCount}
+                  </ThemedText>
+                  <ThemedText className="font-medium">${efoilTotal}</ThemedText>
+                </View>
+              )}
               {promoApplied && (
                 <View className="flex-row justify-between mb-3">
                   <ThemedText style={{ color: '#22C55E' }}>{promoApplied.label}</ThemedText>
@@ -591,18 +800,46 @@ export default function ActivityCheckoutScreen() {
           <ThemedText className="font-bold text-2xl">${finalPrice.toFixed(2)}</ThemedText>
         </View>
 
-        <Button
-          title={isProcessing ? 'Processing...' : `Pay $${finalPrice.toFixed(2)}`}
-          onPress={handlePayment}
-          disabled={!isFormValid || isProcessing}
-          iconStart={isProcessing ? undefined : 'CreditCard'}
-          loading={isProcessing}
-          size="large"
-          variant="cta"
-          rounded="full"
-        />
+        {/* Apple Pay button (primary) */}
+        {applePaySupported && Platform.OS === 'ios' && (
+          <PlatformPayButton
+            onPress={handleApplePay}
+            type={PlatformPay.ButtonType.Pay}
+            appearance={PlatformPay.ButtonStyle.Black}
+            borderRadius={25}
+            disabled={!isFormValid || isProcessing}
+            style={{ width: '100%', height: 52, marginBottom: 10 }}
+          />
+        )}
 
-        <ThemedText className="text-center text-sm opacity-40 mt-3">
+        {/* Card payment fallback (or primary on Android / when Apple Pay unavailable) */}
+        {(!applePaySupported || Platform.OS !== 'ios') && (
+          <Button
+            title={isProcessing ? 'Processing...' : `Pay $${finalPrice.toFixed(2)}`}
+            onPress={handlePayment}
+            disabled={!isFormValid || isProcessing}
+            iconStart={isProcessing ? undefined : 'CreditCard'}
+            loading={isProcessing}
+            size="large"
+            variant="cta"
+            rounded="full"
+          />
+        )}
+
+        {/* Secondary card option when Apple Pay is shown */}
+        {applePaySupported && Platform.OS === 'ios' && (
+          <Pressable
+            onPress={handlePayment}
+            disabled={!isFormValid || isProcessing}
+            className="py-3"
+          >
+            <ThemedText className="text-center text-sm font-medium" style={{ color: colors.highlight }}>
+              Or pay with card
+            </ThemedText>
+          </Pressable>
+        )}
+
+        <ThemedText className="text-center text-sm opacity-40 mt-2">
           Secure payment powered by Stripe
         </ThemedText>
       </View>
