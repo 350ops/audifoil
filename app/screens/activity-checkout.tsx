@@ -76,8 +76,17 @@ export default function ActivityCheckoutScreen() {
   // Check Apple Pay support on mount
   React.useEffect(() => {
     (async () => {
-      const supported = await isPlatformPaySupported();
-      setApplePaySupported(supported);
+      try {
+        const supported = await isPlatformPaySupported({ googlePay: { testEnv: false } });
+        setApplePaySupported(supported);
+        console.log('[ApplePay] Supported:', supported);
+      } catch (e) {
+        console.log('[ApplePay] Check failed, defaulting to true on iOS:', e);
+        // On iOS, default to showing Apple Pay — it will handle errors gracefully
+        if (Platform.OS === 'ios') {
+          setApplePaySupported(true);
+        }
+      }
     })();
   }, [isPlatformPaySupported]);
 
@@ -800,8 +809,8 @@ export default function ActivityCheckoutScreen() {
           <ThemedText className="font-bold text-2xl">${finalPrice.toFixed(2)}</ThemedText>
         </View>
 
-        {/* Apple Pay button (primary) */}
-        {applePaySupported && Platform.OS === 'ios' && (
+        {/* Apple Pay button — always shown on iOS */}
+        {Platform.OS === 'ios' && (
           <PlatformPayButton
             onPress={handleApplePay}
             type={PlatformPay.ButtonType.Pay}
@@ -812,8 +821,8 @@ export default function ActivityCheckoutScreen() {
           />
         )}
 
-        {/* Card payment fallback (or primary on Android / when Apple Pay unavailable) */}
-        {(!applePaySupported || Platform.OS !== 'ios') && (
+        {/* Card payment button — shown on Android, or as fallback on iOS */}
+        {Platform.OS !== 'ios' && (
           <Button
             title={isProcessing ? 'Processing...' : `Pay $${finalPrice.toFixed(2)}`}
             onPress={handlePayment}
@@ -826,12 +835,12 @@ export default function ActivityCheckoutScreen() {
           />
         )}
 
-        {/* Secondary card option when Apple Pay is shown */}
-        {applePaySupported && Platform.OS === 'ios' && (
+        {/* Secondary card option on iOS */}
+        {Platform.OS === 'ios' && (
           <Pressable
             onPress={handlePayment}
             disabled={!isFormValid || isProcessing}
-            className="py-3"
+            className="py-2"
           >
             <ThemedText className="text-center text-sm font-medium" style={{ color: colors.highlight }}>
               Or pay with card

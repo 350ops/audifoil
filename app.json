@@ -1,11 +1,11 @@
 {
   "expo": {
     "newArchEnabled": true,
-    "name": "foiltribe",
-    "slug": "audifoil",
-    "version": "1.0.0",
-    "runtimeVersion": "1.0.0",
-    "scheme": "foiltribe",
+    "name": "foiltribemv",
+    "slug": "foiltribemv",
+    "version": "1.1.0",
+    "runtimeVersion": "1.1.0",
+    "scheme": "foiltribemv",
     "platforms": [
       "ios",
       "android"
@@ -14,22 +14,25 @@
       "tsconfigPaths": true
     },
     "plugins": [
-      "expo-router",
-      "expo-font",
-      "expo-video",
-      "expo-web-browser",
-      "expo-apple-authentication",
       [
-        "expo-notifications",
+        "expo-splash-screen",
         {
-          "icon": "./assets/icon.png",
-          "color": "#0077B6"
+          "image": "./assets/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-router",
+        {
+          "origin": "https://foiltribemv.expo.app"
         }
       ],
       [
         "@stripe/stripe-react-native",
         {
-          "enableGooglePay": true
+          "merchantIdentifier": "merchant.com.mmdev13.foiltribemv",
+          "publishableKey": "pk_live_51QiAABDO4BRJvLH7ctaJuK2Hg3srajjDZhxijucRuHhA2RRjguQ1QxB5TL0XfnPINWX8hKtRpY5pZcZErgyI77As00NF3ZMijQ"
         }
       ]
     ],
@@ -61,14 +64,14 @@
       },
       "softwareKeyboardLayoutMode": "pan",
       "predictiveBackGestureEnabled": false,
-      "package": "com.mmdev13.foiltribeadventures"
+      "package": "com.mmdev13.foiltribemv"
     },
     "extra": {
       "router": {
-        "origin": false
+        "origin": "https://foiltribemv.expo.app"
       },
       "eas": {
-        "projectId": "bf9d6b8b-3fac-4a09-828a-51560c2877c9"
+        "projectId": "360120b8-dba4-4c38-8180-0f2f4fdcfe10"
       }
     },
     "owner": "mmdev13"

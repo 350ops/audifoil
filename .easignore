@@ -1,0 +1,125 @@
+# ──────────────────────────────────────────────
+# EAS Build Ignore — reduce archive size
+# ──────────────────────────────────────────────
+
+# Duplicate videos folder at root (already in assets/img/imagesmaldivesa/videos/)
+videos/
+
+# Documentation & analysis (not needed for build)
+README.md
+APP_ANALYSIS.md
+CLAUDE.md
+LICENSE
+.claude/
+.cursor/
+
+# Build artifacts & temp files
+build/
+supabase/.temp/
+
+# Dev config files not needed in build
+cesconfig.json
+mockData.js
+mle_routes.json
+
+# Git
+.git/
+.gitignore
+
+# ──────────────────────────────────────────────
+# Unused Logos (675 files, only 11 are used)
+# Keep only the ones referenced in data/airlineLogos.ts
+# ──────────────────────────────────────────────
+Logos/Aer*
+Logos/Ag*
+Logos/Ai*
+Logos/Ak*
+Logos/Al*
+Logos/Am*
+Logos/An*
+Logos/Ar*
+Logos/As*
+Logos/ASL*
+Logos/AT*
+Logos/Atl*
+Logos/Au*
+Logos/Av*
+Logos/Az*
+!Logos/AzerbaijanAirlines.png
+Logos/B*
+!Logos/BritishAirways.png
+Logos/C*
+!Logos/CondorFlugdienstGmbH.png
+Logos/D*
+Logos/E*
+!Logos/Emirates(airline).png
+!Logos/EtihadAirways(EY).png
+Logos/F*
+!Logos/Flydubai.png
+Logos/G*
+Logos/H*
+Logos/I*
+!Logos/ItAliAirlines.png
+Logos/J*
+Logos/K*
+Logos/L*
+Logos/M*
+Logos/N*
+!Logos/Neos(airline).png
+Logos/O*
+Logos/P*
+Logos/Q*
+!Logos/QatarAirways.png
+Logos/R*
+Logos/S*
+!Logos/SingaporeAirlines.png
+Logos/T*
+!Logos/TurkishAirlines.png
+Logos/U*
+Logos/V*
+Logos/W*
+Logos/X*
+Logos/Y*
+Logos/Z*
+Logos/0*
+Logos/1*
+Logos/2*
+Logos/3*
+Logos/4*
+Logos/5*
+Logos/6*
+Logos/7*
+Logos/8*
+Logos/9*
+
+# Unused asset images (not referenced in code)
+assets/img/banner-*.jpg
+assets/img/banner.jpg
+assets/img/banner-3.png
+assets/img/wallpaper-3.jpg
+assets/img/wallpaper.webp
+assets/img/onboarding-1.jpg
+assets/img/onboarding-1.png
+assets/img/onboarding-1.webp
+assets/img/onboarding-2.jpg
+assets/img/photography.jpg
+assets/img/marketing.jpg
+assets/img/illustration.jpg
+assets/img/design.jpg
+assets/img/craft.jpg
+assets/img/tshomino.jpg
+assets/img/user-1.jpg
+assets/img/user-2.jpg
+assets/img/user-3.jpg
+assets/img/user-4.jpg
+assets/img/user.jpg
+assets/img/efoil.jpg
+assets/img/island.jpeg
+assets/img/boat.jpeg
+assets/img/crew.jpeg
+assets/img/master.png
+assets/img/File 5.jpg
+assets/img/apple-pay.png
+assets/img/visa.png
+assets/img/qr.png
+assets/img/qr.svg
