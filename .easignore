@@ -1,11 +1,48 @@
 # ──────────────────────────────────────────────
-# EAS Build Ignore — reduce archive size
+# EAS Build Ignore
+# NOTE: .easignore REPLACES .gitignore entirely
+# so we must include everything from .gitignore too
 # ──────────────────────────────────────────────
 
-# Duplicate videos folder at root (already in assets/img/imagesmaldivesa/videos/)
+# === From .gitignore (required) ===
+node_modules
+
+# Native build directories
+ios/
+android/
+
+# Expo build artifacts
+dist/
+.expo/
+.expo-shared/
+*.jsbundle
+*.hbc
+*.hbc.map
+*.js.map
+
+# OS specific
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.mcp.json
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Additional EAS exclusions ===
+
+# Duplicate videos folder at root
 /videos
 
-# Documentation & analysis (not needed for build)
+# Git
+.git/
+.gitignore
+
+# Documentation
 README.md
 APP_ANALYSIS.md
 CLAUDE.md
@@ -17,82 +54,26 @@ LICENSE
 build/
 supabase/.temp/
 
-# Dev config files not needed in build
+# Dev config files
 cesconfig.json
 mockData.js
 mle_routes.json
 
-# Git
-.git/
-.gitignore
-
-# ──────────────────────────────────────────────
-# Unused Logos (675 files, only 11 are used)
-# Keep only the ones referenced in data/airlineLogos.ts
-# ──────────────────────────────────────────────
-Logos/Aer*
-Logos/Ag*
-Logos/Ai*
-Logos/Ak*
-Logos/Al*
-Logos/Am*
-Logos/An*
-Logos/Ar*
-Logos/As*
-Logos/ASL*
-Logos/AT*
-Logos/Atl*
-Logos/Au*
-Logos/Av*
-Logos/Az*
-!Logos/AzerbaijanAirlines.png
-Logos/B*
-!Logos/BritishAirways.png
-Logos/C*
-!Logos/CondorFlugdienstGmbH.png
-Logos/D*
-Logos/E*
+# Unused Logos (keep only the 11 used in airlineLogos.ts)
+Logos/*
+!Logos/QatarAirways.png
 !Logos/Emirates(airline).png
 !Logos/EtihadAirways(EY).png
-Logos/F*
-!Logos/Flydubai.png
-Logos/G*
-Logos/H*
-Logos/I*
-!Logos/ItAliAirlines.png
-Logos/J*
-Logos/K*
-Logos/L*
-Logos/M*
-Logos/N*
-!Logos/Neos(airline).png
-Logos/O*
-Logos/P*
-Logos/Q*
-!Logos/QatarAirways.png
-Logos/R*
-Logos/S*
-!Logos/SingaporeAirlines.png
-Logos/T*
 !Logos/TurkishAirlines.png
-Logos/U*
-Logos/V*
-Logos/W*
-Logos/X*
-Logos/Y*
-Logos/Z*
-Logos/0*
-Logos/1*
-Logos/2*
-Logos/3*
-Logos/4*
-Logos/5*
-Logos/6*
-Logos/7*
-Logos/8*
-Logos/9*
+!Logos/SingaporeAirlines.png
+!Logos/Flydubai.png
+!Logos/BritishAirways.png
+!Logos/ItAliAirlines.png
+!Logos/CondorFlugdienstGmbH.png
+!Logos/Neos(airline).png
+!Logos/AzerbaijanAirlines.png
 
-# Unused asset images (not referenced in code)
+# Unused images
 assets/img/banner-*.jpg
 assets/img/banner.jpg
 assets/img/banner-3.png
