@@ -3,7 +3,7 @@
 # ──────────────────────────────────────────────
 
 # Duplicate videos folder at root (already in assets/img/imagesmaldivesa/videos/)
-videos/
+/videos
 
 # Documentation & analysis (not needed for build)
 README.md
