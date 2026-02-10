@@ -1,6 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { create } from 'zustand';
+'use client';
 
+import { create } from 'zustand';
 import {
   Activity,
   ActivityBooking,
@@ -8,9 +8,6 @@ import {
   ACTIVITIES,
   generateActivitySlots,
 } from '@/data/activities';
-import { loadBookings, createBooking, addBooking } from '@/data/bookings';
-import { CrewLayover, getCrewExperienceConstraint } from '@/data/flightsMle';
-import { generateSlotsForFlight } from '@/data/slots';
 import {
   BookingInsert,
   createBooking as createDbBooking,
@@ -22,143 +19,10 @@ import {
   formatTripsForUI,
   getOrCreateTripsForDate,
 } from '@/data/tripsDb';
-import { Booking, DemoUser, Flight, Slot } from '@/data/types';
+import { DemoUser } from '@/data/types';
 
-const ACTIVITY_BOOKINGS_KEY = 'foiltribe_activity_bookings';
+const ACTIVITY_BOOKINGS_KEY = 'bohowaves_activity_bookings';
 
-interface AppState {
-  // Demo user
-  demoUser: DemoUser | null;
-  setDemoUser: (user: DemoUser | null) => void;
-
-  // ==========================================
-  // ACTIVITIES MARKETPLACE (PRIMARY)
-  // ==========================================
-
-  // All activities
-  activities: Activity[];
-
-  // Selected activity for detail view
-  selectedActivity: Activity | null;
-  setSelectedActivity: (activity: Activity | null) => void;
-
-  // Generated slots for selected activity (legacy mock data)
-  activitySlots: ActivitySlot[];
-  generateActivitySlots: (activity: Activity) => void;
-
-  // Selected slot for booking
-  selectedActivitySlot: ActivitySlot | null;
-  setSelectedActivitySlot: (slot: ActivitySlot | null) => void;
-
-  // Number of guests
-  guestCount: number;
-  setGuestCount: (count: number) => void;
-
-  // Activity bookings
-  activityBookings: ActivityBooking[];
-  loadActivityBookings: () => Promise<void>;
-  addActivityBooking: (
-    activity: Activity,
-    slot: ActivitySlot,
-    guests: number,
-    userInfo: { name: string; email: string; whatsapp: string; airlineCode?: string }
-  ) => Promise<ActivityBooking>;
-
-  // Update a booking with group booking info
-  updateActivityBooking: (
-    bookingId: string,
-    updates: Partial<ActivityBooking>
-  ) => Promise<void>;
-
-  // Latest activity booking (for success screen)
-  latestActivityBooking: ActivityBooking | null;
-  setLatestActivityBooking: (booking: ActivityBooking | null) => void;
-
-  // Reset activity selection
-  resetActivitySelection: () => void;
-
-  // ==========================================
-  // DATABASE TRIPS (NEW)
-  // ==========================================
-
-  // Database activity (loaded from Supabase)
-  dbActivity: DbActivity | null;
-  setDbActivity: (activity: DbActivity | null) => void;
-
-  // Database trips for selected date
-  dbTrips: FormattedTrip[];
-  setDbTrips: (trips: FormattedTrip[]) => void;
-
-  // Dates that have trips available
-  datesWithTrips: string[];
-  setDatesWithTrips: (dates: string[]) => void;
-
-  // Loading states
-  tripsLoading: boolean;
-  setTripsLoading: (loading: boolean) => void;
-
-  // Fetch activity from database by slug
-  fetchDbActivity: (slug: string) => Promise<DbActivity | null>;
-
-  // Fetch trips for a specific date
-  fetchTripsForDate: (date: string) => Promise<FormattedTrip[]>;
-
-  // Fetch dates with available trips
-  fetchDatesWithTrips: (startDate: string, endDate: string) => Promise<string[]>;
-
-  // Create a booking in the database
-  createDbBooking: (
-    tripId: string,
-    guests: number,
-    totalPrice: number,
-    userInfo: { name: string; email?: string; whatsapp?: string; airlineCode?: string }
-  ) => Promise<DbBooking | null>;
-
-  // ==========================================
-  // CREW SHORTCUT (SECONDARY - Legacy flights)
-  // ==========================================
-
-  // Selected flight
-  selectedFlight: Flight | null;
-  setSelectedFlight: (flight: Flight | null) => void;
-
-  // Selected slot
-  selectedSlot: Slot | null;
-  setSelectedSlot: (slot: Slot | null) => void;
-
-  // Generated slots for selected flight
-  currentSlots: Slot[];
-  generateSlots: (flight: Flight) => void;
-
-  // Flight bookings (legacy)
-  bookings: Booking[];
-  loadBookingsFromStorage: () => Promise<void>;
-  addNewBooking: (
-    flight: Flight,
-    slot: Slot,
-    userInfo: { name: string; email: string; whatsapp: string }
-  ) => Promise<Booking>;
-
-  // Latest booking (for success screen)
-  latestBooking: Booking | null;
-  setLatestBooking: (booking: Booking | null) => void;
-
-  // Reset selection
-  resetSelection: () => void;
-
-  // Crew layover (arrival + departure + date) — used for "Crew" → experiences
-  selectedCrewLayover: CrewLayover | null;
-  setSelectedCrewLayover: (layover: CrewLayover | null) => void;
-
-  // ==========================================
-  // LOADING STATES
-  // ==========================================
-
-  isLoading: boolean;
-  setIsLoading: (loading: boolean) => void;
-}
-
-// Generate confirmation code
 function generateConfirmationCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = 'MLD-';
@@ -168,47 +32,68 @@ function generateConfirmationCode(): string {
   return code;
 }
 
+interface AppState {
+  demoUser: DemoUser | null;
+  setDemoUser: (user: DemoUser | null) => void;
+
+  // Activities
+  activities: Activity[];
+  selectedActivity: Activity | null;
+  setSelectedActivity: (activity: Activity | null) => void;
+  activitySlots: ActivitySlot[];
+  generateActivitySlots: (activity: Activity) => void;
+  selectedActivitySlot: ActivitySlot | null;
+  setSelectedActivitySlot: (slot: ActivitySlot | null) => void;
+  guestCount: number;
+  setGuestCount: (count: number) => void;
+
+  // Bookings
+  activityBookings: ActivityBooking[];
+  loadActivityBookings: () => void;
+  addActivityBooking: (
+    activity: Activity,
+    slot: ActivitySlot,
+    guests: number,
+    userInfo: { name: string; email: string; whatsapp: string; airlineCode?: string }
+  ) => ActivityBooking;
+  updateActivityBooking: (bookingId: string, updates: Partial<ActivityBooking>) => void;
+  latestActivityBooking: ActivityBooking | null;
+  setLatestActivityBooking: (booking: ActivityBooking | null) => void;
+  resetActivitySelection: () => void;
+
+  // Database trips
+  dbActivity: DbActivity | null;
+  setDbActivity: (activity: DbActivity | null) => void;
+  dbTrips: FormattedTrip[];
+  setDbTrips: (trips: FormattedTrip[]) => void;
+  datesWithTrips: string[];
+  setDatesWithTrips: (dates: string[]) => void;
+  tripsLoading: boolean;
+  setTripsLoading: (loading: boolean) => void;
+  fetchDbActivity: (slug: string) => Promise<DbActivity | null>;
+  fetchTripsForDate: (date: string) => Promise<FormattedTrip[]>;
+  fetchDatesWithTrips: (startDate: string, endDate: string) => Promise<string[]>;
+  createDbBooking: (tripId: string, guests: number, totalPrice: number, userInfo: { name: string; email?: string; whatsapp?: string; airlineCode?: string }) => Promise<DbBooking | null>;
+
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+}
+
 export const useStore = create<AppState>((set, get) => ({
-  // Demo user
-  demoUser: {
-    id: 'demo-user',
-    name: 'Miguel',
-    email: 'hello@foiltribe.com',
-    whatsapp: '+34 612 345 678',
-  },
+  demoUser: { id: 'demo-user', name: 'Miguel', email: 'hello@bohowaves.com', whatsapp: '+34 612 345 678' },
   setDemoUser: (user) => set({ demoUser: user }),
 
-  // ==========================================
-  // ACTIVITIES MARKETPLACE
-  // ==========================================
-
   activities: ACTIVITIES,
-
   selectedActivity: null,
   setSelectedActivity: (activity) => {
     set({ selectedActivity: activity, selectedActivitySlot: null, guestCount: 1 });
-    if (activity) {
-      get().generateActivitySlots(activity);
-    }
+    if (activity) get().generateActivitySlots(activity);
   },
 
   activitySlots: [],
   generateActivitySlots: (activity) => {
-    const layover = get().selectedCrewLayover;
-    if (layover) {
-      const { dateStr, dateLabel, earliestStartTimeLocal, latestEndTimeLocal } =
-        getCrewExperienceConstraint(layover);
-      const slots = generateActivitySlots(activity, 1, {
-        forDate: dateStr,
-        dateLabel,
-        earliestStartTime: earliestStartTimeLocal,
-        latestEndTime: latestEndTimeLocal,
-      });
-      set({ activitySlots: slots });
-    } else {
-      const slots = generateActivitySlots(activity, 3);
-      set({ activitySlots: slots });
-    }
+    const slots = generateActivitySlots(activity, 3);
+    set({ activitySlots: slots });
   },
 
   selectedActivitySlot: null,
@@ -218,24 +103,20 @@ export const useStore = create<AppState>((set, get) => ({
   setGuestCount: (count) => set({ guestCount: count }),
 
   activityBookings: [],
-  loadActivityBookings: async () => {
+  loadActivityBookings: () => {
     try {
-      const stored = await AsyncStorage.getItem(ACTIVITY_BOOKINGS_KEY);
-      if (stored) {
-        set({ activityBookings: JSON.parse(stored) });
-      }
+      const stored = localStorage.getItem(ACTIVITY_BOOKINGS_KEY);
+      if (stored) set({ activityBookings: JSON.parse(stored) });
     } catch (error) {
       console.error('Failed to load activity bookings:', error);
     }
   },
 
-  addActivityBooking: async (activity, slot, guests, userInfo) => {
+  addActivityBooking: (activity, slot, guests, userInfo) => {
     const booking: ActivityBooking = {
       id: `booking-${Date.now()}`,
       confirmationCode: generateConfirmationCode(),
-      activity,
-      slot,
-      guests,
+      activity, slot, guests,
       totalPrice: slot.price * guests,
       userName: userInfo.name,
       userEmail: userInfo.email,
@@ -243,74 +124,34 @@ export const useStore = create<AppState>((set, get) => ({
       status: 'confirmed',
       createdAt: new Date().toISOString(),
     };
-
-    const currentBookings = get().activityBookings;
-    const updatedBookings = [...currentBookings, booking];
-
-    try {
-      await AsyncStorage.setItem(ACTIVITY_BOOKINGS_KEY, JSON.stringify(updatedBookings));
-    } catch (error) {
-      console.error('Failed to save activity booking:', error);
-    }
-
-    set({
-      activityBookings: updatedBookings,
-      latestActivityBooking: booking,
-    });
-
+    const updatedBookings = [...get().activityBookings, booking];
+    try { localStorage.setItem(ACTIVITY_BOOKINGS_KEY, JSON.stringify(updatedBookings)); } catch {}
+    set({ activityBookings: updatedBookings, latestActivityBooking: booking });
     return booking;
   },
 
-  updateActivityBooking: async (bookingId, updates) => {
-    const currentBookings = get().activityBookings;
-    const updatedBookings = currentBookings.map((b) =>
-      b.id === bookingId ? { ...b, ...updates } : b
-    );
-
-    try {
-      await AsyncStorage.setItem(ACTIVITY_BOOKINGS_KEY, JSON.stringify(updatedBookings));
-    } catch (error) {
-      console.error('Failed to update activity booking:', error);
-    }
-
-    const updatedLatest = get().latestActivityBooking?.id === bookingId
-      ? { ...get().latestActivityBooking!, ...updates }
-      : get().latestActivityBooking;
-
-    set({
-      activityBookings: updatedBookings,
-      latestActivityBooking: updatedLatest,
-    });
+  updateActivityBooking: (bookingId, updates) => {
+    const updatedBookings = get().activityBookings.map((b) => b.id === bookingId ? { ...b, ...updates } : b);
+    try { localStorage.setItem(ACTIVITY_BOOKINGS_KEY, JSON.stringify(updatedBookings)); } catch {}
+    const updatedLatest = get().latestActivityBooking?.id === bookingId ? { ...get().latestActivityBooking!, ...updates } : get().latestActivityBooking;
+    set({ activityBookings: updatedBookings, latestActivityBooking: updatedLatest });
   },
 
   latestActivityBooking: null,
   setLatestActivityBooking: (booking) => set({ latestActivityBooking: booking }),
 
-  resetActivitySelection: () =>
-    set({
-      selectedActivity: null,
-      selectedActivitySlot: null,
-      activitySlots: [],
-      guestCount: 1,
-      latestActivityBooking: null,
-      dbActivity: null,
-      dbTrips: [],
-      datesWithTrips: [],
-    }),
+  resetActivitySelection: () => set({
+    selectedActivity: null, selectedActivitySlot: null, activitySlots: [], guestCount: 1,
+    latestActivityBooking: null, dbActivity: null, dbTrips: [], datesWithTrips: [],
+  }),
 
-  // ==========================================
-  // DATABASE TRIPS
-  // ==========================================
-
+  // Database trips
   dbActivity: null,
   setDbActivity: (activity) => set({ dbActivity: activity }),
-
   dbTrips: [],
   setDbTrips: (trips) => set({ dbTrips: trips }),
-
   datesWithTrips: [],
   setDatesWithTrips: (dates) => set({ datesWithTrips: dates }),
-
   tripsLoading: false,
   setTripsLoading: (loading) => set({ tripsLoading: loading }),
 
@@ -321,20 +162,10 @@ export const useStore = create<AppState>((set, get) => ({
   },
 
   fetchTripsForDate: async (date) => {
-    const { dbActivity, selectedActivity } = get();
+    const { dbActivity } = get();
     if (!dbActivity) return [];
-
     set({ tripsLoading: true, selectedActivitySlot: null });
-
-    const dbTrips = await getOrCreateTripsForDate(
-      dbActivity.id,
-      dbActivity.slug,
-      date,
-      dbActivity.duration_min,
-      dbActivity.max_guests,
-      dbActivity.is_sunset ?? false
-    );
-
+    const dbTrips = await getOrCreateTripsForDate(dbActivity.id, dbActivity.slug, date, dbActivity.duration_min, dbActivity.max_guests, dbActivity.is_sunset ?? false);
     const formatted = await formatTripsForUI(dbTrips, dbActivity);
     set({ dbTrips: formatted, tripsLoading: false });
     return formatted;
@@ -343,7 +174,6 @@ export const useStore = create<AppState>((set, get) => ({
   fetchDatesWithTrips: async (startDate, endDate) => {
     const { dbActivity } = get();
     if (!dbActivity) return [];
-
     const dates = await fetchDatesWithTrips(dbActivity.id, startDate, endDate);
     set({ datesWithTrips: dates });
     return dates;
@@ -351,71 +181,13 @@ export const useStore = create<AppState>((set, get) => ({
 
   createDbBooking: async (tripId, guests, totalPrice, userInfo) => {
     const booking: BookingInsert = {
-      trip_id: tripId,
-      guest_count: guests,
-      total_price: totalPrice,
-      user_name: userInfo.name,
-      user_email: userInfo.email,
-      user_whatsapp: userInfo.whatsapp,
-      airline_code: userInfo.airlineCode,
+      trip_id: tripId, guest_count: guests, total_price: totalPrice,
+      user_name: userInfo.name, user_email: userInfo.email,
+      user_whatsapp: userInfo.whatsapp, airline_code: userInfo.airlineCode,
       status: 'confirmed',
     };
-
-    const result = await createDbBooking(booking);
-    return result;
+    return await createDbBooking(booking);
   },
-
-  // ==========================================
-  // CREW SHORTCUT (Legacy)
-  // ==========================================
-
-  selectedFlight: null,
-  setSelectedFlight: (flight) => {
-    set({ selectedFlight: flight, selectedSlot: null });
-    if (flight) {
-      get().generateSlots(flight);
-    }
-  },
-
-  selectedSlot: null,
-  setSelectedSlot: (slot) => set({ selectedSlot: slot }),
-
-  currentSlots: [],
-  generateSlots: (flight) => {
-    const slots = generateSlotsForFlight(flight);
-    set({ currentSlots: slots });
-  },
-
-  bookings: [],
-  loadBookingsFromStorage: async () => {
-    const bookings = await loadBookings();
-    set({ bookings });
-  },
-  addNewBooking: async (flight, slot, userInfo) => {
-    const booking = createBooking(flight, slot, userInfo);
-    await addBooking(booking);
-    const bookings = await loadBookings();
-    set({ bookings, latestBooking: booking });
-    return booking;
-  },
-
-  latestBooking: null,
-  setLatestBooking: (booking) => set({ latestBooking: booking }),
-
-  resetSelection: () =>
-    set({
-      selectedFlight: null,
-      selectedSlot: null,
-      currentSlots: [],
-      latestBooking: null,
-    }),
-
-  selectedCrewLayover: null,
-  setSelectedCrewLayover: (layover) => set({ selectedCrewLayover: layover }),
-
-  // ==========================================
-  // LOADING
-  // ==========================================
 
   isLoading: false,
   setIsLoading: (loading) => set({ isLoading: loading }),

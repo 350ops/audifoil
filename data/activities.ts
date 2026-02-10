@@ -1,11 +1,11 @@
-// Activities Data for Maldives Luxury Experiences App
+// Activities Data for Maldives Luxury Experiences - Web version
 
 export type ActivityCategory = 'EFOIL' | 'BOAT' | 'SNORKEL' | 'FISHING' | 'PRIVATE';
 
 export interface MediaItem {
   type: 'image' | 'video';
   uri: string;
-  localSource?: ImageSourcePropType;
+  src?: string; // local /img/ path for web
   poster?: string;
 }
 
@@ -69,46 +69,39 @@ export interface ActivityBooking {
   userWhatsapp: string;
   status: 'confirmed' | 'pending' | 'completed' | 'cancelled';
   createdAt: string;
-  // Split payment tracking (optional — set after group booking is created)
   supabaseBookingId?: string;
   paymentLinkUrl?: string;
   paidCount?: number;
 }
 
-// Local images for activities
-import { ImageSourcePropType } from 'react-native';
-
-// Local asset imports
+// Web image paths (referenced from /public/img/)
 export const LOCAL_IMAGES = {
-  // Original images
-  lagoonBoat: require('@/assets/img/File 1.jpg'),
-  swimmingFish: require('@/assets/img/File 2.jpg'),
-  seaTurtle: require('@/assets/img/File 3.jpg'),
-  privateIsland: require('@/assets/img/File 4.jpg'),
-  dolphin: require('@/assets/img/dolphin.jpg'),
-  fishing: require('@/assets/img/fishing.jpg'),
-  efoil: require('@/assets/img/audi.jpg'),
-
-  // Maldives real photos
-  boat: require('@/assets/img/imagesmaldivesa/boat.png'),
-  boat2: require('@/assets/img/imagesmaldivesa/boat2.png'),
-  boat3: require('@/assets/img/imagesmaldivesa/boat3.png'),
-  crewOnABoat: require('@/assets/img/imagesmaldivesa/crewonaboat.jpeg'),
-  dolphins: require('@/assets/img/imagesmaldivesa/dolphins.png'),
-  efoilMedium: require('@/assets/img/imagesmaldivesa/efoil Medium.png'),
-  efoilNew: require('@/assets/img/imagesmaldivesa/efoil.png'),
-  island: require('@/assets/img/imagesmaldivesa/island.png'),
-  mantas: require('@/assets/img/imagesmaldivesa/mantas.jpg'),
-  reef: require('@/assets/img/imagesmaldivesa/reef3.jpeg'),
-  sandbank: require('@/assets/img/imagesmaldivesa/sandbank.png'),
-  sandbank2: require('@/assets/img/imagesmaldivesa/sandbank2.png'),
-  sandbank3: require('@/assets/img/imagesmaldivesa/sanbank3.jpeg'),
-  sandbank5: require('@/assets/img/imagesmaldivesa/sandbank5.jpeg'),
-  snorkel: require('@/assets/img/imagesmaldivesa/snorkel.png'),
-  snorkel2: require('@/assets/img/imagesmaldivesa/snorkel2.png'),
-  snorkel4: require('@/assets/img/imagesmaldivesa/snorkel4.png'),
-  turtle: require('@/assets/img/imagesmaldivesa/turtle.png'),
-  turtle2: require('@/assets/img/imagesmaldivesa/turtle2.png'),
+  lagoonBoat: '/img/File 1.jpg',
+  swimmingFish: '/img/File 2.jpg',
+  seaTurtle: '/img/File 3.jpg',
+  privateIsland: '/img/File 4.jpg',
+  dolphin: '/img/dolphin.jpg',
+  fishing: '/img/fishing.jpg',
+  efoil: '/img/audi.jpg',
+  boat: '/img/imagesmaldivesa/boat.png',
+  boat2: '/img/imagesmaldivesa/boat2.png',
+  boat3: '/img/imagesmaldivesa/boat3.png',
+  crewOnABoat: '/img/imagesmaldivesa/crewonaboat.jpeg',
+  dolphins: '/img/imagesmaldivesa/dolphins.png',
+  efoilMedium: '/img/imagesmaldivesa/efoil Medium.png',
+  efoilNew: '/img/imagesmaldivesa/efoil.png',
+  island: '/img/imagesmaldivesa/island.png',
+  mantas: '/img/imagesmaldivesa/mantas.jpg',
+  reef: '/img/imagesmaldivesa/reef3.jpeg',
+  sandbank: '/img/imagesmaldivesa/sandbank.png',
+  sandbank2: '/img/imagesmaldivesa/sandbank2.png',
+  sandbank3: '/img/imagesmaldivesa/sanbank3.jpeg',
+  sandbank5: '/img/imagesmaldivesa/sandbank5.jpeg',
+  snorkel: '/img/imagesmaldivesa/snorkel.png',
+  snorkel2: '/img/imagesmaldivesa/snorkel2.png',
+  snorkel4: '/img/imagesmaldivesa/snorkel4.png',
+  turtle: '/img/imagesmaldivesa/turtle.png',
+  turtle2: '/img/imagesmaldivesa/turtle2.png',
 };
 
 // High-quality images for activities
@@ -131,21 +124,6 @@ export const MEDIA = {
     fish: 'https://images.unsplash.com/photo-1546026423-cc4642628d2b?w=800&q=80',
     turtle: 'https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&q=80',
   },
-  fishing: {
-    sunset: 'https://images.unsplash.com/photo-1545816250-e12bedba42ba?w=1200&q=80',
-    boat: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80',
-    catch: 'https://images.unsplash.com/photo-1544551763-8dd44758c2dd?w=800&q=80',
-  },
-  sandbank: {
-    aerial: 'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=1200&q=80',
-    picnic: 'https://images.unsplash.com/photo-1540202404-a2f29016b523?w=800&q=80',
-    beach: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
-  },
-  dolphin: {
-    pod: 'https://images.unsplash.com/photo-1607153333879-c174d265f1d2?w=1200&q=80',
-    jumping: 'https://images.unsplash.com/photo-1570481662006-a3a1374699e8?w=800&q=80',
-    sunset: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80',
-  },
   maldives: {
     overwater: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1200&q=80',
     lagoon: 'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=800&q=80',
@@ -153,10 +131,8 @@ export const MEDIA = {
   },
 };
 
-// Main experience: 5h cruise, from $80/person (5 guests) — the core foiltribe trip
 export const MALDIVES_ADVENTURE_ID = 'maldives-adventure';
 
-// E-Foil add-on — optional $150 per person, purchasable at booking or after
 export const EFOIL_ADDON = {
   id: 'efoil-addon',
   title: 'Audi E-Foil Experience',
@@ -169,14 +145,9 @@ export const EFOIL_ADDON = {
     'Drone footage of your ride',
     '360° camera on board — footage is yours',
   ],
-  images: [
-    LOCAL_IMAGES.efoilNew,
-    LOCAL_IMAGES.efoilMedium,
-    LOCAL_IMAGES.efoil,
-  ],
+  images: [LOCAL_IMAGES.efoilNew, LOCAL_IMAGES.efoilMedium, LOCAL_IMAGES.efoil],
 };
 
-// Professional media content — available upon request
 export const MEDIA_PACKAGE = {
   id: 'media-package',
   title: 'Professional Media Content',
@@ -190,13 +161,12 @@ export const MEDIA_PACKAGE = {
   note: 'Available upon request — let us know when you book or anytime before the trip.',
 };
 
-// Experience highlights — the activities presented as parts of the Maldives Adventure trip
 export interface ExperienceHighlight {
   id: string;
   title: string;
   subtitle: string;
   description: string;
-  images: ImageSourcePropType[];
+  images: string[];
   icon: string;
 }
 
@@ -221,7 +191,7 @@ export const EXPERIENCE_HIGHLIGHTS: ExperienceHighlight[] = [
     id: 'sandbank',
     title: 'Private Sandbank',
     subtitle: 'Your own island for an hour',
-    description: 'Step onto a strip of white sand in the middle of the Indian Ocean. Picnic lunch, drinks, swimming, and the best photos you\'ll ever take.',
+    description: "Step onto a strip of white sand in the middle of the Indian Ocean. Picnic lunch, drinks, swimming, and the best photos you'll ever take.",
     images: [LOCAL_IMAGES.sandbank, LOCAL_IMAGES.sandbank2, LOCAL_IMAGES.sandbank3, LOCAL_IMAGES.sandbank5, LOCAL_IMAGES.island],
     icon: 'Sun',
   },
@@ -235,13 +205,11 @@ export const EXPERIENCE_HIGHLIGHTS: ExperienceHighlight[] = [
   },
 ];
 
-// Format duration for display (always hours)
 export function formatDurationHours(durationMin: number): string {
   const hours = durationMin / 60;
   return hours >= 1 ? `${hours} hour${hours !== 1 ? 's' : ''}` : `${durationMin} min`;
 }
 
-// Activities catalog — Maldives Adventure first, then Audi e-foil (with price), then others (no price in list)
 export const ACTIVITIES: Activity[] = [
   {
     id: MALDIVES_ADVENTURE_ID,
@@ -257,14 +225,14 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'all',
     isPrivate: false,
     media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.dolphins },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.snorkel },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.sandbank },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.efoilNew },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.crewOnABoat },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.turtle },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.island },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.boat },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.dolphins },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.snorkel },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.sandbank },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.efoilNew },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.crewOnABoat },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.turtle },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.island },
     ],
     tags: ['5 hours', 'Dolphins', 'Snorkel', 'Sandbank', 'E-Foil', 'Sunset'],
     highlights: [
@@ -318,10 +286,10 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'beginner',
     isPrivate: true,
     media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.efoilNew },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.efoilMedium },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.efoil },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat2 },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.efoilNew },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.efoilMedium },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.efoil },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.boat2 },
     ],
     tags: ['2 hours', 'Private', 'Instructor', 'Drone & 360'],
     highlights: [
@@ -355,54 +323,6 @@ export const ACTIVITIES: Activity[] = [
     isTrending: true,
   },
   {
-    id: 'safari-boat-sunset',
-    title: 'Safari Boat Sunset Cruise',
-    subtitle: 'Golden hour on a traditional dhoni',
-    category: 'BOAT',
-    durationMin: 300,
-    priceFromUsd: 300,
-    rating: 4.8,
-    reviewCount: 89,
-    maxGuests: 6,
-    minGuests: 2,
-    skillLevel: 'all',
-    isPrivate: false,
-    media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat3 },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.island },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.sandbank5 },
-    ],
-    tags: ['2 hours', '2-8 guests', 'Sunset', 'Drinks included'],
-    highlights: [
-      'Traditional Maldivian dhoni boat',
-      'Champagne & canapés',
-      'Stunning sunset views',
-    ],
-    whatYoullDo: [
-      'Board a beautifully restored traditional dhoni boat',
-      'Cruise through the atolls as the sun sets',
-      'Enjoy premium drinks and local delicacies',
-    ],
-    included: [
-      '2-hour sunset cruise',
-      'Welcome champagne',
-      'Canapés & snacks',
-      'Soft drinks & water',
-      'Professional crew',
-      'Bluetooth speaker',
-    ],
-    safety: ['Life jackets available', 'Experienced captain', 'Weather-dependent departure'],
-    meetingPoint: 'Malé Harbor, Sunset Pier',
-    socialProof: [
-      { label: 'Emirates crew favorite', type: 'crew' },
-      { label: 'Best at golden hour', type: 'popular' },
-    ],
-    bookingsThisWeek: 18,
-    isFeatured: true,
-    isSunset: true,
-  },
-  {
     id: 'snorkel-lagoon',
     title: 'Lagoon Reef Snorkeling',
     subtitle: 'Discover vibrant coral gardens',
@@ -416,13 +336,13 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'beginner',
     isPrivate: false,
     media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.snorkel },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.turtle },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.reef },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.snorkel2 },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.turtle2 },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.snorkel4 },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.mantas },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.snorkel },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.turtle },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.reef },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.snorkel2 },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.turtle2 },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.snorkel4 },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.mantas },
     ],
     tags: ['90 min', '1-6 guests', 'Beginner friendly', 'Equipment provided'],
     highlights: ['House reef teeming with life', 'Sea turtles & rays', 'Professional guide'],
@@ -449,51 +369,47 @@ export const ACTIVITIES: Activity[] = [
     isTrending: true,
   },
   {
-    id: 'sunset-fishing',
-    title: 'Sunset Line Fishing',
-    subtitle: 'Traditional Maldivian fishing experience',
-    category: 'FISHING',
+    id: 'dolphin-cruise',
+    title: 'Dolphin Discovery Cruise',
+    subtitle: 'Meet spinner dolphins at dawn',
+    category: 'BOAT',
     durationMin: 300,
-    priceFromUsd: 200,
-    rating: 4.6,
-    reviewCount: 73,
+    priceFromUsd: 180,
+    rating: 4.8,
+    reviewCount: 98,
     maxGuests: 6,
     minGuests: 2,
     skillLevel: 'all',
     isPrivate: false,
     media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat2 },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.fishing },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat3 },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.island },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.dolphins },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.boat },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.crewOnABoat },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.island },
     ],
-    tags: ['2.5 hours', '2-6 guests', 'Sunset', 'BBQ option'],
-    highlights: [
-      'Traditional hand-line fishing',
-      'Spectacular sunset views',
-      'Cook your catch option',
-    ],
+    tags: ['90 min', '2-12 guests', 'Morning', '95% sighting rate'],
+    highlights: ['Spinner dolphin pods', '95% sighting guarantee', 'Marine biologist guide'],
     whatYoullDo: [
-      'Learn traditional Maldivian line fishing techniques',
-      'Fish the outer reef as the sun sets',
-      'Optional: have the chef cook your catch',
+      'Cruise to dolphin feeding grounds at sunrise',
+      'Watch pods of spinner dolphins leap and play',
+      'Learn about dolphin behavior from our marine expert',
     ],
     included: [
-      '2.5-hour fishing trip',
-      'Fishing equipment',
-      'Bait & tackle',
-      'Drinks & snacks',
-      'Experienced fisherman guide',
-      'BBQ your catch (optional)',
+      '90-minute dolphin cruise',
+      'Marine biologist guide',
+      'Breakfast pastries',
+      'Coffee & juices',
+      'Binoculars provided',
+      'Photo opportunities',
     ],
-    safety: ['Life jackets provided', 'First aid on board', 'Catch & release encouraged'],
-    meetingPoint: "Fisherman's Wharf, East Pier",
+    safety: ['Respectful distance maintained', 'No swimming with dolphins', 'Eco-friendly practices'],
+    meetingPoint: 'Sunrise Pier, Main Harbor',
     socialProof: [
-      { label: 'Biggest catch: 12kg tuna', type: 'popular' },
-      { label: 'Flydubai crew regular', type: 'crew' },
+      { label: '95% dolphin sighting rate', type: 'popular' },
+      { label: 'Turkish Airlines crew loved it', type: 'crew' },
     ],
-    bookingsThisWeek: 12,
-    isSunset: true,
+    bookingsThisWeek: 22,
+    isTrending: true,
   },
   {
     id: 'sandbank-picnic',
@@ -509,12 +425,12 @@ export const ACTIVITIES: Activity[] = [
     skillLevel: 'all',
     isPrivate: true,
     media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.sandbank },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.sandbank2 },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.sandbank3 },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.sandbank5 },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.island },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.sandbank },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.sandbank2 },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.sandbank3 },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.sandbank5 },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.island },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.boat },
     ],
     tags: ['3 hours', '2-4 guests', 'Private', 'Gourmet lunch'],
     highlights: ['Exclusive sandbank access', 'Gourmet picnic setup', 'Champagne & lobster'],
@@ -541,62 +457,11 @@ export const ACTIVITIES: Activity[] = [
     bookingsThisWeek: 8,
     isFeatured: true,
   },
-  {
-    id: 'dolphin-cruise',
-    title: 'Dolphin Discovery Cruise',
-    subtitle: 'Meet spinner dolphins at dawn',
-    category: 'BOAT',
-    durationMin: 300,
-    priceFromUsd: 180,
-    rating: 4.8,
-    reviewCount: 98,
-    maxGuests: 6,
-    minGuests: 2,
-    skillLevel: 'all',
-    isPrivate: false,
-    media: [
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.dolphins },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.boat },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.crewOnABoat },
-      { type: 'image', uri: '', localSource: LOCAL_IMAGES.island },
-    ],
-    tags: ['90 min', '2-12 guests', 'Morning', '95% sighting rate'],
-    highlights: ['Spinner dolphin pods', '95% sighting guarantee', 'Marine biologist guide'],
-    whatYoullDo: [
-      'Cruise to dolphin feeding grounds at sunrise',
-      'Watch pods of spinner dolphins leap and play',
-      'Learn about dolphin behavior from our marine expert',
-    ],
-    included: [
-      '90-minute dolphin cruise',
-      'Marine biologist guide',
-      'Breakfast pastries',
-      'Coffee & juices',
-      'Binoculars provided',
-      'Photo opportunities',
-    ],
-    safety: [
-      'Respectful distance maintained',
-      'No swimming with dolphins',
-      'Eco-friendly practices',
-    ],
-    meetingPoint: 'Sunrise Pier, Main Harbor',
-    socialProof: [
-      { label: '95% dolphin sighting rate', type: 'popular' },
-      { label: 'Turkish Airlines crew loved it', type: 'crew' },
-    ],
-    bookingsThisWeek: 22,
-    isTrending: true,
-  },
 ];
 
 // Helper functions
 export function getActivityById(id: string): Activity | undefined {
   return ACTIVITIES.find((a) => a.id === id);
-}
-
-export function getActivitiesByCategory(category: ActivityCategory): Activity[] {
-  return ACTIVITIES.filter((a) => a.category === category);
 }
 
 export function getFeaturedActivities(): Activity[] {
@@ -605,7 +470,6 @@ export function getFeaturedActivities(): Activity[] {
 
 export function getTrendingActivities(): Activity[] {
   const trending = ACTIVITIES.filter((a) => a.isTrending);
-  // Custom order: dolphins, snorkeling, efoil
   const order = ['dolphin-cruise', 'snorkel-lagoon', 'efoil-session'];
   return trending.sort((a, b) => {
     const aIndex = order.indexOf(a.id);
@@ -616,68 +480,20 @@ export function getTrendingActivities(): Activity[] {
   });
 }
 
-export function getSunsetActivities(): Activity[] {
-  return ACTIVITIES.filter((a) => a.isSunset);
-}
-
-export function getWaterSportsActivities(): Activity[] {
-  return ACTIVITIES.filter((a) => a.category === 'EFOIL' || a.category === 'SNORKEL');
-}
-
-export function getPrivateExperiences(): Activity[] {
-  return ACTIVITIES.filter((a) => a.isPrivate);
-}
-
-export function getBoatExperiences(): Activity[] {
-  return ACTIVITIES.filter((a) => a.category === 'BOAT' || a.category === 'FISHING');
-}
-
-export interface GenerateSlotsOptions {
-  /** Single date (YYYY-MM-DD) — generate only this day (e.g. crew layover date) */
-  forDate?: string;
-  /** Label for forDate (e.g. "Mon, Feb 9") */
-  dateLabel?: string;
-  /** Only include slots that start at or after this time (HH:mm) — after crew arrival + buffer */
-  earliestStartTime?: string;
-  /** Only include slots that end at or before this time (HH:mm) — before crew departure − buffer */
-  latestEndTime?: string;
-}
-
-// Generate time slots for an activity
-export function generateActivitySlots(
-  activity: Activity,
-  daysAhead: number = 2,
-  options?: GenerateSlotsOptions
-): ActivitySlot[] {
+export function generateActivitySlots(activity: Activity, daysAhead: number = 2): ActivitySlot[] {
   const slots: ActivitySlot[] = [];
   const now = new Date();
-  const { forDate, dateLabel: optionDateLabel, earliestStartTime, latestEndTime } = options ?? {};
 
-  const dateRanges: { dateStr: string; dateLabel: string }[] = forDate
-    ? [{ dateStr: forDate, dateLabel: optionDateLabel ?? forDate }]
-    : Array.from({ length: daysAhead }, (_, d) => {
-        const date = new Date(now);
-        date.setDate(date.getDate() + d);
-        const dateStr = date.toISOString().split('T')[0];
-        const dateLabel =
-          d === 0
-            ? 'Today'
-            : d === 1
-              ? 'Tomorrow'
-              : date.toLocaleDateString('en-US', {
-                  weekday: 'short',
-                  month: 'short',
-                  day: 'numeric',
-                });
-        return { dateStr, dateLabel };
-      });
+  const dateRanges = Array.from({ length: daysAhead }, (_, d) => {
+    const date = new Date(now);
+    date.setDate(date.getDate() + d);
+    const dateStr = date.toISOString().split('T')[0];
+    const dateLabel = d === 0 ? 'Today' : d === 1 ? 'Tomorrow' : date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    return { dateStr, dateLabel };
+  });
 
   for (const { dateStr, dateLabel } of dateRanges) {
-    const startHours = activity.isSunset
-      ? [16, 17, 18]
-      : activity.id === 'dolphin-cruise'
-        ? [6, 7, 8]
-        : [9, 10, 11, 14, 15, 16, 17];
+    const startHours = activity.isSunset ? [16, 17, 18] : activity.id === 'dolphin-cruise' ? [6, 7, 8] : [9, 10, 11, 14, 15, 16, 17];
 
     startHours.forEach((hour) => {
       const startTime = `${hour.toString().padStart(2, '0')}:00`;
@@ -686,12 +502,8 @@ export function generateActivitySlots(
       const endMin = endMinutes % 60;
       const endTime = `${endHour.toString().padStart(2, '0')}:${endMin.toString().padStart(2, '0')}`;
 
-      if (earliestStartTime && startTime < earliestStartTime) return;
-      if (latestEndTime && endTime > latestEndTime) return;
-
       const isSunsetSlot = hour >= 17;
       const isPopular = isSunsetSlot || hour === 10;
-
       const maxSpots = activity.isPrivate ? 1 : activity.maxGuests;
       const bookedCount = Math.floor(Math.random() * (maxSpots + 1));
       const spotsRemaining = Math.max(0, maxSpots - bookedCount);
@@ -699,15 +511,11 @@ export function generateActivitySlots(
       const crews = ['Emirates', 'Qatar', 'Etihad', 'Turkish', 'Flydubai', 'SriLankan'];
       const bookedBy: { label: string; airlineCode?: string }[] = [];
       if (bookedCount > 0) {
-        const randomCrews = crews
-          .sort(() => Math.random() - 0.5)
-          .slice(0, Math.min(bookedCount, 2));
+        const randomCrews = crews.sort(() => Math.random() - 0.5).slice(0, Math.min(bookedCount, 2));
         randomCrews.forEach((crew) => {
           bookedBy.push({ label: `${crew} crew`, airlineCode: crew.substring(0, 2).toUpperCase() });
         });
-        if (bookedCount > 2) {
-          bookedBy.push({ label: `+${bookedCount - 2} more` });
-        }
+        if (bookedCount > 2) bookedBy.push({ label: `+${bookedCount - 2} more` });
       }
 
       slots.push({
@@ -731,33 +539,15 @@ export function generateActivitySlots(
   return slots;
 }
 
-// Category display names and icons
-export const CATEGORY_INFO: Record<ActivityCategory, { name: string; icon: string }> = {
-  EFOIL: { name: 'E-Foil', icon: 'Waves' },
-  BOAT: { name: 'Boat Tours', icon: 'Ship' },
-  SNORKEL: { name: 'Snorkeling', icon: 'Fish' },
-  FISHING: { name: 'Fishing', icon: 'Anchor' },
-  PRIVATE: { name: 'Private', icon: 'Crown' },
-};
-
-// Promo codes
 export const PROMO_CODES: Record<string, { discount: number; label: string }> = {
   CREW25: { discount: 0.25, label: 'Crew Discount (25%)' },
   PARADISE10: { discount: 0.1, label: 'Paradise Welcome (10%)' },
   SUNSET15: { discount: 0.15, label: 'Sunset Special (15%)' },
 };
 
-export function applyPromoCode(
-  code: string,
-  price: number
-): { finalPrice: number; discount: number; label: string } | null {
+export function applyPromoCode(code: string, price: number): { finalPrice: number; discount: number; label: string } | null {
   const promo = PROMO_CODES[code.toUpperCase()];
   if (!promo) return null;
-
   const discount = price * promo.discount;
-  return {
-    finalPrice: price - discount,
-    discount,
-    label: promo.label,
-  };
+  return { finalPrice: price - discount, discount, label: promo.label };
 }

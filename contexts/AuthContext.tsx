@@ -1,34 +1,29 @@
+'use client';
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { router } from 'expo-router';
-import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase-browser';
 import { Tables } from '@/lib/database.types';
-import * as AppleAuthentication from 'expo-apple-authentication';
-import * as WebBrowser from 'expo-web-browser';
-import { Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Required for Google Sign-in to work properly
-WebBrowser.maybeCompleteAuthSession();
+const DEMO_MODE_ENABLED = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+const DEMO_STORAGE_KEY = 'bohowaves_demo_mode';
+const DEMO_PROFILE_KEY = 'bohowaves_demo_profile';
 
-// Demo mode - enabled via environment variable
-const DEMO_MODE_ENABLED = process.env.EXPO_PUBLIC_DEMO_MODE === 'true';
-const DEMO_STORAGE_KEY = '@foiltribe_demo_mode';
-const DEMO_PROFILE_KEY = '@foiltribe_demo_profile';
-
-// Demo user data
 const DEMO_USER: User = {
   id: 'demo-user-id',
-  email: 'hello@foiltribe.com',
+  email: 'hello@bohowaves.com',
   app_metadata: {},
   user_metadata: { full_name: 'Demo User' },
   aud: 'authenticated',
   created_at: new Date().toISOString(),
 } as User;
 
+type Profile = Tables<'profiles'>;
+
 const DEMO_PROFILE: Profile = {
   id: 'demo-user-id',
-  email: 'hello@foiltribe.com',
+  email: 'hello@bohowaves.com',
   first_name: 'Demo',
   last_name: 'User',
   avatar_url: null,
@@ -36,8 +31,6 @@ const DEMO_PROFILE: Profile = {
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
 };
-
-type Profile = Tables<'profiles'>;
 
 interface AuthContextType {
   session: Session | null;
@@ -48,12 +41,10 @@ interface AuthContextType {
   demoModeAvailable: boolean;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signInWithApple: () => Promise<{ error: Error | null }>;
-  signInWithGoogleToken: (idToken: string) => Promise<{ error: Error | null }>;
+  signInWithOAuth: (provider: 'apple' | 'google') => Promise<{ error: Error | null }>;
   signInAsDemo: () => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: Error | null }>;
-  updateDemoProfile: (updates: Partial<Profile>) => Promise<{ error: Error | null }>;
   refreshProfile: () => Promise<void>;
 }
 
@@ -65,24 +56,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    // Check if demo mode was previously active
-    const checkDemoMode = async () => {
+    const checkDemoMode = () => {
       if (DEMO_MODE_ENABLED) {
-        const demoActive = await AsyncStorage.getItem(DEMO_STORAGE_KEY);
+        const demoActive = localStorage.getItem(DEMO_STORAGE_KEY);
         if (demoActive === 'true') {
           setIsDemoMode(true);
           setUser(DEMO_USER);
-
-          // Load saved demo profile or use default
-          const savedProfile = await AsyncStorage.getItem(DEMO_PROFILE_KEY);
-          if (savedProfile) {
-            setProfile(JSON.parse(savedProfile));
-          } else {
-            setProfile(DEMO_PROFILE);
-          }
-
+          const savedProfile = localStorage.getItem(DEMO_PROFILE_KEY);
+          setProfile(savedProfile ? JSON.parse(savedProfile) : DEMO_PROFILE);
           setIsLoading(false);
           return true;
         }
@@ -90,16 +74,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return false;
     };
 
-    // Get initial session
     const initAuth = async () => {
-      const isDemo = await checkDemoMode();
+      const isDemo = checkDemoMode();
       if (isDemo) return;
 
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id);
+        await fetchProfile(session.user.id);
       } else {
         setIsLoading(false);
       }
@@ -107,222 +90,91 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initAuth();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        // Ignore auth changes if in demo mode
-        if (isDemoMode) return;
-
-        setSession(session);
-        setUser(session?.user ?? null);
-
-        if (session?.user) {
-          await fetchProfile(session.user.id);
-        } else {
-          setProfile(null);
-        }
-        setIsLoading(false);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        await fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
       }
-    );
+      setIsLoading(false);
+    });
 
     return () => subscription.unsubscribe();
-  }, [isDemoMode]);
+  }, []);
 
   const fetchProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-
-    if (error) {
-      console.error('Error fetching profile:', error);
-    } else {
-      setProfile(data);
-    }
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+    if (!error) setProfile(data);
     setIsLoading(false);
   };
 
-  const refreshProfile = async () => {
-    if (user) {
-      await fetchProfile(user.id);
-    }
-  };
+  const refreshProfile = async () => { if (user) await fetchProfile(user.id); };
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (error) {
-      return { error };
-    }
-
-    return { error: null };
+    const { error } = await supabase.auth.signUp({ email, password });
+    return { error: error as Error | null };
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error: error as Error | null };
+  };
+
+  const signInWithOAuth = async (provider: 'apple' | 'google') => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
-
-    if (error) {
-      return { error };
-    }
-
-    return { error: null };
-  };
-
-  const signInWithApple = async () => {
-    try {
-      const credential = await AppleAuthentication.signInAsync({
-        requestedScopes: [
-          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-          AppleAuthentication.AppleAuthenticationScope.EMAIL,
-        ],
-      });
-
-      if (credential.identityToken) {
-        const { error } = await supabase.auth.signInWithIdToken({
-          provider: 'apple',
-          token: credential.identityToken,
-        });
-
-        if (error) {
-          return { error };
-        }
-
-        return { error: null };
-      }
-
-      return { error: new Error('No identity token received') };
-    } catch (e: any) {
-      if (e.code === 'ERR_REQUEST_CANCELED') {
-        // User cancelled
-        return { error: null };
-      }
-      return { error: e };
-    }
-  };
-
-  const signInWithGoogleToken = async (idToken: string) => {
-    try {
-      const { error } = await supabase.auth.signInWithIdToken({
-        provider: 'google',
-        token: idToken,
-      });
-
-      if (error) {
-        return { error };
-      }
-
-      return { error: null };
-    } catch (e: any) {
-      return { error: e };
-    }
+    return { error: error as Error | null };
   };
 
   const signInAsDemo = async () => {
-    if (!DEMO_MODE_ENABLED) {
-      return { error: new Error('Demo mode is not enabled') };
-    }
-
-    try {
-      await AsyncStorage.setItem(DEMO_STORAGE_KEY, 'true');
-      setIsDemoMode(true);
-      setUser(DEMO_USER);
-      setProfile(DEMO_PROFILE);
-      return { error: null };
-    } catch (e: any) {
-      return { error: e };
-    }
-  };
-
-  const signOut = async () => {
-    // Clear demo mode if active
-    if (isDemoMode) {
-      await AsyncStorage.removeItem(DEMO_STORAGE_KEY);
-      await AsyncStorage.removeItem(DEMO_PROFILE_KEY);
-      setIsDemoMode(false);
-      setUser(null);
-      setProfile(null);
-      router.replace('/');
-      return;
-    }
-
-    await supabase.auth.signOut();
-    setProfile(null);
-    router.replace('/');
-  };
-
-  const updateProfile = async (updates: Partial<Profile>) => {
-    if (!user) {
-      return { error: new Error('No user logged in') };
-    }
-
-    // Use demo profile update if in demo mode
-    if (isDemoMode) {
-      return updateDemoProfile(updates);
-    }
-
-    const { error } = await supabase
-      .from('profiles')
-      .update(updates)
-      .eq('id', user.id);
-
-    if (error) {
-      return { error };
-    }
-
-    // Refresh profile after update
-    await fetchProfile(user.id);
+    if (!DEMO_MODE_ENABLED) return { error: new Error('Demo mode is not enabled') };
+    localStorage.setItem(DEMO_STORAGE_KEY, 'true');
+    setIsDemoMode(true);
+    setUser(DEMO_USER);
+    setProfile(DEMO_PROFILE);
     return { error: null };
   };
 
-  const updateDemoProfile = async (updates: Partial<Profile>) => {
-    if (!isDemoMode) {
-      return { error: new Error('Not in demo mode') };
+  const signOut = async () => {
+    if (isDemoMode) {
+      localStorage.removeItem(DEMO_STORAGE_KEY);
+      localStorage.removeItem(DEMO_PROFILE_KEY);
+      setIsDemoMode(false);
+      setUser(null);
+      setProfile(null);
+      router.push('/');
+      return;
     }
+    await supabase.auth.signOut();
+    setProfile(null);
+    router.push('/');
+  };
 
-    try {
-      const updatedProfile: Profile = {
-        ...DEMO_PROFILE,
-        ...profile,
-        ...updates,
-        updated_at: new Date().toISOString(),
-      };
-
-      await AsyncStorage.setItem(DEMO_PROFILE_KEY, JSON.stringify(updatedProfile));
-      setProfile(updatedProfile);
-
+  const updateProfile = async (updates: Partial<Profile>) => {
+    if (!user) return { error: new Error('No user logged in') };
+    if (isDemoMode) {
+      const updatedProfile = { ...DEMO_PROFILE, ...profile, ...updates, updated_at: new Date().toISOString() };
+      localStorage.setItem(DEMO_PROFILE_KEY, JSON.stringify(updatedProfile));
+      setProfile(updatedProfile as Profile);
       return { error: null };
-    } catch (e: any) {
-      return { error: e };
     }
+    // @ts-ignore - Supabase type narrowing issue with partial updates
+    const { error: updateError } = await supabase.from('profiles').update(updates).eq('id', user.id);
+    if (!updateError) await fetchProfile(user.id);
+    return { error: updateError as Error | null };
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        session,
-        user,
-        profile,
-        isLoading,
-        isDemoMode,
-        demoModeAvailable: DEMO_MODE_ENABLED,
-        signUp,
-        signIn,
-        signInWithApple,
-        signInWithGoogleToken,
-        signInAsDemo,
-        signOut,
-        updateProfile,
-        updateDemoProfile,
-        refreshProfile,
-      }}
-    >
+    <AuthContext.Provider value={{
+      session, user, profile, isLoading, isDemoMode,
+      demoModeAvailable: DEMO_MODE_ENABLED,
+      signUp, signIn, signInWithOAuth, signInAsDemo, signOut,
+      updateProfile, refreshProfile,
+    }}>
       {children}
     </AuthContext.Provider>
   );
@@ -330,8 +182,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (context === undefined) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }

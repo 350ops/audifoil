@@ -1,27 +1,22 @@
-// Stripe Payment Context Provider
-// Provides Stripe initialization and payment methods throughout the app
+'use client';
 
-import {
-  initPaymentSheet,
-  presentPaymentSheet,
-  StripeProvider,
-} from '@stripe/stripe-react-native';
 import React, { createContext, useCallback, useContext, useState } from 'react';
-import { Alert } from 'react-native';
+import { loadStripe, Stripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 
-const PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY!;
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://cikeyqrsslkczzzklixf.supabase.co';
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpa2V5cXJzc2xrY3p6emtsaXhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkyMTQwNTMsImV4cCI6MjA4NDc5MDA1M30.-aV3veBqpf6Yv3jdE43q0ZRZKR-MGn6P036KBQymvNE';
 
-// Get the Supabase Edge Functions URL
 function getEdgeFunctionUrl(functionName: string): string {
   return `${SUPABASE_URL}/functions/v1/${functionName}`;
 }
 
-// Types
+const stripePromise = PUBLISHABLE_KEY ? loadStripe(PUBLISHABLE_KEY) : null;
+
 export interface PaymentParams {
   tripId: string;
-  amount: number; // in cents
+  amount: number;
   currency: string;
   customerEmail?: string;
   customerName?: string;
@@ -33,6 +28,7 @@ export interface PaymentResult {
   success: boolean;
   paymentIntentId?: string;
   error?: string;
+  clientSecret?: string;
 }
 
 export interface ShareableLinkParams {
@@ -48,49 +44,39 @@ interface StripeContextType {
   isReady: boolean;
   isProcessing: boolean;
   isMockMode: boolean;
-  initializePaymentSheet: (params: PaymentParams) => Promise<boolean>;
-  presentPaymentSheet: () => Promise<PaymentResult>;
+  clientSecret: string | null;
+  initializePayment: (params: PaymentParams) => Promise<string | null>;
   generateShareableLink: (params: ShareableLinkParams) => Promise<string>;
 }
 
 const StripeContext = createContext<StripeContextType | null>(null);
 
-// Mock implementation for when Stripe is not available
 const mockStripeContext: StripeContextType = {
   isReady: false,
   isProcessing: false,
   isMockMode: true,
-  initializePaymentSheet: async () => {
-    Alert.alert('Payment Unavailable', 'Payment system is not configured. Please contact support.');
-    return false;
+  clientSecret: null,
+  initializePayment: async () => {
+    alert('Payment system is not configured. Please contact support.');
+    return null;
   },
-  presentPaymentSheet: async () => ({ success: false, error: 'Payment unavailable' }),
-  generateShareableLink: async () => 'https://foiltribe.com',
+  generateShareableLink: async () => 'https://bohowaves.com',
 };
 
-// Hook to use Stripe context
 export function useStripePayments() {
   const context = useContext(StripeContext);
-  // Return mock if context not available (prevents crash)
-  if (!context) {
-    console.warn('[Stripe] Context not available, using mock');
-    return mockStripeContext;
-  }
+  if (!context) return mockStripeContext;
   return context;
 }
 
-// Inner provider that uses the Stripe hooks
 function StripePaymentProviderInner({ children }: { children: React.ReactNode }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
 
-  // Initialize payment sheet with Supabase Edge Function
-  const handleInitializePaymentSheet = useCallback(async (params: PaymentParams): Promise<boolean> => {
-    console.log('[Stripe] Initializing payment sheet...');
+  const initializePayment = useCallback(async (params: PaymentParams): Promise<string | null> => {
     setIsProcessing(true);
-
     try {
-      // Call Supabase Edge Function
       const response = await fetch(getEdgeFunctionUrl('payment-sheet'), {
         method: 'POST',
         headers: {
@@ -111,80 +97,22 @@ function StripePaymentProviderInner({ children }: { children: React.ReactNode })
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('[Stripe] API error:', errorData);
         throw new Error(errorData.error || `API error: ${response.status}`);
       }
 
-      const { paymentIntent, ephemeralKey, customer } = await response.json();
-      console.log('[Stripe] Got payment intent, initializing sheet...');
-
-      // Initialize the payment sheet
-      const { error } = await initPaymentSheet({
-        merchantDisplayName: 'foiltribe',
-        customerId: customer,
-        customerEphemeralKeySecret: ephemeralKey,
-        paymentIntentClientSecret: paymentIntent,
-        allowsDelayedPaymentMethods: false,
-        defaultBillingDetails: {
-          name: params.customerName,
-          email: params.customerEmail,
-        },
-        returnURL: 'foiltribe://stripe-redirect',
-      });
-
-      if (error) {
-        console.error('[Stripe] initPaymentSheet error:', error);
-        Alert.alert('Error', error.message);
-        setIsProcessing(false);
-        return false;
-      }
-
-      console.log('[Stripe] Payment sheet initialized successfully');
+      const { paymentIntent } = await response.json();
+      setClientSecret(paymentIntent);
       setIsReady(true);
       setIsProcessing(false);
-      return true;
+      return paymentIntent;
     } catch (error: any) {
-      console.error('[Stripe] Error in initializePaymentSheet:', error);
-      Alert.alert('Payment Error', error.message || 'Failed to initialize payment. Please try again.');
+      console.error('[Stripe] Error:', error);
       setIsProcessing(false);
-      return false;
+      return null;
     }
   }, []);
 
-  // Present the payment sheet
-  const handlePresentPaymentSheet = useCallback(async (): Promise<PaymentResult> => {
-    console.log('[Stripe] Presenting payment sheet...');
-    setIsProcessing(true);
-
-    try {
-      const { error } = await presentPaymentSheet();
-
-      if (error) {
-        console.log('[Stripe] Payment cancelled or failed:', error.message);
-        setIsProcessing(false);
-
-        if (error.code === 'Canceled') {
-          return { success: false, error: 'Payment cancelled' };
-        }
-
-        return { success: false, error: error.message };
-      }
-
-      console.log('[Stripe] Payment successful!');
-      setIsReady(false);
-      setIsProcessing(false);
-      return { success: true, paymentIntentId: `pi_${Date.now()}` };
-    } catch (error: any) {
-      console.error('[Stripe] Error presenting payment sheet:', error);
-      setIsProcessing(false);
-      return { success: false, error: 'Payment failed' };
-    }
-  }, []);
-
-  // Generate a shareable payment link for friends via Supabase Edge Function
   const generateShareableLink = useCallback(async (params: ShareableLinkParams): Promise<string> => {
-    console.log('[Stripe] Generating shareable link...');
-
     try {
       const response = await fetch(getEdgeFunctionUrl('payment-link'), {
         method: 'POST',
@@ -193,89 +121,36 @@ function StripePaymentProviderInner({ children }: { children: React.ReactNode })
           'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
           'apikey': SUPABASE_ANON_KEY,
         },
-        body: JSON.stringify({
-          tripId: params.tripId,
-          tripDate: params.tripDate,
-          tripTime: params.tripTime,
-          activityTitle: params.activityTitle,
-          pricePerPerson: params.pricePerPerson,
-          inviterName: params.inviterName,
-        }),
+        body: JSON.stringify(params),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to create payment link');
-      }
-
+      if (!response.ok) throw new Error('Failed to create payment link');
       const { paymentLinkUrl } = await response.json();
-      console.log('[Stripe] Payment link created:', paymentLinkUrl);
       return paymentLinkUrl;
-    } catch (error: any) {
-      console.error('[Stripe] Error creating payment link:', error);
-      // Return a fallback deep link
-      const queryParams = new URLSearchParams({
-        trip: params.tripId,
-        date: params.tripDate,
-        time: params.tripTime,
-        activity: params.activityTitle,
-        price: params.pricePerPerson.toString(),
-      });
-      return `https://foiltribe.com/join?${queryParams.toString()}`;
+    } catch {
+      const queryParams = new URLSearchParams({ trip: params.tripId, date: params.tripDate, time: params.tripTime, activity: params.activityTitle, price: params.pricePerPerson.toString() });
+      return `https://bohowaves.com/join?${queryParams.toString()}`;
     }
   }, []);
 
-  const value: StripeContextType = {
-    isReady,
-    isProcessing,
-    isMockMode: false,
-    initializePaymentSheet: handleInitializePaymentSheet,
-    presentPaymentSheet: handlePresentPaymentSheet,
-    generateShareableLink,
-  };
-
-  return <StripeContext.Provider value={value}>{children}</StripeContext.Provider>;
+  return (
+    <StripeContext.Provider value={{ isReady, isProcessing, isMockMode: false, clientSecret, initializePayment, generateShareableLink }}>
+      {children}
+    </StripeContext.Provider>
+  );
 }
 
-// Main provider that wraps children with StripeProvider
 export default function StripePaymentProvider({ children }: { children: React.ReactNode }) {
-  if (!PUBLISHABLE_KEY) {
-    console.warn('[Stripe] Missing EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY - payments disabled');
-    // Still provide context with mock implementation
-    return (
-      <StripeContext.Provider value={mockStripeContext}>
-        {children}
-      </StripeContext.Provider>
-    );
+  if (!stripePromise) {
+    return <StripeContext.Provider value={mockStripeContext}>{children}</StripeContext.Provider>;
   }
 
-  try {
-    return (
-      <StripeProvider
-        publishableKey={PUBLISHABLE_KEY}
-        urlScheme="foiltribe"
-        merchantIdentifier="merchant.com.mmdev13.foiltribemv"
-      >
-        <StripePaymentProviderInner>{children}</StripePaymentProviderInner>
-      </StripeProvider>
-    );
-  } catch (error) {
-    console.error('[Stripe] Failed to initialize StripeProvider:', error);
-    // Fallback to mock if native module fails
-    return (
-      <StripeContext.Provider value={mockStripeContext}>
-        {children}
-      </StripeContext.Provider>
-    );
-  }
+  return (
+    <Elements stripe={stripePromise}>
+      <StripePaymentProviderInner>{children}</StripePaymentProviderInner>
+    </Elements>
+  );
 }
 
-// Helper function to convert dollars to cents
 export function dollarsToCents(dollars: number): number {
   return Math.round(dollars * 100);
-}
-
-// Helper function to format price for display
-export function formatStripePrice(cents: number): string {
-  return `$${(cents / 100).toFixed(2)}`;
 }

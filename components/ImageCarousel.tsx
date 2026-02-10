@@ -1,149 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import { View, FlatList, Image, Dimensions, Pressable, StyleSheet, LayoutChangeEvent } from 'react-native';
-import { ImageSourcePropType } from 'react-native';
-import ThemedText from '@/components/ThemedText';
+'use client';
+
+import Image from 'next/image';
+import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 interface ImageCarouselProps {
-    images: string[] | ImageSourcePropType[];
-    width?: number;
-    height?: number;
-    showPagination?: boolean;
-    paginationStyle?: 'dots' | 'numbers';
-    onImagePress?: (index: number) => void;
-    autoPlay?: boolean;
-    autoPlayInterval?: number;
-    loop?: boolean;
-    className?: string;
-    rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+  images: string[];
+  height?: number;
+  className?: string;
+  overlay?: React.ReactNode;
 }
 
-const ImageCarousel: React.FC<ImageCarouselProps> = ({
-    images,
-    width: propWidth,
-    height = 200,
-    showPagination = true,
-    paginationStyle = 'dots',
-    onImagePress,
-    autoPlay = false,
-    autoPlayInterval = 3000,
-    loop = true,
-    className = '',
-    rounded = 'none',
-}) => {
-    const [containerWidth, setContainerWidth] = useState(propWidth || Dimensions.get('window').width);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const flatListRef = React.useRef<FlatList>(null);
+export default function ImageCarousel({ images, height = 400, className, overlay }: ImageCarouselProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
 
-    const handleLayout = (event: LayoutChangeEvent) => {
-        const { width } = event.nativeEvent.layout;
-        setContainerWidth(width);
-    };
+  const goTo = (index: number) => setActiveIndex(index);
+  const goNext = () => setActiveIndex((i) => (i + 1) % images.length);
+  const goPrev = () => setActiveIndex((i) => (i - 1 + images.length) % images.length);
 
-    const getRoundedClass = () => {
-        switch (rounded) {
-            case 'none': return '';
-            case 'sm': return 'rounded-sm';
-            case 'md': return 'rounded-md';
-            case 'lg': return 'rounded-lg';
-            case 'xl': return 'rounded-xl';
-            case '2xl': return 'rounded-2xl';
-            case 'full': return 'rounded-full';
-            default: return '';
-        }
-    };
+  if (!images.length) return null;
 
-    const handleImageChange = (contentOffsetX: number) => {
-        const index = Math.round(contentOffsetX / containerWidth);
-        setActiveIndex(index);
-    };
-
-    const handleImagePress = () => {
-        if (onImagePress) {
-            onImagePress(activeIndex);
-        }
-    };
-
-    const renderPagination = () => {
-        if (!showPagination || images.length <= 1) return null;
-
-        return (
-            <View className="flex-row justify-center absolute bottom-4 w-full">
-                {paginationStyle === 'dots' ? (
-                    images.map((_, index) => (
-                        <View
-                            key={index}
-                            className={`h-2 w-2 rounded-full mx-1 ${
-                                index === activeIndex ? 'bg-white' : 'bg-white/40'
-                            }`}
-                        />
-                    ))
-                ) : (
-                    <View className="bg-black/50 px-3 py-1 rounded-full">
-                        <ThemedText className="text-white">
-                            {activeIndex + 1} / {images.length}
-                        </ThemedText>
-                    </View>
-                )}
-            </View>
-        );
-    };
-
-    const renderItem = ({ item, index }: { item: string | ImageSourcePropType; index: number }) => (
-        <Pressable onPress={handleImagePress} style={{ width: containerWidth, height }}>
+  return (
+    <div className={cn('relative overflow-hidden', className)} style={{ height }}>
+      {/* Images */}
+      <div className="relative h-full w-full">
+        {images.map((src, i) => (
+          <div
+            key={i}
+            className={cn(
+              'absolute inset-0 transition-opacity duration-500',
+              i === activeIndex ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            )}
+          >
             <Image
-                source={typeof item === 'string' ? { uri: item } : item}
-                style={[
-                    styles.image,
-                    {
-                        width: containerWidth,
-                        height,
-                    },
-                ]}
-                
-                resizeMode="cover"
+              src={src}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="100vw"
+              priority={i === 0}
             />
-        </Pressable>
-    );
+          </div>
+        ))}
+      </div>
 
-    return (
-        <View 
-            className={`${getRoundedClass()} ${className}`}
-            style={[
-                styles.container,
-                {
-                    height,
-                    overflow: 'hidden',
-                },
-            ]}
-            onLayout={handleLayout}
-        >
-            <FlatList
-                ref={flatListRef}
-                data={images}
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={(_, index) => index.toString()}
-                renderItem={renderItem}
-                onMomentumScrollEnd={(e) => {
-                    const contentOffsetX = e.nativeEvent.contentOffset.x;
-                    handleImageChange(contentOffsetX);
-                }}
-                style={{ height }}
-                contentContainerStyle={{ width: containerWidth * images.length }}
+      {/* Overlay */}
+      {overlay && <div className="absolute inset-0">{overlay}</div>}
+
+      {/* Nav buttons */}
+      {images.length > 1 && (
+        <>
+          <button
+            onClick={goPrev}
+            className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-2 backdrop-blur-sm transition-colors hover:bg-white/40"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
+          </button>
+          <button
+            onClick={goNext}
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-2 backdrop-blur-sm transition-colors hover:bg-white/40"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>
+          </button>
+        </>
+      )}
+
+      {/* Dots */}
+      {images.length > 1 && (
+        <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              className={cn(
+                'rounded-full transition-all',
+                i === activeIndex ? 'h-1.5 w-4 bg-white' : 'h-1.5 w-1.5 bg-white/40'
+              )}
             />
-            {renderPagination()}
-        </View>
-    );
-};
-
-const styles = StyleSheet.create({
-    container: {
-        position: 'relative',
-    },
-    image: {
-        backgroundColor: '#f0f0f0',
-    },
-});
-
-export default ImageCarousel; 
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

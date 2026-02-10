@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --color-primary: #000000;
+  --color-invert: #ffffff;
+  --color-secondary: #ffffff;
+  --color-background: #F7F7F7;
+  --color-darker: #EBEBEB;
+  --color-text: #000000;
+  --color-text-muted: rgba(0, 0, 0, 0.65);
+  --color-highlight: #FF0039;
+  --color-cta: #FF0039;
+  --color-border: rgba(0, 0, 0, 0.12);
+}
+
+.dark {
+  --color-primary: #ffffff;
+  --color-invert: #000000;
+  --color-secondary: #1A1A1A;
+  --color-background: #000000;
+  --color-darker: #0D0D0D;
+  --color-text: #ffffff;
+  --color-text-muted: rgba(255, 255, 255, 0.65);
+  --color-highlight: #FF0039;
+  --color-cta: #FF0039;
+  --color-border: rgba(255, 255, 255, 0.12);
+}
+
+body {
+  font-family: 'Outfit', system-ui, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom gradient utilities */
+.gradient-hero {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.05) 35%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+}
+
+.gradient-overlay {
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+.gradient-cta {
+  background: linear-gradient(135deg, #FF0039 0%, #0284C7 100%);
+}

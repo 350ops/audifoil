@@ -1,0 +1,12 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/create-payment-intent/route": "app/api/create-payment-intent/route.js",
+  "/(main)/explore/page": "app/(main)/explore/page.js",
+  "/(main)/booking/select-time/page": "app/(main)/booking/select-time/page.js",
+  "/(main)/booking/checkout/page": "app/(main)/booking/checkout/page.js",
+  "/(main)/booking/success/page": "app/(main)/booking/success/page.js",
+  "/(main)/settings/page": "app/(main)/settings/page.js",
+  "/(main)/activities/page": "app/(main)/activities/page.js",
+  "/(main)/bookings/page": "app/(main)/bookings/page.js",
+  "/(main)/crew/page": "app/(main)/crew/page.js"
+}

@@ -1,11 +1,11 @@
-// components/Button.tsx
-import React from 'react';
-import { Text, ActivityIndicator, TouchableOpacity, View, Pressable } from 'react-native';
-import { Link, router } from 'expo-router';
-import Icon, { IconName } from './Icon';
-import useThemeColors from '@/contexts/ThemeColors';
+'use client';
 
-type RoundedOption = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+import React from 'react';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import * as LucideIcons from 'lucide-react';
+
+type IconName = keyof typeof LucideIcons;
 
 interface ButtonProps {
   title?: string;
@@ -13,19 +13,18 @@ interface ButtonProps {
   loading?: boolean;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'cta';
   size?: 'small' | 'medium' | 'large';
-  rounded?: RoundedOption;
+  rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
   href?: string;
   className?: string;
   textClassName?: string;
   disabled?: boolean;
-  iconStart?: IconName;
-  iconEnd?: IconName;
+  iconStart?: string;
+  iconEnd?: string;
   iconSize?: number;
-  iconColor?: string;
-  iconClassName?: string;
+  children?: React.ReactNode;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export function Button({
   title,
   onPress,
   loading = false,
@@ -39,115 +38,61 @@ export const Button: React.FC<ButtonProps> = ({
   iconStart,
   iconEnd,
   iconSize,
-  iconColor,
-  iconClassName = '',
-  ...props
-}) => {
-  const buttonStyles = {
-    primary: 'bg-primary',
-    secondary: 'bg-secondary',
-    outline: 'border border-border bg-transparent',
-    ghost: 'bg-transparent',
-    cta: 'bg-highlight', // Airbnb-style pink CTA
+  children,
+}: ButtonProps) {
+  const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 active:scale-[0.98]';
+
+  const variantStyles = {
+    primary: 'bg-primary text-invert hover:opacity-90',
+    secondary: 'bg-secondary text-foreground hover:opacity-90 border border-border',
+    outline: 'border border-border bg-transparent text-foreground hover:bg-secondary',
+    ghost: 'bg-transparent text-foreground hover:bg-secondary',
+    cta: 'bg-highlight text-white hover:opacity-90',
   };
-  
-  const buttonSize = {
-    small: 'py-2',
-    medium: 'py-3',
-    large: 'py-5',
+
+  const sizeStyles = {
+    small: 'py-2 px-4 text-sm',
+    medium: 'py-3 px-5 text-base',
+    large: 'py-4 px-6 text-lg',
   };
-  
+
   const roundedStyles = {
-    none: 'rounded-none',
-    xs: 'rounded-xs',
-    sm: 'rounded-sm',
-    md: 'rounded-md',
-    lg: 'rounded-lg',
-    xl: 'rounded-xl',
-    full: 'rounded-full',
-  };
-  
-  const textColor = variant === 'outline' || variant === 'secondary' || variant === 'ghost' ? 'text-text' : 'text-invert';
-  const disabledStyle = disabled ? 'opacity-50' : '';
-
-  // Default icon sizes based on button size
-  const getIconSize = () => {
-    if (iconSize) return iconSize;
-    
-    switch (size) {
-      case 'small': return 16;
-      case 'medium': return 18;
-      case 'large': return 20;
-      default: return 18;
-    }
+    none: 'rounded-none', sm: 'rounded-sm', md: 'rounded-md',
+    lg: 'rounded-lg', xl: 'rounded-xl', full: 'rounded-full',
   };
 
-  // Default icon color based on variant
-  const getIconColor = () => {
-    const colors = useThemeColors();
-    if (iconColor) return iconColor;
-    
-    return variant === 'outline' || variant === 'secondary' || variant === 'ghost' 
-      ? colors.text // highlight color
-      : colors.invert; // white
-  };
-  const colors = useThemeColors();
+  const getIconSize = () => iconSize || (size === 'small' ? 16 : size === 'large' ? 20 : 18);
 
-  const ButtonContent = (
+  const renderIcon = (name: string, position: 'start' | 'end') => {
+    const IconComponent = (LucideIcons as any)[name];
+    if (!IconComponent) return null;
+    return <IconComponent size={getIconSize()} className={position === 'start' ? 'mr-2' : 'ml-2'} />;
+  };
+
+  const classes = cn(baseStyles, variantStyles[variant], sizeStyles[size], roundedStyles[rounded], disabled && 'opacity-50 cursor-not-allowed', className);
+
+  const content = (
     <>
       {loading ? (
-        <ActivityIndicator color={colors.invert} />
+        <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
       ) : (
-        <View className="flex-row items-center justify-center">
-          {iconStart && (
-            <Icon 
-              name={iconStart} 
-              size={getIconSize()} 
-              color={getIconColor()} 
-              className={`mr-2 ${iconClassName} `} 
-            />
-          )}
-          
-          <Text className={`${textColor} font-medium ${textClassName}`}>{title}</Text>
-          
-          {iconEnd && (
-            <Icon 
-              name={iconEnd} 
-              size={getIconSize()} 
-              color={getIconColor()} 
-              className={`ml-2 ${iconClassName}`} 
-            />
-          )}
-        </View>
+        <>
+          {iconStart && renderIcon(iconStart, 'start')}
+          {title && <span className={textClassName}>{title}</span>}
+          {children}
+          {iconEnd && renderIcon(iconEnd, 'end')}
+        </>
       )}
     </>
   );
 
   if (href) {
-    return (
-      <TouchableOpacity
-        disabled={loading || disabled}
-        activeOpacity={0.8}
-        className={`px-4 relative ${buttonStyles[variant]} ${buttonSize[size]} ${roundedStyles[rounded]} items-center justify-center ${disabledStyle} ${className}`} 
-        {...props}
-        onPress={() => {
-          router.push(href);
-        }}
-      >
-        {ButtonContent}
-      </TouchableOpacity>
-    );
+    return <Link href={href} className={classes}>{content}</Link>;
   }
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      disabled={loading || disabled}
-      activeOpacity={0.8}
-      className={`px-4 relative ${buttonStyles[variant]} ${buttonSize[size]} ${roundedStyles[rounded]} items-center justify-center ${disabledStyle} ${className}`} 
-      {...props}
-    >
-      {ButtonContent}
-    </TouchableOpacity>
+    <button onClick={onPress} disabled={loading || disabled} className={classes}>
+      {content}
+    </button>
   );
-};
+}

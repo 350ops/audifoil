@@ -1,232 +1,85 @@
-// TripCard - Enhanced trip slot card with group status and dynamic pricing
-import { View, Pressable } from 'react-native';
-import ThemedText from './ThemedText';
+'use client';
+
+import { cn } from '@/lib/utils';
 import Icon from './Icon';
-import useThemeColors from '@/contexts/ThemeColors';
-import { FormattedTrip } from '@/data/tripsDb';
-import { PRICE_TIERS } from '@/data/pricing';
+import type { FormattedTrip } from '@/data/tripsDb';
 
 interface TripCardProps {
   trip: FormattedTrip;
   isSelected?: boolean;
-  onPress?: () => void;
+  onSelect?: () => void;
 }
 
-// Group size visual indicator (people icons)
-function GroupIndicator({
-  bookedCount,
-  maxSpots,
-}: {
-  bookedCount: number;
-  maxSpots: number;
-}) {
-  const colors = useThemeColors();
-  const filledSpots = Math.min(bookedCount, maxSpots);
-  const emptySpots = Math.max(0, maxSpots - bookedCount);
+export default function TripCard({ trip, isSelected, onSelect }: TripCardProps) {
+  const isFull = trip.spotsRemaining === 0;
 
   return (
-    <View className="flex-row items-center gap-0.5">
-      {/* Filled spots (booked) */}
-      {Array.from({ length: Math.min(filledSpots, 4) }).map((_, i) => (
-        <Icon key={`filled-${i}`} name="User" size={14} color={colors.highlight} fill={colors.highlight} />
-      ))}
-      {filledSpots > 4 && (
-        <ThemedText className="text-xs ml-0.5" style={{ color: colors.highlight }}>
-          +{filledSpots - 4}
-        </ThemedText>
-      )}
-      {/* Empty spots (available) */}
-      {Array.from({ length: Math.min(emptySpots, 4 - Math.min(filledSpots, 4)) }).map((_, i) => (
-        <Icon key={`empty-${i}`} name="User" size={14} color={colors.placeholder} />
-      ))}
-    </View>
-  );
-}
-
-// Price tier badge
-function PriceBadge({ price, isAtBasePrice }: { price: number; isAtBasePrice: boolean }) {
-  const colors = useThemeColors();
-
-  return (
-    <View
-      className="px-2 py-1 rounded-full"
-      style={{
-        backgroundColor: isAtBasePrice ? colors.highlight : colors.secondary,
-        borderWidth: isAtBasePrice ? 0 : 1,
-        borderColor: colors.border,
-      }}
-    >
-      <ThemedText
-        className="text-sm font-bold"
-        style={{ color: isAtBasePrice ? 'white' : colors.text }}
-      >
-        ${price}
-      </ThemedText>
-    </View>
-  );
-}
-
-export default function TripCard({ trip, isSelected, onPress }: TripCardProps) {
-  const colors = useThemeColors();
-
-  const {
-    startTime,
-    endTime,
-    bookedCount,
-    maxSpots,
-    spotsRemaining,
-    pricePerPerson,
-    nextTierPrice,
-    guestsNeededForNextTier,
-    isAtBasePrice,
-    isSunset,
-    bookedBy,
-  } = trip;
-
-  // Generate status message
-  const getStatusMessage = () => {
-    if (spotsRemaining === 0) return 'Full';
-    if (bookedCount === 0) return 'Be the first to join!';
-    if (bookedCount === 1) return '1 person joined';
-    return `${bookedCount} people joined`;
-  };
-
-  // Generate price hint message
-  const getPriceHint = () => {
-    if (isAtBasePrice) return 'Best rate!';
-    if (guestsNeededForNextTier === 1) return `1 more → $${nextTierPrice}/person`;
-    if (guestsNeededForNextTier > 0) return `${guestsNeededForNextTier} more → $${nextTierPrice}/person`;
-    return '';
-  };
-
-  const isFull = spotsRemaining === 0;
-
-  return (
-    <Pressable
-      onPress={onPress}
+    <button
+      onClick={onSelect}
       disabled={isFull}
-      className={`rounded-2xl overflow-hidden mb-3 ${isFull ? 'opacity-50' : ''}`}
-      style={{
-        backgroundColor: colors.secondary,
-        borderWidth: isSelected ? 2 : 1,
-        borderColor: isSelected ? colors.highlight : colors.border,
-      }}
-    >
-      <View className="p-4">
-        {/* Top Row: Time & Price */}
-        <View className="flex-row items-center justify-between mb-3">
-          <View className="flex-row items-center gap-2">
-            <Icon name="Clock" size={16} color={colors.icon} />
-            <ThemedText className="text-base font-semibold">
-              {startTime} → {endTime}
-            </ThemedText>
-            {isSunset && (
-              <View className="bg-orange-500/20 px-2 py-0.5 rounded-full">
-                <ThemedText className="text-xs text-orange-500">Sunset</ThemedText>
-              </View>
-            )}
-          </View>
-          <PriceBadge price={pricePerPerson} isAtBasePrice={isAtBasePrice} />
-        </View>
-
-        {/* Middle Row: Group Indicator & Status */}
-        <View className="flex-row items-center justify-between mb-2">
-          <View className="flex-row items-center gap-3">
-            <GroupIndicator bookedCount={bookedCount} maxSpots={maxSpots} />
-            <ThemedText className="text-sm" style={{ color: colors.textMuted }}>
-              {getStatusMessage()}
-            </ThemedText>
-          </View>
-        </View>
-
-        {/* Price Hint */}
-        {!isFull && !isAtBasePrice && (
-          <View className="flex-row items-center gap-1 mb-2">
-            <Icon name="TrendingDown" size={14} color={colors.highlight} />
-            <ThemedText className="text-sm" style={{ color: colors.highlight }}>
-              {getPriceHint()}
-            </ThemedText>
-          </View>
-        )}
-
-        {/* Booked By (crews) */}
-        {bookedBy.length > 0 && (
-          <View className="flex-row items-center gap-2 pt-2 border-t" style={{ borderColor: colors.border }}>
-            <Icon name="Users" size={14} color={colors.placeholder} />
-            <ThemedText className="text-xs" style={{ color: colors.textMuted }}>
-              {bookedBy.map((b) => b.label).join(' · ')}
-            </ThemedText>
-          </View>
-        )}
-
-        {/* Full Status */}
-        {isFull && (
-          <View className="flex-row items-center gap-2 mt-2">
-            <Icon name="AlertCircle" size={14} color={colors.placeholder} />
-            <ThemedText className="text-sm" style={{ color: colors.placeholder }}>
-              No spots remaining
-            </ThemedText>
-          </View>
-        )}
-      </View>
-
-      {/* Selection Indicator */}
-      {isSelected && (
-        <View
-          className="absolute top-3 right-3 w-6 h-6 rounded-full items-center justify-center"
-          style={{ backgroundColor: colors.highlight }}
-        >
-          <Icon name="Check" size={14} color="white" />
-        </View>
+      className={cn(
+        'w-full rounded-2xl border p-4 text-left transition-all',
+        isSelected
+          ? 'border-highlight bg-highlight/5 shadow-md'
+          : 'border-border bg-secondary hover:border-highlight/50 hover:shadow-sm',
+        isFull && 'opacity-50 cursor-not-allowed'
       )}
-    </Pressable>
-  );
-}
-
-// Compact version for smaller displays
-export function TripCardCompact({ trip, isSelected, onPress }: TripCardProps) {
-  const colors = useThemeColors();
-
-  const { startTime, endTime, bookedCount, pricePerPerson, isAtBasePrice, spotsRemaining } = trip;
-
-  const isFull = spotsRemaining === 0;
-
-  return (
-    <Pressable
-      onPress={onPress}
-      disabled={isFull}
-      className={`rounded-xl overflow-hidden ${isFull ? 'opacity-50' : ''}`}
-      style={{
-        backgroundColor: isSelected ? colors.highlight : colors.secondary,
-        borderWidth: 1,
-        borderColor: isSelected ? colors.highlight : colors.border,
-        minWidth: 100,
-      }}
     >
-      <View className="p-3 items-center">
-        <ThemedText
-          className="text-sm font-semibold"
-          style={{ color: isSelected ? 'white' : colors.text }}
-        >
-          {startTime}
-        </ThemedText>
-        <View className="flex-row items-center gap-1 mt-1">
-          <ThemedText
-            className="text-lg font-bold"
-            style={{ color: isSelected ? 'white' : isAtBasePrice ? colors.highlight : colors.text }}
-          >
-            ${pricePerPerson}
-          </ThemedText>
-        </View>
-        {bookedCount > 0 && (
-          <ThemedText
-            className="text-xs mt-1"
-            style={{ color: isSelected ? 'rgba(255,255,255,0.8)' : colors.textMuted }}
-          >
-            {bookedCount}/{trip.maxSpots}
-          </ThemedText>
-        )}
-      </View>
-    </Pressable>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', isSelected ? 'bg-highlight/20' : 'bg-background')}>
+            <Icon name={trip.isSunset ? 'Sunset' : 'Sun'} size={20} color={isSelected ? '#FF0039' : undefined} />
+          </div>
+          <div>
+            <p className="font-semibold">{trip.startTime} - {trip.endTime}</p>
+            <p className="text-sm text-muted">{trip.dateLabel}</p>
+          </div>
+        </div>
+
+        <div className="text-right">
+          <p className={cn('text-lg font-bold', trip.isAtBasePrice ? 'text-green-500' : 'text-foreground')}>
+            ${trip.pricePerPerson}
+          </p>
+          <p className="text-xs text-muted">per person</p>
+        </div>
+      </div>
+
+      {/* Capacity bar */}
+      <div className="mt-3 flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          {Array.from({ length: trip.maxSpots }).map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                'h-6 w-6 rounded-full flex items-center justify-center text-xs',
+                i < trip.bookedCount ? 'bg-highlight/20 text-highlight' : 'bg-background text-muted'
+              )}
+            >
+              <Icon name="User" size={12} />
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center gap-1.5">
+          {trip.isPopular && (
+            <span className="rounded-full bg-orange-500/10 px-2 py-0.5 text-xs font-medium text-orange-500">Popular</span>
+          )}
+          {isFull ? (
+            <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-500">Full</span>
+          ) : (
+            <span className="text-xs text-muted">{trip.spotsRemaining} spot{trip.spotsRemaining !== 1 ? 's' : ''} left</span>
+          )}
+        </div>
+      </div>
+
+      {/* Price drop hint */}
+      {!trip.isAtBasePrice && trip.guestsNeededForNextTier > 0 && (
+        <div className="mt-2 flex items-center gap-1.5 rounded-lg bg-green-500/10 px-3 py-1.5">
+          <Icon name="TrendingDown" size={14} color="#22c55e" />
+          <span className="text-xs font-medium text-green-600">
+            {trip.guestsNeededForNextTier} more → ${trip.nextTierPrice}/person
+          </span>
+        </div>
+      )}
+    </button>
   );
 }
