@@ -45,8 +45,8 @@ export default function LandingPage() {
             </AnimatedDiv>
             <AnimatedDiv animation="slideInBottom" delay={200}>
               <p className="mt-4 text-lg leading-relaxed text-white/90 lg:text-xl">
-                5 hours. Dolphins, reefs, sandbank, e-foil.<br />
-                All in one unforgettable day.
+                Every day 10am Departure. Snorkeling, Dolphin cruise, , Sandbank, Island tour E-foil.<br />
+                Lunch, Snorkeling gear, fresh water shower
               </p>
             </AnimatedDiv>
             <AnimatedDiv animation="slideInBottom" delay={300}>

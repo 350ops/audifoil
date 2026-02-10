@@ -58,7 +58,8 @@ export default function ExplorePage() {
               Your Maldives<br />Adventure
             </h1>
             <p className="mt-3 text-lg text-white/90 lg:text-xl">
-              5 hours. Dolphins, reefs, sandbank, e-foil.<br />All in one unforgettable day.
+              Every day 10am Departure. Snorkeling, Dolphin cruise, , Sandbank, Island tour E-foil.<br />
+              Lunch, Snorkeling gear, fresh water shower...
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-4">
               <div className="flex items-center rounded-xl bg-white/25 px-5 py-3 backdrop-blur-sm">
@@ -152,7 +153,8 @@ export default function ExplorePage() {
                 Boho Waves was started by a former airline crew member who knew there had to be a better way to experience the Maldives on a layover budget.
               </p>
               <p className="mt-3 text-white/90 leading-relaxed max-w-2xl">
-                For $80, you and your crew get dolphins, snorkeling, a private sandbank, lunch, and an e-foil session — all in 5 hours, with pickup from your hotel.
+                Every day 10am Departure. Snorkeling, Dolphin cruise, , Sandbank, Island tour E-foil.<br />
+                Lunch, Snorkeling gear, fresh water shower...
               </p>
               <div className="mt-6">
                 <Button href="/crew" title="Learn More" variant="ghost" rounded="full" className="border border-white/30 text-white hover:bg-white/10" iconEnd="ArrowRight" />
