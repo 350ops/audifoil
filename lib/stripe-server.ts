@@ -3,21 +3,27 @@
 
 import Stripe from 'stripe';
 
-// Initialize Stripe with secret key
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  httpClient: Stripe.createFetchHttpClient(),
-  appInfo: {
-    name: 'foiltribe',
-    version: '1.0.0',
-  },
-});
+// Lazy-initialize Stripe (env vars not available at build time on Vercel)
+let _stripe: Stripe;
+export function getStripe() {
+  if (!_stripe) {
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+      httpClient: Stripe.createFetchHttpClient(),
+      appInfo: {
+        name: 'foiltribe',
+        version: '1.0.0',
+      },
+    });
+  }
+  return _stripe;
+}
 
 // Currency configuration
 export const CURRENCY = 'usd';
 
 // Create a customer in Stripe
 export async function createCustomer(email?: string, name?: string): Promise<Stripe.Customer> {
-  return stripe.customers.create({
+  return getStripe().customers.create({
     email,
     name,
     metadata: {
@@ -28,7 +34,7 @@ export async function createCustomer(email?: string, name?: string): Promise<Str
 
 // Create an ephemeral key for the customer
 export async function createEphemeralKey(customerId: string): Promise<Stripe.EphemeralKey> {
-  return stripe.ephemeralKeys.create(
+  return getStripe().ephemeralKeys.create(
     { customer: customerId },
   );
 }
@@ -43,7 +49,7 @@ export interface CreatePaymentIntentParams {
 }
 
 export async function createPaymentIntent(params: CreatePaymentIntentParams): Promise<Stripe.PaymentIntent> {
-  return stripe.paymentIntents.create({
+  return getStripe().paymentIntents.create({
     amount: params.amount,
     currency: params.currency || CURRENCY,
     customer: params.customerId,
@@ -67,8 +73,9 @@ export interface CreatePaymentLinkParams {
 }
 
 export async function createPaymentLink(params: CreatePaymentLinkParams): Promise<Stripe.PaymentLink> {
+  const s = getStripe();
   // First create a product
-  const product = await stripe.products.create({
+  const product = await s.products.create({
     name: params.productName,
     description: params.productDescription,
     metadata: {
@@ -80,14 +87,14 @@ export async function createPaymentLink(params: CreatePaymentLinkParams): Promis
   });
 
   // Create a price for the product
-  const price = await stripe.prices.create({
+  const price = await s.prices.create({
     product: product.id,
     unit_amount: params.priceInCents,
     currency: CURRENCY,
   });
 
   // Create the payment link
-  const paymentLink = await stripe.paymentLinks.create({
+  const paymentLink = await s.paymentLinks.create({
     line_items: [
       {
         price: price.id,
@@ -113,20 +120,21 @@ export async function createPaymentLink(params: CreatePaymentLinkParams): Promis
 
 // Get payment link URL
 export async function getPaymentLinkUrl(paymentLinkId: string): Promise<string> {
-  const paymentLink = await stripe.paymentLinks.retrieve(paymentLinkId);
+  const paymentLink = await getStripe().paymentLinks.retrieve(paymentLinkId);
   return paymentLink.url;
 }
 
 // Retrieve a payment intent to check status
 export async function getPaymentIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
-  return stripe.paymentIntents.retrieve(paymentIntentId);
+  return getStripe().paymentIntents.retrieve(paymentIntentId);
 }
 
 // List customer's payment methods
 export async function listPaymentMethods(customerId: string): Promise<Stripe.PaymentMethod[]> {
-  const paymentMethods = await stripe.paymentMethods.list({
+  const paymentMethods = await getStripe().paymentMethods.list({
     customer: customerId,
     type: 'card',
   });
   return paymentMethods.data;
 }
+
