@@ -31,7 +31,9 @@ export default function BookingsScreen() {
 
   const handleBookingPress = useCallback((booking: ActivityBooking) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    // Could navigate to booking detail screen
+    if (booking.supabaseBookingId) {
+      router.push({ pathname: '/screens/trip-status', params: { bookingId: booking.supabaseBookingId } });
+    }
   }, []);
 
   const renderBookingCard = useCallback(({ item, index }: { item: ActivityBooking; index: number }) => (
@@ -170,6 +172,40 @@ function BookingCard({ booking, onPress }: { booking: ActivityBooking; onPress: 
             {booking.confirmationCode}
           </ThemedText>
         </View>
+
+        {/* Payment progress badge (group bookings) */}
+        {booking.guests > 1 && (
+          <View className="flex-row items-center justify-between mb-4 pb-4 border-b border-border">
+            <View className="flex-row items-center">
+              <Icon name="Users" size={16} color={colors.highlight} />
+              <ThemedText className="ml-2 opacity-60">Payments</ThemedText>
+            </View>
+            <View className="flex-row items-center">
+              <View
+                className="rounded-full px-3 py-1 mr-2"
+                style={{
+                  backgroundColor: (booking.paidCount || 1) >= booking.guests
+                    ? '#22C55E15'
+                    : colors.highlight + '15',
+                }}
+              >
+                <ThemedText
+                  className="text-xs font-bold"
+                  style={{
+                    color: (booking.paidCount || 1) >= booking.guests
+                      ? '#22C55E'
+                      : colors.highlight,
+                  }}
+                >
+                  {booking.paidCount || 1}/{booking.guests} paid
+                </ThemedText>
+              </View>
+              {booking.supabaseBookingId && (
+                <Icon name="ChevronRight" size={16} color={colors.highlight} />
+              )}
+            </View>
+          </View>
+        )}
 
         {/* Date & Time */}
         <View className="flex-row items-center mb-3">

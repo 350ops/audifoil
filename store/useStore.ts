@@ -64,6 +64,12 @@ interface AppState {
     userInfo: { name: string; email: string; whatsapp: string; airlineCode?: string }
   ) => Promise<ActivityBooking>;
 
+  // Update a booking with group booking info
+  updateActivityBooking: (
+    bookingId: string,
+    updates: Partial<ActivityBooking>
+  ) => Promise<void>;
+
   // Latest activity booking (for success screen)
   latestActivityBooking: ActivityBooking | null;
   setLatestActivityBooking: (booking: ActivityBooking | null) => void;
@@ -253,6 +259,28 @@ export const useStore = create<AppState>((set, get) => ({
     });
 
     return booking;
+  },
+
+  updateActivityBooking: async (bookingId, updates) => {
+    const currentBookings = get().activityBookings;
+    const updatedBookings = currentBookings.map((b) =>
+      b.id === bookingId ? { ...b, ...updates } : b
+    );
+
+    try {
+      await AsyncStorage.setItem(ACTIVITY_BOOKINGS_KEY, JSON.stringify(updatedBookings));
+    } catch (error) {
+      console.error('Failed to update activity booking:', error);
+    }
+
+    const updatedLatest = get().latestActivityBooking?.id === bookingId
+      ? { ...get().latestActivityBooking!, ...updates }
+      : get().latestActivityBooking;
+
+    set({
+      activityBookings: updatedBookings,
+      latestActivityBooking: updatedLatest,
+    });
   },
 
   latestActivityBooking: null,

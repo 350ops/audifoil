@@ -30,6 +30,7 @@ function RootLayoutNav() {
       <Stack.Screen name="screens/select-time" />
       <Stack.Screen name="screens/activity-checkout" />
       <Stack.Screen name="screens/activity-success" options={{ gestureEnabled: false }} />
+      <Stack.Screen name="screens/trip-status" />
     </Stack>
   );
 }

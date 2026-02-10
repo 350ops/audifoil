@@ -42,7 +42,7 @@ const generateDates = () => {
 
 const DATES = generateDates();
 
-const SEAT_PRICE = 80;
+const SEAT_PRICE = 1; // TESTING: set to $1, change back to $80 for production
 
 interface CrewQuickBookCardProps {
   onBook?: (params: {

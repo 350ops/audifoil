@@ -6,7 +6,7 @@ export const PRICE_TIERS = {
   SOLO: 300, // 1 person
   TWO: 150, // 2 people (each)
   THREE: 100, // 3 people (each)
-  BASE: 80, // 4+ people (each)
+  BASE: 1, // 4+ people (each) — TESTING: set to $1, change back to $80 for production
 } as const;
 
 // Minimum guests for base price

@@ -69,6 +69,10 @@ export interface ActivityBooking {
   userWhatsapp: string;
   status: 'confirmed' | 'pending' | 'completed' | 'cancelled';
   createdAt: string;
+  // Split payment tracking (optional — set after group booking is created)
+  supabaseBookingId?: string;
+  paymentLinkUrl?: string;
+  paidCount?: number;
 }
 
 // Local images for activities

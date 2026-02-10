@@ -46,6 +46,7 @@ export default function ActivityCheckoutScreen() {
     selectedActivitySlot,
     guestCount,
     addActivityBooking,
+    updateActivityBooking,
     demoUser,
     dbTrips,
   } = useStore();
@@ -113,14 +114,16 @@ export default function ActivityCheckoutScreen() {
     };
   }, [selectedActivitySlot, selectedActivity, dbTrips, guestCount]);
 
-  // Single ticket pricing - everyone pays the base rate
+  // Split payment: booker only pays their own ticket + personal e-foil
   const ticketPrice = getSingleTicketPrice(); // $80
-  const ticketTotal = ticketPrice * guestCount;
-  const totalPrice = ticketTotal + efoilTotal;
+  const bookerTicket = ticketPrice; // Just 1 ticket for the booker
+  const bookerEfoil = efoilCount > 0 ? EFOIL_ADDON.priceUsd : 0; // Booker's personal e-foil only
+  const bookerTotal = bookerTicket + bookerEfoil;
   const finalPrice = promoApplied
-    ? totalPrice - promoApplied.discount
-    : totalPrice;
-  const actualDiscount = totalPrice - finalPrice;
+    ? bookerTotal - promoApplied.discount
+    : bookerTotal;
+  const actualDiscount = bookerTotal - finalPrice;
+  const remainingGuests = guestCount - 1;
 
   // Get friend invite info (safe even if activity is null)
   const inviteInfo = useMemo(() => {
@@ -162,7 +165,7 @@ export default function ActivityCheckoutScreen() {
   }, [name, email, validateEmail]);
 
   const handleApplyPromo = useCallback(() => {
-    const result = applyPromoCode(promoCode, totalPrice);
+    const result = applyPromoCode(promoCode, bookerTotal);
     if (result) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setPromoApplied({ discount: result.discount, label: result.label });
@@ -170,7 +173,7 @@ export default function ActivityCheckoutScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Invalid Code', 'This promo code is not valid. Try CREW25 for a crew discount!');
     }
-  }, [promoCode, totalPrice]);
+  }, [promoCode, bookerTotal]);
 
   // Initialize Stripe Payment Sheet
   const initPayment = useCallback(async () => {
@@ -209,12 +212,107 @@ export default function ActivityCheckoutScreen() {
     }
   }, [selectedActivity, selectedActivitySlot, email, name, finalPrice, guestCount, initializePaymentSheet, validateForm]);
 
+  // Create group booking after payment succeeds
+  const createGroupBooking = useCallback(async (paymentIntentId?: string) => {
+    if (!selectedActivity || !selectedActivitySlot) return null;
+
+    try {
+      const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL;
+      const SUPABASE_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/create-group-booking`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          apikey: SUPABASE_KEY!,
+        },
+        body: JSON.stringify({
+          activityId: selectedActivity.id,
+          slotDate: selectedActivitySlot.date,
+          slotTime: selectedActivitySlot.startTime,
+          totalGuests: guestCount,
+          pricePerPerson: ticketPrice,
+          bookerName: name,
+          bookerEmail: email,
+          bookerWhatsapp: whatsapp,
+          bookerPaymentIntentId: paymentIntentId || null,
+          bookerAmount: finalPrice,
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        console.error('[GroupBooking] Error:', err);
+        return null;
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('[GroupBooking] Failed:', error);
+      return null;
+    }
+  }, [selectedActivity, selectedActivitySlot, guestCount, ticketPrice, name, email, whatsapp, finalPrice]);
+
   // Handle payment
+  // TESTING: Set to true to skip Stripe and simulate a successful payment
+  const SIMULATE_PAYMENT = __DEV__;
+
   const handlePayment = useCallback(async () => {
     if (!selectedActivity || !selectedActivitySlot) return;
     
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
+    if (!validateForm()) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      setTouched({ name: true, email: true });
+      return;
+    }
+
+    // TESTING: Simulate successful payment in dev mode
+    if (SIMULATE_PAYMENT) {
+      setPaymentStep('processing');
+      setShowPaymentModal(true);
+
+      // Simulate a short delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const result = { success: true, paymentIntentId: `pi_test_${Date.now()}` } as any;
+
+      setPaymentStep('success');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      const localBooking = await addActivityBooking(selectedActivity, selectedActivitySlot, guestCount, {
+        name, email, whatsapp,
+      });
+
+      const groupBooking = await createGroupBooking(result.paymentIntentId);
+
+      if (groupBooking && localBooking) {
+        await updateActivityBooking(localBooking.id, {
+          supabaseBookingId: groupBooking.bookingId,
+          paymentLinkUrl: groupBooking.paymentLinkUrl,
+          paidCount: 1,
+          confirmationCode: groupBooking.confirmationCode || localBooking.confirmationCode,
+        });
+      }
+
+      setTimeout(() => {
+        setShowPaymentModal(false);
+        router.replace({
+          pathname: '/screens/activity-success',
+          params: {
+            paymentLinkUrl: groupBooking?.paymentLinkUrl || '',
+            bookingId: groupBooking?.bookingId || '',
+            pendingCount: String(groupBooking?.pendingCount || 0),
+          },
+        });
+      }, 1500);
+
+      return;
+    }
+
+    // Production: real Stripe payment
     // Initialize payment if not already done
     if (paymentStep !== 'ready') {
       const initialized = await initPayment();
@@ -229,17 +327,37 @@ export default function ActivityCheckoutScreen() {
       setPaymentStep('success');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-      // Create booking record
-      await addActivityBooking(selectedActivity, selectedActivitySlot, guestCount, {
+      // Create local booking record
+      const localBooking = await addActivityBooking(selectedActivity, selectedActivitySlot, guestCount, {
         name,
         email,
         whatsapp,
       });
 
+      // Create group booking in Supabase (for payment tracking)
+      const groupBooking = await createGroupBooking(result.paymentIntentId);
+
+      // Save group booking info back to local booking
+      if (groupBooking && localBooking) {
+        await updateActivityBooking(localBooking.id, {
+          supabaseBookingId: groupBooking.bookingId,
+          paymentLinkUrl: groupBooking.paymentLinkUrl,
+          paidCount: 1,
+          confirmationCode: groupBooking.confirmationCode || localBooking.confirmationCode,
+        });
+      }
+
       // Show success for a moment then navigate
       setTimeout(() => {
         setShowPaymentModal(false);
-        router.replace('/screens/activity-success');
+        router.replace({
+          pathname: '/screens/activity-success',
+          params: {
+            paymentLinkUrl: groupBooking?.paymentLinkUrl || '',
+            bookingId: groupBooking?.bookingId || '',
+            pendingCount: String(groupBooking?.pendingCount || 0),
+          },
+        });
       }, 1500);
     } else {
       setPaymentStep('error');
@@ -329,15 +447,34 @@ export default function ActivityCheckoutScreen() {
       setPaymentStep('success');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-      await addActivityBooking(selectedActivity, selectedActivitySlot, guestCount, {
+      const localBooking = await addActivityBooking(selectedActivity, selectedActivitySlot, guestCount, {
         name,
         email,
         whatsapp,
       });
 
+      // Create group booking in Supabase
+      const groupBooking = await createGroupBooking();
+
+      if (groupBooking && localBooking) {
+        await updateActivityBooking(localBooking.id, {
+          supabaseBookingId: groupBooking.bookingId,
+          paymentLinkUrl: groupBooking.paymentLinkUrl,
+          paidCount: 1,
+          confirmationCode: groupBooking.confirmationCode || localBooking.confirmationCode,
+        });
+      }
+
       setTimeout(() => {
         setShowPaymentModal(false);
-        router.replace('/screens/activity-success');
+        router.replace({
+          pathname: '/screens/activity-success',
+          params: {
+            paymentLinkUrl: groupBooking?.paymentLinkUrl || '',
+            bookingId: groupBooking?.bookingId || '',
+            pendingCount: String(groupBooking?.pendingCount || 0),
+          },
+        });
       }, 1500);
     } catch (error: any) {
       setPaymentStep('error');
@@ -745,22 +882,18 @@ export default function ActivityCheckoutScreen() {
             </View>
           )}
 
-          {/* Price Summary */}
+          {/* Price Summary — split model */}
           <View className="mt-6">
-            <ThemedText className="font-bold text-lg mb-3">Price Summary</ThemedText>
+            <ThemedText className="font-bold text-lg mb-3">Your Payment</ThemedText>
             <View className="bg-secondary rounded-xl p-4" style={shadowPresets.card}>
               <View className="flex-row justify-between mb-3">
-                <ThemedText className="opacity-60">
-                  Ticket × {guestCount}
-                </ThemedText>
-                <ThemedText className="font-medium">${ticketTotal}</ThemedText>
+                <ThemedText className="opacity-60">Your ticket</ThemedText>
+                <ThemedText className="font-medium">${ticketPrice}</ThemedText>
               </View>
-              {efoilCount > 0 && (
+              {bookerEfoil > 0 && (
                 <View className="flex-row justify-between mb-3">
-                  <ThemedText className="opacity-60">
-                    E-Foil add-on × {efoilCount}
-                  </ThemedText>
-                  <ThemedText className="font-medium">${efoilTotal}</ThemedText>
+                  <ThemedText className="opacity-60">E-Foil add-on</ThemedText>
+                  <ThemedText className="font-medium">${bookerEfoil}</ThemedText>
                 </View>
               )}
               {promoApplied && (
@@ -772,12 +905,29 @@ export default function ActivityCheckoutScreen() {
                 </View>
               )}
               <View className="flex-row justify-between pt-3 border-t border-border">
-                <ThemedText className="font-bold text-lg">Total</ThemedText>
+                <ThemedText className="font-bold text-lg">You pay</ThemedText>
                 <ThemedText className="font-bold text-2xl" style={{ color: colors.highlight }}>
                   ${finalPrice.toFixed(2)}
                 </ThemedText>
               </View>
             </View>
+
+            {/* Split payment info */}
+            {remainingGuests > 0 && (
+              <View className="mt-3 rounded-xl p-3" style={{ backgroundColor: colors.highlight + '10' }}>
+                <View className="flex-row items-start">
+                  <Icon name="Users" size={16} color={colors.highlight} />
+                  <View className="ml-2 flex-1">
+                    <ThemedText className="text-sm font-medium" style={{ color: colors.highlight }}>
+                      {remainingGuests} more {remainingGuests === 1 ? 'guest' : 'guests'} to pay separately
+                    </ThemedText>
+                    <ThemedText className="text-xs mt-1 opacity-60">
+                      After you pay, you'll get a payment link (${ticketPrice}/person) to share with your group.
+                    </ThemedText>
+                  </View>
+                </View>
+              </View>
+            )}
           </View>
 
           {/* What's Included */}
