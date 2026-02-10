@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import AnimatedDiv from '@/components/AnimatedDiv';
 import Icon from '@/components/Icon';
 import { Button } from '@/components/Button';
@@ -18,7 +19,15 @@ const MEDIA_VIDEOS = [
 
 export default function ActivitiesPage() {
   const { setSelectedActivity } = useStore();
+  const router = useRouter();
   const adventure = ACTIVITIES.find((a) => a.id === MALDIVES_ADVENTURE_ID);
+
+  const handleBook = () => {
+    if (adventure) {
+      setSelectedActivity(adventure);
+      router.push('/booking/select-time');
+    }
+  };
 
   return (
     <div className="pb-20">
@@ -173,6 +182,20 @@ export default function ActivitiesPage() {
           </div>
         </AnimatedDiv>
       </div>
+
+      {/* Sticky Book Footer */}
+      {adventure && (
+        <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-secondary/90 p-4 backdrop-blur-xl lg:hidden z-50">
+          <div className="mx-auto flex max-w-4xl items-center justify-between gap-4">
+            <div>
+              <span className="text-2xl font-bold text-highlight">${adventure.priceFromUsd}</span>
+              <span className="text-sm text-muted"> / person</span>
+            </div>
+            <Button title="Book Now" variant="cta" size="large" rounded="full" onPress={handleBook} iconEnd="ArrowRight" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
