@@ -34,6 +34,8 @@ export default function Footer() {
             <div className="flex flex-col gap-2">
               <Link href="/how-it-works" className="text-sm text-muted hover:text-foreground transition-colors">How It Works</Link>
               <Link href="/crew" className="text-sm text-muted hover:text-foreground transition-colors">For Airline Crew</Link>
+              <Link href="/privacy" className="text-sm text-muted hover:text-foreground transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="text-sm text-muted hover:text-foreground transition-colors">Terms of Service</Link>
               <Link href="/settings" className="text-sm text-muted hover:text-foreground transition-colors">Settings</Link>
             </div>
           </div>
