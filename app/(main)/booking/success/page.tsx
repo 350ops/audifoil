@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import AnimatedDiv from '@/components/AnimatedDiv';
@@ -9,6 +9,14 @@ import { Button } from '@/components/Button';
 import { useStore } from '@/store/useStore';
 
 export default function BookingSuccessPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center"><p className="text-muted">Loading...</p></div>}>
+      <BookingSuccessContent />
+    </Suspense>
+  );
+}
+
+function BookingSuccessContent() {
   const searchParams = useSearchParams();
   const { latestActivityBooking, resetActivitySelection, selectedActivity, activitySlots, selectedActivitySlot, guestCount, addActivityBooking } = useStore();
   const [booking, setBooking] = useState(latestActivityBooking);
