@@ -11,9 +11,9 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const NAV_LINKS = [
   { href: '/explore', label: 'Explore', icon: 'Compass' },
-  { href: '/activities', label: 'Activities', icon: 'Waves' },
+  { href: '/activities', label: 'Services', icon: 'Waves' },
   { href: '/bookings', label: 'Bookings', icon: 'CalendarCheck' },
-  { href: '/crew', label: 'Crew', icon: 'Plane' },
+  { href: '/crew', label: 'About', icon: 'Info' },
 ];
 
 export default function Navbar() {
@@ -26,8 +26,8 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
         {/* Logo */}
         <Link href="/explore" className="flex items-center gap-2">
-          <Image src="/img/imagesmaldivesa/logoboho.png" alt="Boho Waves" width={36} height={36} className="rounded-md" />
-          <span className="text-lg font-bold tracking-wider text-foreground">Boho Waves</span>
+          <Image src="/img/imagesmaldivesa/logoboho.png" alt="Maldives Water Sports" width={36} height={36} className="rounded-md" />
+          <span className="text-lg font-bold tracking-wider text-foreground">Maldives Water Sports</span>
         </Link>
 
         {/* Desktop nav */}
