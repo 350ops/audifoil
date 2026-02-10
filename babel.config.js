@@ -1,12 +1,13 @@
 module.exports = function (api) {
-  api.cache(true);
+  const isWeb = api.caller((caller) => caller && caller.platform === 'web');
+  api.cache.using(() => String(isWeb));
   return {
     presets: [
       'nativewind/babel',
       ['babel-preset-expo', { jsxImportSource: 'nativewind' }],
     ],
     plugins: [
-      'react-native-worklets/plugin',
+      ...(!isWeb ? ['react-native-worklets/plugin'] : []),
     ],
   };
 };

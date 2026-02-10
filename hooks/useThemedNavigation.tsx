@@ -14,10 +14,9 @@ export default function useThemedNavigation() {
   const colors = useThemeColors();
   const isDark = theme === 'dark';
   
-  // Set up status/navigation bar styling based on theme
+  // Set up status/navigation bar styling based on theme (Android only)
   useEffect(() => {
     if (Platform.OS === 'android') {
-      // Set navigation bar color
       NavigationBar.setBackgroundColorAsync(colors.bg);
       NavigationBar.setButtonStyleAsync(isDark ? 'light' : 'dark');
 

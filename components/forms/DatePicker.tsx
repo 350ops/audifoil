@@ -103,8 +103,44 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     hideDatePicker();
   };
 
+  // Web-specific date input handler
+  const webDateInputRef = useRef<any>(null);
+  const showWebDatePicker = () => {
+    if (Platform.OS === 'web' && webDateInputRef.current) {
+      webDateInputRef.current.showPicker?.();
+      webDateInputRef.current.click?.();
+    }
+  };
+
   // Helper function to render date picker modal/component
   const renderDatePicker = () => {
+    if (Platform.OS === 'web') {
+      const formatDateForInput = (d: Date) => d.toISOString().split('T')[0];
+      return React.createElement('input', {
+        ref: webDateInputRef,
+        type: 'date',
+        value: value ? formatDateForInput(value) : '',
+        min: minDate ? formatDateForInput(minDate) : undefined,
+        max: maxDate ? formatDateForInput(maxDate) : undefined,
+        onChange: (e: any) => {
+          const dateVal = e.target.value;
+          if (dateVal) {
+            onChange(new Date(dateVal + 'T00:00:00'));
+          }
+          hideDatePicker();
+        },
+        style: {
+          position: 'absolute' as const,
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          opacity: 0,
+          cursor: 'pointer',
+          zIndex: 60,
+        },
+      });
+    }
     if (Platform.OS === 'ios') {
       return (
         <Modal

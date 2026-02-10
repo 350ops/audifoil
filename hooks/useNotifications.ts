@@ -3,15 +3,17 @@ import { Platform, Alert } from 'react-native';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 
-// Detect if running in Expo Go
+// Detect if running in Expo Go or on web
 const isExpoGo = Constants.executionEnvironment === 'storeClient';
 const isExpoGoAndroid = isExpoGo && Platform.OS === 'android';
+const isWeb = Platform.OS === 'web';
+const isNotificationsUnsupported = isExpoGoAndroid || isWeb;
 
-// Conditionally import expo-notifications to avoid error in Expo Go on Android
+// Conditionally import expo-notifications to avoid error in Expo Go on Android and on web
 let Notifications: typeof import('expo-notifications') | null = null;
 
-if (!isExpoGoAndroid) {
-  // Safe to import on iOS or in development builds
+if (!isNotificationsUnsupported) {
+  // Safe to import on iOS or in development builds (not web)
   Notifications = require('expo-notifications');
 
   // Configure how notifications appear when app is in foreground
