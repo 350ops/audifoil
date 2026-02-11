@@ -11,26 +11,26 @@ import { useStore } from '@/store/useStore';
 import { LOCAL_IMAGES, ACTIVITIES, MALDIVES_ADVENTURE_ID } from '@/data/activities';
 
 const EXPERIENCE_ITEMS = [
-  { icon: 'Fish', title: 'Swim with Dolphins', desc: 'Cruise to the dolphin channel and swim alongside wild spinner dolphins. 95% sighting rate.' },
-  { icon: 'Waves', title: 'Snorkel Pristine Reefs', desc: 'Two reef stops teeming with tropical fish, sea turtles, and reef sharks. All gear provided.' },
-  { icon: 'Sun', title: 'Private Sandbank Picnic', desc: "Your own strip of white sand in the middle of the Indian Ocean. Lunch, drinks, and the best photos you'll ever take." },
-  { icon: 'Zap', title: 'Fly an E-Foil', desc: "The highlight. Every guest tries the Audi e-foil — an electric surfboard that lifts you above the water. Resorts charge $150+ for 30 min. It's included." },
-  { icon: 'Sunset', title: 'Golden Hour Cruise', desc: 'End the day cruising back as the sun sets over the Indian Ocean. Music, drinks, and memories that last.' },
-  { icon: 'Camera', title: 'Professional Media Content', desc: 'GoPro, drone, underwater, and 360° cameras — professional-grade photos and video, available upon request.' },
+  { icon: 'Fish', title: 'Dolphin Watching', desc: 'Cruise to where spinner dolphins gather and observe them in their natural habitat. An exhilarating experience for all ages.' },
+  { icon: 'Waves', title: 'Snorkeling Adventures', desc: 'Explore vibrant coral gardens teeming with tropical fish, sea turtles, reef sharks, and stingrays. All gear provided.' },
+  { icon: 'Sun', title: 'Sandbank Escapes', desc: 'Step onto secluded sandbanks featuring powder-soft white sands and shallow warm waters. The ultimate photo opportunity.' },
+  { icon: 'Anchor', title: 'Sunset Cruises', desc: 'Search for dolphins, enjoy resort sightseeing, and watch the sky light up with fiery, breathtaking sunset colors.' },
+  { icon: 'Ship', title: 'Fishing Adventures', desc: 'Experience traditional Maldivian hand-line fishing and trolling techniques as the sun sets over the Indian Ocean.' },
+  { icon: 'Zap', title: 'Thrilling Water Sports', desc: 'Jet ski across the crystal-clear Indian Ocean or kayak through calm lagoon waters. Options for every thrill level.' },
 ];
 
 const STEPS = [
-  { number: '1', title: 'Pick a date', desc: 'Check upcoming trips. We run them most days, morning and afternoon.' },
-  { number: '2', title: 'Reserve your spot', desc: 'Tap "Join Trip" and lock in your spot. No payment until the trip is confirmed.' },
-  { number: '3', title: 'Spread the word', desc: 'Share your trip link with friends or colleagues. The more who join, the less everyone pays.' },
-  { number: '4', title: 'Show up and enjoy', desc: 'We pick you up from Malé or Hulhumalé. Sunscreen and a swimsuit — we handle everything else.' },
+  { number: '1', title: 'Browse excursions', desc: 'Explore our special excursions, water sports, and paradise retreats.' },
+  { number: '2', title: 'Pick your date', desc: 'Check availability and select a date that works for you.' },
+  { number: '3', title: 'Book via WhatsApp', desc: 'Contact us on WhatsApp at +960 7772241 to confirm your booking.' },
+  { number: '4', title: 'Show up and enjoy', desc: 'We handle transportation, equipment, and refreshments — just bring your sense of adventure.' },
 ];
 
 const VALUES = [
-  { icon: 'Map', title: 'Local Knowledge', desc: "We know the reefs, the dolphin channels, and the sandbanks that don't show up on Google Maps." },
-  { icon: 'Users', title: 'Small Groups', desc: 'Max 5 people. No megaboat. No crowds. Just a small crew sharing an incredible day.' },
-  { icon: 'Sparkles', title: 'Unfair Value', desc: 'An e-foil session alone costs $250+ at resorts. We include it with dolphins, snorkeling, and lunch — from $80.' },
-  { icon: 'Heart', title: 'Community', desc: "Most guests come solo and leave with friends. One trip, and you'll want to tell everyone." },
+  { icon: 'Map', title: 'Expert Local Guides', desc: 'Our team knows the Maldivian waters, reefs, and safety protocols to give you the best experience.' },
+  { icon: 'Wrench', title: 'Modern Equipment', desc: 'Our boats, jet skis, and gear are regularly serviced and well-maintained for your safety and comfort.' },
+  { icon: 'Heart', title: 'Personalized Service', desc: 'We customize activities based on your interests, schedule, and budget. Every trip is tailored to you.' },
+  { icon: 'Shield', title: 'Safety First', desc: 'Certified instructors, life jackets for all, and weather-dependent departures ensure your safety at every step.' },
 ];
 
 export default function ExplorePage() {
@@ -42,7 +42,7 @@ export default function ExplorePage() {
     const adventure = ACTIVITIES.find((a) => a.id === MALDIVES_ADVENTURE_ID);
     if (adventure) {
       setSelectedActivity(adventure);
-      window.location.href = '/activities/maldives-adventure';
+      window.location.href = '/activities/south-ari-atoll';
     }
   };
 
@@ -55,19 +55,18 @@ export default function ExplorePage() {
         <div className="relative flex h-full flex-col justify-end p-6 lg:p-12">
           <div className="mx-auto w-full max-w-7xl">
             <h1 className="text-4xl font-bold leading-tight text-white lg:text-6xl">
-              Your Maldives<br />Adventure
+              Find Your Perfect<br />Excursion
             </h1>
             <p className="mt-3 text-lg text-white/90 lg:text-xl">
-              Every day 10am Departure. Snorkeling, Dolphin cruise, , Sandbank, Island tour E-foil.<br />
-              Lunch, Snorkeling gear, fresh water shower...
+              Dive into adventure with Maldives Water Sports — world-class ocean activities, unforgettable memories, and unmatched service in the heart of paradise.
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-4">
               <div className="flex items-center rounded-xl bg-white/25 px-5 py-3 backdrop-blur-sm">
-                <span className="text-xl font-bold text-white">$80</span>
+                <span className="text-xl font-bold text-white">From $25</span>
                 <span className="ml-2 text-white/80">/ person</span>
               </div>
               <Button
-                title="Book Experience"
+                title="Book Now"
                 variant="cta"
                 size="large"
                 rounded="full"
@@ -83,14 +82,14 @@ export default function ExplorePage() {
         {/* VIDEO TEASER */}
         <AnimatedDiv animation="fadeIn" delay={100} className="mt-8">
           <VideoPreview src="/img/imagesmaldivesa/snorkeling.mp4" height={300} rounded={16} />
-          <p className="mt-2 text-center text-xs text-muted">A day on the water with Boho Waves</p>
+          <p className="mt-2 text-center text-xs text-muted">A day on the water with Maldives Water Sports</p>
         </AnimatedDiv>
 
-        {/* THE EXPERIENCE */}
+        {/* OUR SPECIAL EXCURSIONS */}
         <section className="mt-16">
           <AnimatedDiv animation="fadeIn">
-            <h2 className="text-3xl font-bold">One Day. Five Experiences.</h2>
-            <p className="mt-2 text-muted">Everything the Maldives has to offer, packed into a single unforgettable day.</p>
+            <h2 className="text-3xl font-bold">Our Special Excursions</h2>
+            <p className="mt-2 text-muted">From full-day adventures to thrilling water sports — we have something for everyone.</p>
           </AnimatedDiv>
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             {EXPERIENCE_ITEMS.map((item, i) => (
@@ -112,24 +111,24 @@ export default function ExplorePage() {
         {/* PRICING */}
         <section className="mt-16">
           <AnimatedDiv animation="fadeIn">
-            <h2 className="text-3xl font-bold">$80 / person</h2>
-            <p className="mt-2 text-muted">One price. Everything included. No hidden fees.</p>
+            <h2 className="text-3xl font-bold">Find Your Perfect Excursion in Minutes</h2>
+            <p className="mt-2 text-muted">Transparent pricing. No hidden fees. Book easily via WhatsApp.</p>
           </AnimatedDiv>
 
-          {/* What's included */}
+          {/* Popular packages */}
           <AnimatedDiv animation="fadeIn" delay={200} className="mt-6">
             <div className="rounded-2xl border border-border bg-secondary p-6 shadow-sm">
-              <h3 className="mb-4 font-bold text-lg">Every trip includes:</h3>
+              <h3 className="mb-4 font-bold text-lg">Popular excursions starting from:</h3>
               <div className="grid gap-2 sm:grid-cols-2">
                 {[
-                  '5-hour boat adventure',
-                  'Dolphin swimming',
-                  '2 snorkel reef stops + all gear',
-                  'Private sandbank stop + picnic lunch',
-                  'E-foil session for every guest (worth $150+)',
-                  'Professional drone & 360-cam footage',
-                  'Hotel pickup & drop-off',
-                  'Drinks, snacks & refreshments all day',
+                  'South Ari Atoll Full-Day Adventure',
+                  'Maldivian Sunset Fishing Adventure',
+                  'Maldivian Sunset Cruise',
+                  'Malahini Kuda Bandos Day Visit',
+                  'Maafushi Island Adventure Tour',
+                  'Kayak Rental',
+                  'Jet Ski Rental',
+                  'Professional media content available',
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-2">
                     <Icon name="Check" size={16} color="#22C55E" className="mt-0.5 shrink-0" />
@@ -141,23 +140,22 @@ export default function ExplorePage() {
           </AnimatedDiv>
         </section>
 
-        {/* FOR CABIN CREW */}
+        {/* PARADISE RETREATS */}
         <section className="mt-16">
           <AnimatedDiv animation="fadeIn">
             <div className="gradient-cta overflow-hidden rounded-2xl p-8 text-white shadow-lg lg:p-10">
               <div className="mb-4 flex items-center gap-3">
-                <Icon name="Plane" size={24} color="white" />
-                <h2 className="text-2xl font-bold">On a Layover in Malé?</h2>
+                <Icon name="Palmtree" size={24} color="white" />
+                <h2 className="text-2xl font-bold">Paradise Retreats</h2>
               </div>
               <p className="text-white/90 leading-relaxed max-w-2xl">
-                Boho Waves was started by a former airline crew member who knew there had to be a better way to experience the Maldives on a layover budget.
+                Escape to unmatched serenity. Our resorts offer an array of indulgent experiences — from gourmet dining with fresh local and international cuisine to rejuvenating spa treatments, or simply relaxing in a private villa overlooking the sparkling ocean.
               </p>
               <p className="mt-3 text-white/90 leading-relaxed max-w-2xl">
-                Every day 10am Departure. Snorkeling, Dolphin cruise, , Sandbank, Island tour E-foil.<br />
-                Lunch, Snorkeling gear, fresh water shower...
+                For the adventurous, enjoy snorkeling among vibrant coral reefs, private sunset cruises, island-hopping excursions, and cultural tours to nearby local islands. Every detail is designed to create unforgettable memories.
               </p>
               <div className="mt-6">
-                <Button href="/crew" title="Learn More" variant="ghost" rounded="full" className="border border-white/30 text-white hover:bg-white/10" iconEnd="ArrowRight" />
+                <Button href="/activities" title="Explore Excursions" variant="ghost" rounded="full" className="border border-white/30 text-white hover:bg-white/10" iconEnd="ArrowRight" />
               </div>
             </div>
           </AnimatedDiv>
@@ -187,8 +185,8 @@ export default function ExplorePage() {
         {/* VALUES */}
         <section className="mt-16">
           <AnimatedDiv animation="fadeIn">
-            <h2 className="text-3xl font-bold">What We&apos;re About</h2>
-            <p className="mt-2 text-muted">Small groups. Big experiences. Real value.</p>
+            <h2 className="text-3xl font-bold">Why Maldives Water Sports</h2>
+            <p className="mt-2 text-muted">Your trusted partner for world-class ocean activities.</p>
           </AnimatedDiv>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {VALUES.map((val) => (
@@ -209,11 +207,11 @@ export default function ExplorePage() {
         <section className="mt-16">
           <AnimatedDiv animation="scaleIn">
             <div className="rounded-2xl border border-border bg-secondary p-8 text-center shadow-sm">
-              <h2 className="text-2xl font-bold">Ready?</h2>
-              <p className="mt-2 text-muted">Your best day in the Maldives is one click away.</p>
+              <h2 className="text-2xl font-bold">Ready for Your Maldives Adventure?</h2>
+              <p className="mt-2 text-muted">Book your perfect excursion in minutes.</p>
               <div className="mt-6 flex flex-wrap justify-center gap-4">
                 <a
-                  href="https://wa.me/960XXXXXXX?text=Hey!%20I'd%20like%20to%20book%20the%20Boho Waves%20Maldives%20Adventure."
+                  href="https://wa.me/9607772241?text=Hey!%20I'd%20like%20to%20book%20an%20excursion%20with%20Maldives%20Water%20Sports."
                   target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-white hover:opacity-90 transition-opacity"
                 >
@@ -221,12 +219,12 @@ export default function ExplorePage() {
                   Book via WhatsApp
                 </a>
                 <Button
-                  title="Book Experience"
+                  title="Browse Excursions"
                   variant="cta"
                   rounded="full"
                   size="large"
                   iconEnd="ArrowRight"
-                  onPress={navigateToBooking}
+                  href="/activities"
                 />
               </div>
             </div>

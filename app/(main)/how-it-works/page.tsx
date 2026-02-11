@@ -5,19 +5,21 @@ import Icon from '@/components/Icon';
 import { Button } from '@/components/Button';
 
 const STEPS = [
-  { step: '1', title: 'Browse & Pick a Date', desc: 'Choose from our curated Maldives experiences. Check the calendar for available trips and select a date that works.', icon: 'Calendar' },
-  { step: '2', title: 'Reserve Your Spot', desc: 'Tap "Join Trip" to reserve your spot. No upfront payment — you only pay once the trip is confirmed.', icon: 'UserPlus' },
-  { step: '3', title: 'Share with Friends', desc: 'Share your trip link with friends or crew. The more people who join, the lower the price for everyone.', icon: 'Share2' },
-  { step: '4', title: 'Pay Securely', desc: 'Once your group is set, complete payment through our secure Stripe checkout. Each person pays for their own ticket.', icon: 'CreditCard' },
-  { step: '5', title: 'Show Up & Enjoy', desc: 'We handle hotel pickup, equipment, food, and drinks. Just bring sunscreen and a swimsuit — we take care of everything else.', icon: 'Smile' },
+  { step: '1', title: 'Browse Our Excursions', desc: 'Explore our special excursions including full-day adventures, sunset cruises, fishing trips, island tours, and water sports activities.', icon: 'Compass' },
+  { step: '2', title: 'Pick Your Date', desc: 'Check availability and select a date that works for your schedule.', icon: 'Calendar' },
+  { step: '3', title: 'Book via WhatsApp', desc: 'Contact us on WhatsApp at +960 7772241 to confirm your booking. Quick, easy, and personal.', icon: 'MessageCircle' },
+  { step: '4', title: 'We Handle the Rest', desc: 'Transportation, equipment, refreshments, and expert guides — everything is arranged for you.', icon: 'Package' },
+  { step: '5', title: 'Show Up & Enjoy', desc: 'Just bring sunscreen and a sense of adventure. We take care of everything else for an unforgettable day in paradise.', icon: 'Smile' },
 ];
 
 const FAQS = [
-  { q: 'What if the weather is bad?', a: 'If conditions are unsafe, we reschedule at no extra cost. You can also cancel for a full refund up to 24 hours before.' },
-  { q: 'Do I need swimming experience?', a: 'No! All activities are suitable for beginners. Life jackets are provided, and our crew is trained in water safety.' },
-  { q: 'What about the e-foil?', a: 'The Audi e-foil comes with a private instructor. Most guests are flying within 10 minutes. No prior experience needed.' },
-  { q: 'How does group pricing work?', a: 'Price per person decreases as the group grows. At 5 guests, everyone pays just $80. Share the link to fill your group.' },
-  { q: 'Can I book for a private group?', a: 'Absolutely! Contact us on WhatsApp for private bookings. Prices start from $350 for 1-2 guests.' },
+  { q: 'What water sports activities do you offer?', a: 'We offer a wide range of activities including full-day island adventures (South Ari Atoll, Maafushi Island), sunset fishing, sunset cruises with dolphin search, Malahini Kuda Bandos resort day visits, kayak rentals, and jet ski rentals.' },
+  { q: 'Do I need prior experience for water sports?', a: 'No prior experience is needed! Our activities are designed for all skill levels. Professional instructors provide safety briefings and guidance for activities like jet skiing and snorkeling.' },
+  { q: 'How can I book an excursion or water sport?', a: 'Booking is easy! Simply contact us on WhatsApp at +960 7772241 and our team will help you find the perfect excursion and confirm your booking.' },
+  { q: 'Are the excursions safe for children and families?', a: 'Many of our excursions are family-friendly, including the sunset cruise, kayak rental, and sandbank visits. Life jackets are provided for all guests, and our experienced crew ensures safety at every step.' },
+  { q: 'Can I customize my excursion package?', a: 'We offer personalized and friendly service — our team will customize activities based on your interests, schedule, and budget. Contact us on WhatsApp to discuss your perfect trip.' },
+  { q: 'How do I reach the islands or resorts for the excursions?', a: 'All transportation is included in our excursion packages. We arrange scenic boat rides from Malé or Hulhumalé to all destinations.' },
+  { q: 'What should I bring for water sports and excursions?', a: 'We provide all necessary equipment including snorkeling gear, life jackets, and fishing equipment. Just bring sunscreen, a swimsuit, a towel, and your sense of adventure!' },
 ];
 
 export default function HowItWorksPage() {
@@ -26,7 +28,7 @@ export default function HowItWorksPage() {
       <div className="mx-auto max-w-4xl px-4 py-12 lg:px-8">
         <AnimatedDiv animation="fadeIn">
           <h1 className="text-center text-4xl font-bold">How It Works</h1>
-          <p className="mt-3 text-center text-lg text-muted">Booking your Maldives adventure in 5 simple steps</p>
+          <p className="mt-3 text-center text-lg text-muted">Book your Maldives excursion in 5 simple steps</p>
         </AnimatedDiv>
 
         {/* Steps */}
@@ -56,6 +58,7 @@ export default function HowItWorksPage() {
         <section className="mt-16">
           <AnimatedDiv animation="fadeIn">
             <h2 className="text-center text-3xl font-bold">Frequently Asked Questions</h2>
+            <p className="mt-2 text-center text-muted">From quick answers to in-depth guidance, we&apos;re committed to making sure you feel confident.</p>
           </AnimatedDiv>
           <div className="mt-8 space-y-4">
             {FAQS.map((faq, i) => (
@@ -71,7 +74,17 @@ export default function HowItWorksPage() {
 
         {/* CTA */}
         <AnimatedDiv animation="scaleIn" delay={300} className="mt-12 text-center">
-          <Button href="/activities" title="Browse Experiences" variant="cta" size="large" rounded="full" iconEnd="ArrowRight" />
+          <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href="https://wa.me/9607772241?text=Hey!%20I'd%20like%20to%20book%20an%20excursion%20with%20Maldives%20Water%20Sports."
+              target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-white hover:opacity-90 transition-opacity"
+            >
+              <Icon name="MessageCircle" size={20} color="white" />
+              Book via WhatsApp
+            </a>
+            <Button href="/activities" title="Browse Excursions" variant="cta" size="large" rounded="full" iconEnd="ArrowRight" />
+          </div>
         </AnimatedDiv>
       </div>
     </div>

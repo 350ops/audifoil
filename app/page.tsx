@@ -14,7 +14,7 @@ export default function LandingPage() {
       <div className="relative h-screen min-h-[600px]">
         <Image
           src="/img/imagesmaldivesa/sandbank.jpg"
-          alt="Maldives sandbank aerial"
+          alt="Maldives paradise"
           fill
           className="object-cover"
           priority
@@ -25,8 +25,8 @@ export default function LandingPage() {
           {/* Top bar */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Image src="/img/imagesmaldivesa/logoboho.png" alt="Boho Waves" width={32} height={32} className="rounded-md" />
-              <span className="text-sm font-semibold tracking-[0.2em] text-white/80">BohoWaves</span>
+              <Image src="/img/imagesmaldivesa/logoboho.png" alt="Maldives Water Sports" width={32} height={32} className="rounded-md" />
+              <span className="text-sm font-semibold tracking-[0.2em] text-white/80">Maldives Water Sports</span>
             </div>
             <Link
               href="/login"
@@ -40,24 +40,23 @@ export default function LandingPage() {
           <div className="max-w-2xl">
             <AnimatedDiv animation="slideInBottom" delay={100}>
               <h1 className="text-5xl font-bold leading-tight text-white lg:text-7xl">
-                Your Maldives<br />Adventure
+                Find Your Perfect<br />Destination
               </h1>
             </AnimatedDiv>
             <AnimatedDiv animation="slideInBottom" delay={200}>
               <p className="mt-4 text-lg leading-relaxed text-white/90 lg:text-xl">
-                Every day 10am Departure. Snorkeling, Dolphin cruise, , Sandbank, Island tour E-foil.<br />
-                Lunch, Snorkeling gear, fresh water shower
+                Dive into adventure with Maldives Water Sports — your trusted partner for world-class ocean activities, unforgettable memories, and unmatched service in the heart of paradise.
               </p>
             </AnimatedDiv>
             <AnimatedDiv animation="slideInBottom" delay={300}>
               <div className="mt-6 flex flex-wrap items-center gap-4">
                 <div className="flex items-center rounded-xl bg-white/25 px-5 py-3 backdrop-blur-sm">
-                  <span className="text-xl font-bold text-white">From $80</span>
+                  <span className="text-xl font-bold text-white">From $25</span>
                   <span className="ml-2 text-base text-white/80">/ person</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-white/70">
                   <Icon name="Star" size={16} color="#FFD700" />
-                  <span className="text-sm font-medium">4.9 (312 reviews)</span>
+                  <span className="text-sm font-medium">4.4 (1,400+ reviews)</span>
                 </div>
               </div>
             </AnimatedDiv>
@@ -66,7 +65,7 @@ export default function LandingPage() {
               <div className="mt-8 flex flex-wrap gap-4">
                 <Button
                   href="/explore"
-                  title="Explore Experiences"
+                  title="Explore Excursions"
                   variant="cta"
                   size="large"
                   rounded="full"
@@ -92,10 +91,10 @@ export default function LandingPage() {
           <AnimatedDiv animation="fadeIn">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {[
-                { icon: 'Fish', title: 'Swim with Dolphins', desc: '95% sighting rate' },
-                { icon: 'Waves', title: 'Snorkel Pristine Reefs', desc: 'Turtles, sharks & tropical fish' },
-                { icon: 'Zap', title: 'Fly an E-Foil', desc: 'Included for every guest' },
-                { icon: 'Sun', title: 'Private Sandbank', desc: 'Your own island + picnic lunch' },
+                { icon: 'Fish', title: 'Dolphin Watching', desc: 'Spinner dolphins in their natural habitat' },
+                { icon: 'Waves', title: 'Snorkeling Adventures', desc: 'Stingrays, nurse sharks & tropical reefs' },
+                { icon: 'Sun', title: 'Sandbank Escapes', desc: 'Powder-soft white sands & turquoise waters' },
+                { icon: 'Anchor', title: 'Sunset Cruises', desc: 'Breathtaking sunsets on the Indian Ocean' },
               ].map((item) => (
                 <div key={item.title} className="flex items-start gap-4 rounded-2xl border border-border p-5">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-highlight/10">
@@ -115,7 +114,7 @@ export default function LandingPage() {
             <div className="mt-12 text-center">
               <Button
                 href="/explore"
-                title="View All Experiences"
+                title="View All Excursions"
                 variant="cta"
                 size="large"
                 rounded="full"

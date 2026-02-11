@@ -60,7 +60,7 @@ const mockStripeContext: StripeContextType = {
     alert('Payment system is not configured. Please contact support.');
     return null;
   },
-  generateShareableLink: async () => 'https://bohowaves.com',
+  generateShareableLink: async () => 'https://maldiveswatersports.com',
 };
 
 export function useStripePayments() {
@@ -128,7 +128,7 @@ function StripePaymentProviderInner({ children }: { children: React.ReactNode })
       return paymentLinkUrl;
     } catch {
       const queryParams = new URLSearchParams({ trip: params.tripId, date: params.tripDate, time: params.tripTime, activity: params.activityTitle, price: params.pricePerPerson.toString() });
-      return `https://bohowaves.com/join?${queryParams.toString()}`;
+      return `https://maldiveswatersports.com/join?${queryParams.toString()}`;
     }
   }, []);
 

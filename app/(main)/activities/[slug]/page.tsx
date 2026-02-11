@@ -7,7 +7,7 @@ import AnimatedDiv from '@/components/AnimatedDiv';
 import Icon from '@/components/Icon';
 import { Button } from '@/components/Button';
 import ImageCarousel from '@/components/ImageCarousel';
-import { ACTIVITIES, LOCAL_IMAGES, EFOIL_ADDON } from '@/data/activities';
+import { ACTIVITIES, LOCAL_IMAGES } from '@/data/activities';
 import { useStore } from '@/store/useStore';
 
 export default function ActivityDetailPage() {
