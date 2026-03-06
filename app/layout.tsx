@@ -5,11 +5,11 @@ import StripePaymentProvider from '@/contexts/StripeContext';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Boho Waves — Your Best Day in the Maldives',
-  description: '5-hour Maldives adventure: dolphins, snorkeling, private sandbank, e-foil, sunset cruise. From $80/person.',
+  title: 'Maldives Water Sports — World-Class Ocean Activities',
+  description: 'Excursions, water sports & island adventures in the Maldives. Dolphins, snorkeling, sunset cruises, fishing, jet ski & more. Book via WhatsApp.',
   openGraph: {
-    title: 'Boho Waves — Your Best Day in the Maldives',
-    description: 'Dolphins, snorkeling, sandbank, e-foil, sunset cruise. All in one unforgettable day.',
+    title: 'Maldives Water Sports — World-Class Ocean Activities',
+    description: 'Your trusted partner for world-class ocean activities, unforgettable memories, and unmatched service in the heart of paradise.',
     type: 'website',
   },
 };

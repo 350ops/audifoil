@@ -7,12 +7,12 @@ import { supabase } from '@/lib/supabase-browser';
 import { Tables } from '@/lib/database.types';
 
 const DEMO_MODE_ENABLED = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
-const DEMO_STORAGE_KEY = 'bohowaves_demo_mode';
-const DEMO_PROFILE_KEY = 'bohowaves_demo_profile';
+const DEMO_STORAGE_KEY = 'mws_demo_mode';
+const DEMO_PROFILE_KEY = 'mws_demo_profile';
 
 const DEMO_USER: User = {
   id: 'demo-user-id',
-  email: 'hello@bohowaves.com',
+  email: 'hello@maldiveswatersports.com',
   app_metadata: {},
   user_metadata: { full_name: 'Demo User' },
   aud: 'authenticated',
@@ -23,7 +23,7 @@ type Profile = Tables<'profiles'>;
 
 const DEMO_PROFILE: Profile = {
   id: 'demo-user-id',
-  email: 'hello@bohowaves.com',
+  email: 'hello@maldiveswatersports.com',
   first_name: 'Demo',
   last_name: 'User',
   avatar_url: null,

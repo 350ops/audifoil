@@ -50,8 +50,8 @@ export default function SignUpPage() {
       <div className="w-full max-w-md">
         <AnimatedDiv animation="slideInBottom">
           <Link href="/" className="mb-8 flex items-center justify-center gap-2">
-            <Image src="/img/imagesmaldivesa/logoboho.png" alt="Boho Waves" width={40} height={40} className="rounded-md" />
-            <span className="text-2xl font-bold tracking-wider">Boho Waves</span>
+            <Image src="/img/imagesmaldivesa/logoboho.png" alt="Maldives Water Sports" width={40} height={40} className="rounded-md" />
+            <span className="text-2xl font-bold tracking-wider">Maldives Water Sports</span>
           </Link>
           <h1 className="text-center text-3xl font-bold">Create account</h1>
           <p className="mt-2 text-center text-muted">Start your Maldives adventure</p>
@@ -79,7 +79,7 @@ export default function SignUpPage() {
 
           <div>
             <label className="mb-1 block text-sm font-medium">Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="hello@bohowaves.com"
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="hello@maldiveswatersports.com"
               className="w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground placeholder:text-muted focus:border-highlight focus:outline-none focus:ring-1 focus:ring-highlight" />
           </div>
           <div>

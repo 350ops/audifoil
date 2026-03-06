@@ -21,7 +21,7 @@ import {
 } from '@/data/tripsDb';
 import { DemoUser } from '@/data/types';
 
-const ACTIVITY_BOOKINGS_KEY = 'bohowaves_activity_bookings';
+const ACTIVITY_BOOKINGS_KEY = 'mws_activity_bookings';
 
 function generateConfirmationCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -80,7 +80,7 @@ interface AppState {
 }
 
 export const useStore = create<AppState>((set, get) => ({
-  demoUser: { id: 'demo-user', name: 'Miguel', email: 'hello@bohowaves.com', whatsapp: '+34 612 345 678' },
+  demoUser: { id: 'demo-user', name: 'Guest', email: 'hello@maldiveswatersports.com', whatsapp: '+960 7772241' },
   setDemoUser: (user) => set({ demoUser: user }),
 
   activities: ACTIVITIES,

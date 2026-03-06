@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       amount,
       currency,
       customer: customerId,
-      description: description || 'Boho Waves Watersports - Trip Booking',
+      description: description || 'Maldives Water Sports - Trip Booking',
       metadata: metadata || {},
       automatic_payment_methods: { enabled: true },
     });

@@ -6,14 +6,14 @@ import { useRouter } from 'next/navigation';
 import AnimatedDiv from '@/components/AnimatedDiv';
 import Icon from '@/components/Icon';
 import { Button } from '@/components/Button';
-import { ACTIVITIES, EXPERIENCE_HIGHLIGHTS, EFOIL_ADDON, MEDIA_PACKAGE, LOCAL_IMAGES, MALDIVES_ADVENTURE_ID } from '@/data/activities';
+import { ACTIVITIES, EXPERIENCE_HIGHLIGHTS, KAYAK_ADDON, JET_SKI_ADDON, MEDIA_PACKAGE, LOCAL_IMAGES, MALDIVES_ADVENTURE_ID } from '@/data/activities';
 import { useStore } from '@/store/useStore';
 import ImageCarousel from '@/components/ImageCarousel';
 import VideoPreview from '@/components/VideoPreview';
 
 const MEDIA_VIDEOS = [
-  { src: '/videos/foiling-maldives.mp4', label: 'E-Foil in the Maldives' },
-  { src: '/videos/gliding.mp4', label: 'Gliding above the water' },
+  { src: '/videos/foiling-maldives.mp4', label: 'Water sports in the Maldives' },
+  { src: '/videos/gliding.mp4', label: 'Gliding across the lagoon' },
   { src: '/videos/boat-trip.mov', label: 'On the boat' },
 ];
 
@@ -34,9 +34,9 @@ export default function ActivitiesPage() {
       <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
         {/* Header */}
         <AnimatedDiv animation="fadeIn">
-          <h1 className="text-3xl font-bold lg:text-4xl">The Experience</h1>
+          <h1 className="text-3xl font-bold lg:text-4xl">Our Excursions & Water Sports</h1>
           <p className="mt-2 text-muted max-w-2xl">
-            Our 5-hour Maldives Adventure packs the best of the Indian Ocean into one unforgettable day.
+            From full-day island adventures to thrilling jet ski rides — discover the best of the Maldives with our curated experiences.
           </p>
         </AnimatedDiv>
 
@@ -62,32 +62,57 @@ export default function ActivitiesPage() {
           ))}
         </div>
 
-        {/* E-Foil Add-on */}
+        {/* Thrilling Water Sports */}
         <AnimatedDiv animation="fadeIn" delay={500} className="mt-12">
-          <div className="overflow-hidden rounded-2xl border border-border bg-secondary shadow-sm">
-            <ImageCarousel images={EFOIL_ADDON.images} height={280} overlay={
-              <div className="gradient-overlay flex h-full flex-col justify-end p-6">
-                <div className="flex items-center gap-2">
-                  <Icon name="Zap" size={20} color="white" />
-                  <h3 className="text-xl font-bold text-white">{EFOIL_ADDON.title}</h3>
-                </div>
-                <p className="text-sm text-white/70">Optional add-on · ${EFOIL_ADDON.priceUsd}/person</p>
-              </div>
-            } />
-            <div className="p-6">
-              <div className="mb-3 flex items-center gap-3">
-                <span className="rounded-full bg-highlight/10 px-3 py-1 text-xs font-semibold text-highlight">Optional Add-on</span>
-                <span className="font-bold text-highlight">${EFOIL_ADDON.priceUsd}</span>
-                <span className="text-sm text-muted">/ person</span>
-              </div>
-              <p className="text-muted leading-relaxed">{EFOIL_ADDON.description}</p>
-              <div className="mt-4 space-y-2">
-                {EFOIL_ADDON.includes.map((item, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <Icon name="Check" size={14} color="#22C55E" />
-                    <span className="text-sm text-muted">{item}</span>
+          <h2 className="text-2xl font-bold mb-6">Thrilling Water Sports</h2>
+          <p className="text-muted mb-8">Glide, fly, dive — and truly experience the Maldivian waters with our certified instructors and safety-first approach.</p>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Kayak */}
+            <div className="overflow-hidden rounded-2xl border border-border bg-secondary shadow-sm">
+              <ImageCarousel images={KAYAK_ADDON.images} height={280} overlay={
+                <div className="gradient-overlay flex h-full flex-col justify-end p-6">
+                  <div className="flex items-center gap-2">
+                    <Icon name="Ship" size={20} color="white" />
+                    <h3 className="text-xl font-bold text-white">{KAYAK_ADDON.title}</h3>
                   </div>
-                ))}
+                  <p className="text-sm text-white/70">From ${KAYAK_ADDON.priceUsd} · {KAYAK_ADDON.durationLabel}</p>
+                </div>
+              } />
+              <div className="p-6">
+                <p className="text-muted leading-relaxed">{KAYAK_ADDON.description}</p>
+                <div className="mt-4 space-y-2">
+                  {KAYAK_ADDON.includes.map((item, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <Icon name="Check" size={14} color="#22C55E" />
+                      <span className="text-sm text-muted">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Jet Ski */}
+            <div className="overflow-hidden rounded-2xl border border-border bg-secondary shadow-sm">
+              <ImageCarousel images={JET_SKI_ADDON.images} height={280} overlay={
+                <div className="gradient-overlay flex h-full flex-col justify-end p-6">
+                  <div className="flex items-center gap-2">
+                    <Icon name="Zap" size={20} color="white" />
+                    <h3 className="text-xl font-bold text-white">{JET_SKI_ADDON.title}</h3>
+                  </div>
+                  <p className="text-sm text-white/70">From ${JET_SKI_ADDON.priceUsd} · {JET_SKI_ADDON.durationLabel}</p>
+                </div>
+              } />
+              <div className="p-6">
+                <p className="text-muted leading-relaxed">{JET_SKI_ADDON.description}</p>
+                <div className="mt-4 space-y-2">
+                  {JET_SKI_ADDON.includes.map((item, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <Icon name="Check" size={14} color="#22C55E" />
+                      <span className="text-sm text-muted">{item}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -131,7 +156,7 @@ export default function ActivitiesPage() {
         {/* All Activities Grid */}
         <section className="mt-16">
           <AnimatedDiv animation="fadeIn">
-            <h2 className="text-2xl font-bold">All Experiences</h2>
+            <h2 className="text-2xl font-bold">All Excursions & Services</h2>
             <p className="mt-2 text-muted">Choose from our curated collection.</p>
           </AnimatedDiv>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -174,10 +199,18 @@ export default function ActivitiesPage() {
         {/* Bottom CTA */}
         <AnimatedDiv animation="scaleIn" delay={200} className="mt-12">
           <div className="rounded-2xl border border-border bg-secondary p-8 text-center shadow-sm">
-            <h2 className="text-2xl font-bold">All This. One Trip. From $80.</h2>
-            <p className="mt-2 text-muted">Dolphins, snorkeling, sandbank, sunset cruise, lunch, drinks, hotel pickup — all included.</p>
-            <div className="mt-6">
-              <Button href="/activities/maldives-adventure" title="Book the Experience" variant="cta" size="large" rounded="full" iconEnd="ArrowRight" />
+            <h2 className="text-2xl font-bold">Find Your Perfect Excursion in Minutes</h2>
+            <p className="mt-2 text-muted">Dolphins, snorkeling, sandbanks, sunset cruises, island tours — unforgettable memories await.</p>
+            <div className="mt-6 flex flex-wrap justify-center gap-4">
+              <a
+                href="https://wa.me/9607772241?text=Hey!%20I'd%20like%20to%20book%20an%20excursion%20with%20Maldives%20Water%20Sports."
+                target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-white hover:opacity-90 transition-opacity"
+              >
+                <Icon name="MessageCircle" size={20} color="white" />
+                Book via WhatsApp
+              </a>
+              <Button href="/activities/south-ari-atoll" title="Book the Adventure" variant="cta" size="large" rounded="full" iconEnd="ArrowRight" />
             </div>
           </div>
         </AnimatedDiv>
@@ -198,4 +231,3 @@ export default function ActivitiesPage() {
     </div>
   );
 }
-
