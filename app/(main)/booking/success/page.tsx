@@ -136,7 +136,7 @@ function BookingSuccessContent() {
               </div>
               <div className="flex items-start gap-3">
                 <Icon name="Share2" size={16} className="mt-0.5 shrink-0 text-highlight" />
-                <span>Share the trip with friends — the more who join, the less everyone pays!</span>
+                <span>Share the experience with friends — eFoiling is even more fun together!</span>
               </div>
             </div>
           </div>

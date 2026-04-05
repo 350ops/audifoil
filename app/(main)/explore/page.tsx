@@ -2,47 +2,37 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect } from 'react';
-import { Button } from '@/components/Button';
+import { useRouter } from 'next/navigation';
 import AnimatedDiv from '@/components/AnimatedDiv';
 import Icon from '@/components/Icon';
+import { Button } from '@/components/Button';
 import VideoPreview from '@/components/VideoPreview';
+import { ACTIVITIES, LOCAL_IMAGES, PARTNER_TYPES } from '@/data/activities';
 import { useStore } from '@/store/useStore';
-import { LOCAL_IMAGES, ACTIVITIES, MALDIVES_ADVENTURE_ID } from '@/data/activities';
-
-const EXPERIENCE_ITEMS = [
-  { icon: 'Fish', title: 'Dolphin Watching', desc: 'Cruise to where spinner dolphins gather and observe them in their natural habitat. An exhilarating experience for all ages.' },
-  { icon: 'Waves', title: 'Snorkeling Adventures', desc: 'Explore vibrant coral gardens teeming with tropical fish, sea turtles, reef sharks, and stingrays. All gear provided.' },
-  { icon: 'Sun', title: 'Sandbank Escapes', desc: 'Step onto secluded sandbanks featuring powder-soft white sands and shallow warm waters. The ultimate photo opportunity.' },
-  { icon: 'Anchor', title: 'Sunset Cruises', desc: 'Search for dolphins, enjoy resort sightseeing, and watch the sky light up with fiery, breathtaking sunset colors.' },
-  { icon: 'Ship', title: 'Fishing Adventures', desc: 'Experience traditional Maldivian hand-line fishing and trolling techniques as the sun sets over the Indian Ocean.' },
-  { icon: 'Zap', title: 'Thrilling Water Sports', desc: 'Jet ski across the crystal-clear Indian Ocean or kayak through calm lagoon waters. Options for every thrill level.' },
-];
 
 const STEPS = [
-  { number: '1', title: 'Browse excursions', desc: 'Explore our special excursions, water sports, and paradise retreats.' },
-  { number: '2', title: 'Pick your date', desc: 'Check availability and select a date that works for you.' },
-  { number: '3', title: 'Book via WhatsApp', desc: 'Contact us on WhatsApp at +960 7772241 to confirm your booking.' },
-  { number: '4', title: 'Show up and enjoy', desc: 'We handle transportation, equipment, and refreshments — just bring your sense of adventure.' },
+  { number: '1', title: 'Choose your location', desc: 'Pick Hulhumale (near the airport) or Maafushi Island.' },
+  { number: '2', title: 'Pick your date & time', desc: 'Check availability and select a session that works for you.' },
+  { number: '3', title: 'Book & pay online', desc: 'Secure your spot instantly with our simple checkout.' },
+  { number: '4', title: 'Show up & fly', desc: 'Meet your instructor at the beach. You\'ll be flying in minutes.' },
 ];
 
 const VALUES = [
-  { icon: 'Map', title: 'Expert Local Guides', desc: 'Our team knows the Maldivian waters, reefs, and safety protocols to give you the best experience.' },
-  { icon: 'Wrench', title: 'Modern Equipment', desc: 'Our boats, jet skis, and gear are regularly serviced and well-maintained for your safety and comfort.' },
-  { icon: 'Heart', title: 'Personalized Service', desc: 'We customize activities based on your interests, schedule, and budget. Every trip is tailored to you.' },
-  { icon: 'Shield', title: 'Safety First', desc: 'Certified instructors, life jackets for all, and weather-dependent departures ensure your safety at every step.' },
+  { icon: 'Zap', title: 'Fly on Day One', desc: 'Most riders are above the water within their first session. Our step-by-step coaching makes it easy.' },
+  { icon: 'Shield', title: 'Safety First', desc: 'Certified instructors, wireless kill-switch, helmet, and life jacket on every ride.' },
+  { icon: 'Heart', title: 'Personalized Coaching', desc: 'Sessions are 1-on-1 or 1-on-2. Your instructor adapts to your pace and comfort.' },
+  { icon: 'Globe', title: 'Paradise Setting', desc: 'Ride in calm, crystal-clear lagoons surrounded by the stunning Maldivian scenery.' },
 ];
 
 export default function ExplorePage() {
-  const { loadActivityBookings, setSelectedActivity } = useStore();
+  const { setSelectedActivity } = useStore();
+  const router = useRouter();
 
-  useEffect(() => { loadActivityBookings(); }, []);
-
-  const navigateToBooking = () => {
-    const adventure = ACTIVITIES.find((a) => a.id === MALDIVES_ADVENTURE_ID);
-    if (adventure) {
-      setSelectedActivity(adventure);
-      window.location.href = '/activities/south-ari-atoll';
+  const handleBookLocation = (activityId: string) => {
+    const activity = ACTIVITIES.find((a) => a.id === activityId);
+    if (activity) {
+      setSelectedActivity(activity);
+      router.push(`/book/${activityId}`);
     }
   };
 
@@ -50,28 +40,28 @@ export default function ExplorePage() {
     <div className="pb-20">
       {/* HERO */}
       <div className="relative h-[60vh] min-h-[400px] lg:h-[70vh]">
-        <Image src="/img/imagesmaldivesa/reefsnorkeling.jpg" alt="Reef snorkeling aerial" fill className="object-cover" priority />
+        <Image src={LOCAL_IMAGES.efoilNew} alt="eFoil flying over Maldives lagoon" fill className="object-cover" priority />
         <div className="gradient-hero absolute inset-0" />
         <div className="relative flex h-full flex-col justify-end p-6 lg:p-12">
           <div className="mx-auto w-full max-w-7xl">
             <h1 className="text-4xl font-bold leading-tight text-white lg:text-6xl">
-              Find Your Perfect<br />Excursion
+              Fly Over<br />Paradise
             </h1>
             <p className="mt-3 text-lg text-white/90 lg:text-xl">
-              Dive into adventure with Maldives Water Sports — world-class ocean activities, unforgettable memories, and unmatched service in the heart of paradise.
+              60-minute eFoil lessons in the Maldives. No experience needed — rise above the lagoon and fly.
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-4">
               <div className="flex items-center rounded-xl bg-white/25 px-5 py-3 backdrop-blur-sm">
-                <span className="text-xl font-bold text-white">From $25</span>
-                <span className="ml-2 text-white/80">/ person</span>
+                <span className="text-xl font-bold text-white">From $150</span>
+                <span className="ml-2 text-white/80">/ session</span>
               </div>
               <Button
-                title="Book Now"
+                title="Book a Lesson"
                 variant="cta"
                 size="large"
                 rounded="full"
                 iconEnd="ArrowRight"
-                onPress={navigateToBooking}
+                href="/book"
               />
             </div>
           </div>
@@ -81,84 +71,73 @@ export default function ExplorePage() {
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         {/* VIDEO TEASER */}
         <AnimatedDiv animation="fadeIn" delay={100} className="mt-8">
-          <VideoPreview src="/img/imagesmaldivesa/snorkeling.mp4" height={300} rounded={16} />
-          <p className="mt-2 text-center text-xs text-muted">A day on the water with Maldives Water Sports</p>
+          <VideoPreview src="/videos/foiling-maldives.mp4" height={300} rounded={16} />
+          <p className="mt-2 text-center text-xs text-muted">Experience eFoiling in the Maldives</p>
         </AnimatedDiv>
 
-        {/* OUR SPECIAL EXCURSIONS */}
+        {/* WHAT IS EFOILING */}
         <section className="mt-16">
           <AnimatedDiv animation="fadeIn">
-            <h2 className="text-3xl font-bold">Our Special Excursions</h2>
-            <p className="mt-2 text-muted">From full-day adventures to thrilling water sports — we have something for everyone.</p>
+            <h2 className="text-3xl font-bold">What is eFoiling?</h2>
+            <p className="mt-4 text-muted leading-relaxed max-w-3xl">
+              An eFoil is an electric-powered surfboard with a hydrofoil that lifts you above the water. Using a wireless hand controller, you accelerate smoothly until the board rises — and suddenly you&apos;re flying silently over the ocean. It&apos;s the closest thing to magic on water.
+            </p>
+            <p className="mt-3 text-muted leading-relaxed max-w-3xl">
+              No waves, no wind, no experience needed. Just you, the board, and the turquoise Maldivian lagoon beneath you.
+            </p>
           </AnimatedDiv>
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
-            {EXPERIENCE_ITEMS.map((item, i) => (
-              <AnimatedDiv key={item.title} animation="scaleIn" delay={100 + i * 60}>
-                <div className="flex gap-4 rounded-2xl border border-border bg-secondary p-5 shadow-sm">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-highlight/10">
-                    <Icon name={item.icon} size={24} color="#FF0039" />
+        </section>
+
+        {/* CHOOSE YOUR LOCATION */}
+        <section className="mt-16">
+          <AnimatedDiv animation="fadeIn">
+            <h2 className="text-3xl font-bold">Choose Your Location</h2>
+            <p className="mt-2 text-muted">Two stunning spots to learn and ride.</p>
+          </AnimatedDiv>
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            {ACTIVITIES.map((activity, i) => {
+              const locationName = activity.id === 'efoil-hulhumale' ? 'Hulhumale' : 'Maafushi';
+              const locationDesc = activity.id === 'efoil-hulhumale'
+                ? '10 minutes from Velana International Airport. Perfect for a session before or after your flight.'
+                : 'Popular tourist island with stunning lagoon. Combine with a day trip for the ultimate Maldives experience.';
+
+              return (
+                <AnimatedDiv key={activity.id} animation="scaleIn" delay={100 + i * 80}>
+                  <div
+                    className="group cursor-pointer overflow-hidden rounded-2xl border border-border bg-secondary shadow-sm transition-shadow hover:shadow-md"
+                    onClick={() => handleBookLocation(activity.id)}
+                  >
+                    <div className="relative h-56 overflow-hidden">
+                      <Image
+                        src={activity.media[0]?.src || LOCAL_IMAGES.efoilNew}
+                        alt={activity.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="gradient-overlay absolute inset-0" />
+                      <div className="absolute bottom-4 left-4">
+                        <div className="flex items-center gap-2">
+                          <Icon name="MapPin" size={18} color="white" />
+                          <span className="text-lg font-bold text-white">{locationName}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <p className="text-sm text-muted">{locationDesc}</p>
+                      <div className="mt-3 flex items-center justify-between">
+                        <span className="font-bold">${activity.priceFromUsd}/person</span>
+                        <div className="flex items-center gap-1">
+                          <Icon name="Star" size={14} color="#FFD700" />
+                          <span className="text-sm">{activity.rating}</span>
+                          <span className="text-xs text-muted">({activity.reviewCount})</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold">{item.title}</h3>
-                    <p className="mt-1 text-sm text-muted">{item.desc}</p>
-                  </div>
-                </div>
-              </AnimatedDiv>
-            ))}
+                </AnimatedDiv>
+              );
+            })}
           </div>
-        </section>
-
-        {/* PRICING */}
-        <section className="mt-16">
-          <AnimatedDiv animation="fadeIn">
-            <h2 className="text-3xl font-bold">Find Your Perfect Excursion in Minutes</h2>
-            <p className="mt-2 text-muted">Transparent pricing. No hidden fees. Book easily via WhatsApp.</p>
-          </AnimatedDiv>
-
-          {/* Popular packages */}
-          <AnimatedDiv animation="fadeIn" delay={200} className="mt-6">
-            <div className="rounded-2xl border border-border bg-secondary p-6 shadow-sm">
-              <h3 className="mb-4 font-bold text-lg">Popular excursions starting from:</h3>
-              <div className="grid gap-2 sm:grid-cols-2">
-                {[
-                  'South Ari Atoll Full-Day Adventure',
-                  'Maldivian Sunset Fishing Adventure',
-                  'Maldivian Sunset Cruise',
-                  'Malahini Kuda Bandos Day Visit',
-                  'Maafushi Island Adventure Tour',
-                  'Kayak Rental',
-                  'Jet Ski Rental',
-                  'Professional media content available',
-                ].map((item) => (
-                  <div key={item} className="flex items-start gap-2">
-                    <Icon name="Check" size={16} color="#22C55E" className="mt-0.5 shrink-0" />
-                    <span className="text-sm text-muted">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </AnimatedDiv>
-        </section>
-
-        {/* PARADISE RETREATS */}
-        <section className="mt-16">
-          <AnimatedDiv animation="fadeIn">
-            <div className="gradient-cta overflow-hidden rounded-2xl p-8 text-white shadow-lg lg:p-10">
-              <div className="mb-4 flex items-center gap-3">
-                <Icon name="Palmtree" size={24} color="white" />
-                <h2 className="text-2xl font-bold">Paradise Retreats</h2>
-              </div>
-              <p className="text-white/90 leading-relaxed max-w-2xl">
-                Escape to unmatched serenity. Our resorts offer an array of indulgent experiences — from gourmet dining with fresh local and international cuisine to rejuvenating spa treatments, or simply relaxing in a private villa overlooking the sparkling ocean.
-              </p>
-              <p className="mt-3 text-white/90 leading-relaxed max-w-2xl">
-                For the adventurous, enjoy snorkeling among vibrant coral reefs, private sunset cruises, island-hopping excursions, and cultural tours to nearby local islands. Every detail is designed to create unforgettable memories.
-              </p>
-              <div className="mt-6">
-                <Button href="/activities" title="Explore Excursions" variant="ghost" rounded="full" className="border border-white/30 text-white hover:bg-white/10" iconEnd="ArrowRight" />
-              </div>
-            </div>
-          </AnimatedDiv>
         </section>
 
         {/* HOW IT WORKS */}
@@ -182,11 +161,35 @@ export default function ExplorePage() {
           </div>
         </section>
 
-        {/* VALUES */}
+        {/* FOR PARTNERS CTA */}
         <section className="mt-16">
           <AnimatedDiv animation="fadeIn">
-            <h2 className="text-3xl font-bold">Why Maldives Water Sports</h2>
-            <p className="mt-2 text-muted">Your trusted partner for world-class ocean activities.</p>
+            <div className="gradient-cta overflow-hidden rounded-2xl p-8 text-white shadow-lg lg:p-10">
+              <div className="mb-4 flex items-center gap-3">
+                <Icon name="Handshake" size={24} color="white" />
+                <h2 className="text-2xl font-bold">Partner With eFoil Maldives</h2>
+              </div>
+              <p className="text-white/90 leading-relaxed max-w-2xl">
+                Revenue share model. No investment needed. We provide all eFoil equipment, training, and the booking platform. Your resort, yacht, guesthouse, or watersport center earns from every session.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {PARTNER_TYPES.slice(0, 3).map((pt) => (
+                  <span key={pt.id} className="rounded-full border border-white/30 px-3 py-1 text-sm text-white/80">{pt.title}</span>
+                ))}
+                <span className="rounded-full border border-white/30 px-3 py-1 text-sm text-white/80">+2 more</span>
+              </div>
+              <div className="mt-6">
+                <Button href="/partners" title="Learn More" variant="ghost" rounded="full" className="border border-white/30 text-white hover:bg-white/10" iconEnd="ArrowRight" />
+              </div>
+            </div>
+          </AnimatedDiv>
+        </section>
+
+        {/* WHY EFOIL MALDIVES */}
+        <section className="mt-16">
+          <AnimatedDiv animation="fadeIn">
+            <h2 className="text-3xl font-bold">Why eFoil Maldives</h2>
+            <p className="mt-2 text-muted">The ultimate water sport experience in paradise.</p>
           </AnimatedDiv>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {VALUES.map((val) => (
@@ -207,24 +210,24 @@ export default function ExplorePage() {
         <section className="mt-16">
           <AnimatedDiv animation="scaleIn">
             <div className="rounded-2xl border border-border bg-secondary p-8 text-center shadow-sm">
-              <h2 className="text-2xl font-bold">Ready for Your Maldives Adventure?</h2>
-              <p className="mt-2 text-muted">Book your perfect excursion in minutes.</p>
+              <h2 className="text-2xl font-bold">Ready to Fly?</h2>
+              <p className="mt-2 text-muted">Book your eFoil lesson in minutes. Beginners welcome.</p>
               <div className="mt-6 flex flex-wrap justify-center gap-4">
                 <a
-                  href="https://wa.me/9607772241?text=Hey!%20I'd%20like%20to%20book%20an%20excursion%20with%20Maldives%20Water%20Sports."
+                  href="https://wa.me/9607772241?text=Hey!%20I'd%20like%20to%20book%20an%20eFoil%20lesson%20in%20the%20Maldives."
                   target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-white hover:opacity-90 transition-opacity"
                 >
                   <Icon name="MessageCircle" size={20} color="white" />
-                  Book via WhatsApp
+                  Chat on WhatsApp
                 </a>
                 <Button
-                  title="Browse Excursions"
+                  title="Book a Lesson"
                   variant="cta"
                   rounded="full"
                   size="large"
                   iconEnd="ArrowRight"
-                  href="/activities"
+                  href="/book"
                 />
               </div>
             </div>

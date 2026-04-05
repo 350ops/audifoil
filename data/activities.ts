@@ -1,11 +1,11 @@
-// Activities Data for Maldives Water Sports - Web version
+// eFoil Maldives — Activity Data for eFoil Lessons
 
-export type ActivityCategory = 'BOAT' | 'SNORKEL' | 'FISHING' | 'PRIVATE' | 'WATERSPORT';
+export type ActivityCategory = 'EFOIL';
 
 export interface MediaItem {
   type: 'image' | 'video';
   uri: string;
-  src?: string; // local /img/ path for web
+  src?: string;
   poster?: string;
 }
 
@@ -104,113 +104,76 @@ export const LOCAL_IMAGES = {
   turtle2: '/img/imagesmaldivesa/turtle2.png',
 };
 
-// High-quality images for activities
-export const MEDIA = {
-  boat: {
-    sunset: 'https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c?w=1200&q=80',
-    cruise: 'https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=800&q=80',
-    yacht: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=80',
-    deck: 'https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=800&q=80',
-  },
-  snorkel: {
-    reef: 'https://images.unsplash.com/photo-1544551763-92ab472cad5d?w=1200&q=80',
-    underwater: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=800&q=80',
-    fish: 'https://images.unsplash.com/photo-1546026423-cc4642628d2b?w=800&q=80',
-    turtle: 'https://images.unsplash.com/photo-1591025207163-942350e47db2?w=800&q=80',
-  },
-  maldives: {
-    overwater: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1200&q=80',
-    lagoon: 'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=800&q=80',
-    paradise: 'https://images.unsplash.com/photo-1540202404-a2f29016b523?w=800&q=80',
-  },
-};
+export const DEFAULT_EFOIL_ID = 'efoil-hulhumale';
 
-export const MALDIVES_ADVENTURE_ID = 'south-ari-atoll';
-
-export const KAYAK_ADDON = {
-  id: 'kayak-addon',
-  title: 'Kayak Rental',
-  description: 'Explore the turquoise lagoon at your own pace. Paddle through calm, shallow waters and discover underwater marine life including baby reef sharks and colorful fish.',
-  priceUsd: 25,
-  durationLabel: 'Per hour',
-  includes: [
-    'Single or tandem kayak',
-    'Life jacket provided',
-    'Lagoon access',
-    'Flexible time slots',
-  ],
-  images: [LOCAL_IMAGES.lagoonBoat, LOCAL_IMAGES.island, LOCAL_IMAGES.sandbank],
-};
-
-export const JET_SKI_ADDON = {
-  id: 'jet-ski-addon',
-  title: 'Jet Ski Rental',
-  description: 'Unleash your inner thrill-seeker with our premier Jet Ski service! Experience the true exhilaration of gliding across the crystal-clear Indian Ocean at high speed.',
-  priceUsd: 75,
-  durationLabel: '15 or 60 min sessions',
-  includes: [
-    'Comprehensive safety briefing',
-    'Clear boundary instructions',
-    'Access to lagoon and surrounding reefs',
-    'Professional instructor on standby',
-  ],
-  images: [LOCAL_IMAGES.boat, LOCAL_IMAGES.boat2, LOCAL_IMAGES.boat3],
-};
-
-export const MEDIA_PACKAGE = {
-  id: 'media-package',
-  title: 'Professional Media Content',
-  description: 'Take home cinematic-quality content of your adventure. Our crew captures your trip using professional-grade equipment so you can relive every moment.',
-  equipment: [
-    { icon: 'Video', label: 'GoPro cameras' },
-    { icon: 'Navigation', label: 'Drone aerial footage' },
-    { icon: 'Fish', label: 'Underwater cameras' },
-    { icon: 'RotateCw', label: '360° cameras' },
-  ],
-  note: 'Available upon request — let us know when you book or anytime before the trip.',
-};
-
-export interface ExperienceHighlight {
+// Partner types for B2B page
+export interface PartnerType {
   id: string;
   title: string;
-  subtitle: string;
   description: string;
-  images: string[];
   icon: string;
 }
 
-export const EXPERIENCE_HIGHLIGHTS: ExperienceHighlight[] = [
+export const PARTNER_TYPES: PartnerType[] = [
   {
-    id: 'dolphins',
-    title: 'Dolphin Watching',
-    subtitle: 'Spinner dolphins in their natural habitat',
-    description: 'Experience the exhilaration of observing spinner dolphins in their natural habitat. Our captains know the exact spots where dolphins gather, giving you the best chance for an unforgettable encounter.',
-    images: [LOCAL_IMAGES.dolphins, LOCAL_IMAGES.crewOnABoat],
-    icon: 'Fish',
+    id: 'yachts',
+    title: 'Yachts',
+    description: 'Offer eFoil sessions to your charter guests as a premium add-on experience. No storage hassle — we handle everything.',
+    icon: 'Ship',
   },
   {
-    id: 'snorkeling',
-    title: 'Snorkeling with Stingrays',
-    subtitle: 'Crystal-clear lagoon encounters',
-    description: 'A safe and memorable encounter in crystal-clear lagoons. Explore vibrant coral gardens teeming with tropical fish, sea turtles, reef sharks, and stingrays. All snorkeling gear provided.',
-    images: [LOCAL_IMAGES.snorkel, LOCAL_IMAGES.turtle, LOCAL_IMAGES.reef, LOCAL_IMAGES.snorkel2, LOCAL_IMAGES.mantas, LOCAL_IMAGES.turtle2, LOCAL_IMAGES.snorkel4],
+    id: 'resorts',
+    title: 'Resorts',
+    description: 'Elevate your water sports menu with the most exciting activity on the ocean. Stand out from every other resort in the atoll.',
+    icon: 'Building',
+  },
+  {
+    id: 'guesthouses',
+    title: 'Guesthouses',
+    description: 'Give your guests access to a premium experience they can\'t find elsewhere. Boost reviews and repeat bookings.',
+    icon: 'Home',
+  },
+  {
+    id: 'safari-boats',
+    title: 'Day Trip & Safari Boats',
+    description: 'Add eFoil stops to your itineraries. Your guests get an unforgettable highlight — you earn from every session.',
+    icon: 'Anchor',
+  },
+  {
+    id: 'watersport-centers',
+    title: 'Watersport Centers',
+    description: 'Expand your fleet with zero capital. eFoil is the fastest-growing water sport — and we bring it to your dock.',
     icon: 'Waves',
   },
+];
+
+// Partner benefits
+export interface PartnerBenefit {
+  title: string;
+  description: string;
+  icon: string;
+}
+
+export const PARTNER_BENEFITS: PartnerBenefit[] = [
   {
-    id: 'sandbank',
-    title: 'Sandbank Experience',
-    subtitle: 'Powder-soft white sands',
-    description: 'Visit a secluded sandbank featuring powder-soft white sands and shallow warm waters. The perfect spot for photos, swimming, and relaxation in paradise.',
-    images: [LOCAL_IMAGES.sandbank, LOCAL_IMAGES.sandbank2, LOCAL_IMAGES.sandbank3, LOCAL_IMAGES.sandbank5, LOCAL_IMAGES.island],
-    icon: 'Sun',
+    title: 'Zero Investment',
+    description: 'We provide all eFoil equipment, boards, batteries, and chargers. You invest nothing upfront.',
+    icon: 'CircleDollarSign',
   },
   {
-    id: 'island-visit',
-    title: 'Local Island Visit',
-    subtitle: 'Authentic Maldivian culture',
-    description: 'Visit Himmafushi island, known for surf breaks and a relaxed atmosphere. Enjoy a Maldivian-style lunch and experience the local culture and community.',
-    images: [LOCAL_IMAGES.island, LOCAL_IMAGES.boat, LOCAL_IMAGES.boat3],
-    icon: 'MapPin',
+    title: 'New Revenue Stream',
+    description: 'Earn a revenue share from every booking made through your location. Passive income from day one.',
+    icon: 'TrendingUp',
+  },
+  {
+    title: 'Premium Guest Experience',
+    description: 'Offer the most exciting water sport in the world. eFoiling is the ultimate wow-factor for your guests.',
+    icon: 'Sparkles',
+  },
+  {
+    title: 'Full Support',
+    description: 'We handle training, equipment maintenance, booking platform, and marketing. You just welcome the guests.',
+    icon: 'Headphones',
   },
 ];
 
@@ -221,350 +184,119 @@ export function formatDurationHours(durationMin: number): string {
 
 export const ACTIVITIES: Activity[] = [
   {
-    id: MALDIVES_ADVENTURE_ID,
-    title: 'South Ari Atoll Full-Day Adventure',
-    subtitle: 'Dolphins, Sandbanks & Snorkeling Bliss',
-    category: 'BOAT',
-    durationMin: 480,
-    priceFromUsd: 80,
-    rating: 4.4,
-    reviewCount: 1400,
-    maxGuests: 12,
+    id: 'efoil-hulhumale',
+    title: 'eFoil Lesson — Hulhumale',
+    subtitle: 'Learn to fly above the Indian Ocean',
+    category: 'EFOIL',
+    durationMin: 60,
+    priceFromUsd: 150,
+    rating: 4.9,
+    reviewCount: 120,
+    maxGuests: 2,
     minGuests: 1,
-    skillLevel: 'all',
+    skillLevel: 'beginner',
     isPrivate: false,
     media: [
-      { type: 'image', uri: '', src: LOCAL_IMAGES.boat },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.dolphins },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.snorkel },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.efoilNew },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.efoilMedium },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.efoil },
       { type: 'image', uri: '', src: LOCAL_IMAGES.sandbank },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.crewOnABoat },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.turtle },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.island },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.lagoonBoat },
     ],
-    tags: ['Full Day', 'Dolphins', 'Snorkel', 'Sandbank', 'Island Visit', 'Lunch'],
+    tags: ['60 min', 'Beginner friendly', 'Hulhumale', 'All equipment included'],
     highlights: [
-      'Watch wild spinner dolphins in their natural habitat',
-      'Snorkel with stingrays in crystal-clear lagoons',
-      'Visit Himmafushi island with Maldivian-style lunch',
-      'Relax on a secluded sandbank with powder-soft white sands',
-      'The must-do Maldives tour — four experiences in one day',
+      'Fly above the water on your very first session — no experience needed',
+      'One-on-one instruction from a certified eFoil instructor',
+      'Ride in the calm, turquoise lagoon just minutes from Male airport',
+      'All equipment provided — board, wing, helmet, life jacket',
+      'Perfect for tourists, expats, and locals looking for something extraordinary',
     ],
     whatYoullDo: [
-      'Cruise to the dolphin channel for an exhilarating dolphin watching experience',
-      'Snorkel with stingrays in safe, crystal-clear lagoons',
-      'Visit Himmafushi island — known for surf breaks and relaxed local atmosphere',
-      'Enjoy a Maldivian-style lunch on the island',
-      'Relax on a secluded sandbank with powder-soft white sands and warm shallow waters',
+      'Meet your instructor at Hulhumale Beach for a quick safety briefing and land demo',
+      'Get comfortable on the board in shallow water — learn balance and throttle control',
+      'Start gliding across the surface, gradually increasing speed',
+      'Rise above the water and experience the sensation of flying over the lagoon',
+      'Build confidence with turns, speed control, and cruising at your own pace',
     ],
     included: [
-      'Full-day boat adventure',
-      'Dolphin watching excursion',
-      'Snorkeling with stingrays + all gear',
-      'Local island visit (Himmafushi)',
-      'Maldivian-style lunch',
-      'Sandbank experience',
-      'Complimentary water & soft drinks',
-      'Experienced captain & crew',
+      'eFoil board & all equipment',
+      'Certified instructor (1-on-1 or 1-on-2)',
+      'Safety gear — helmet & life jacket',
+      '60-minute session',
+      'Land briefing & water coaching',
+      'Photos of your ride (on request)',
     ],
-    safety: ['Life jackets for all', 'Experienced crew', 'Weather-dependent departure'],
-    meetingPoint: 'Hulhumalé — pickup available',
+    safety: [
+      'Certified instructor always in the water with you',
+      'Helmet and life jacket mandatory',
+      'Calm lagoon conditions — no waves or currents',
+      'Wireless kill-switch on all boards',
+    ],
+    meetingPoint: 'Hulhumale Beach — 10 min from Velana International Airport',
     socialProof: [
-      { label: '4.4 rating from 1,400+ customers', type: 'popular' },
-      { label: 'The must-do Maldives tour', type: 'popular' },
-    ],
-    bookingsThisWeek: 48,
-    isFeatured: true,
-    isTrending: true,
-  },
-  {
-    id: 'sunset-fishing',
-    title: 'Maldivian Sunset Fishing Adventure',
-    subtitle: 'Cast, Catch, and Cruise',
-    category: 'FISHING',
-    durationMin: 180,
-    priceFromUsd: 60,
-    rating: 4.6,
-    reviewCount: 230,
-    maxGuests: 10,
-    minGuests: 2,
-    skillLevel: 'all',
-    isPrivate: false,
-    media: [
-      { type: 'image', uri: '', src: LOCAL_IMAGES.fishing },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.boat },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.boat3 },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.boat2 },
-    ],
-    tags: ['3 hours', 'Evening', 'Fishing', 'Sunset'],
-    highlights: [
-      'Traditional Maldivian hand-line fishing technique',
-      'Trolling fishing for larger game fish',
-      'Beautiful Maldivian sunset from the sea',
-      'All fishing equipment provided',
-    ],
-    whatYoullDo: [
-      'Board the boat and cruise to known fishing hot spots',
-      'Try trolling fishing — a high-speed chase after larger game fish',
-      'Experience traditional bottom line (hand-line) fishing favored by local fishermen',
-      'Watch the stunning Maldivian sunset from the open sea',
-      'Enjoy a peaceful evening cruise back',
-    ],
-    included: [
-      'All fishing equipment',
-      'Experienced fishing guides',
-      'Complimentary drinking water & soft drinks',
-      'Sandwich meal',
-      'Boat transfer to fishing spots',
-    ],
-    safety: ['Life jackets provided', 'Experienced crew on board', 'Weather-dependent departure'],
-    meetingPoint: 'Hulhumalé — pickup available',
-    socialProof: [
-      { label: 'Perfect ending to your day in paradise', type: 'popular' },
-      { label: 'Beginner-friendly experience', type: 'recent' },
-    ],
-    bookingsThisWeek: 22,
-    isTrending: true,
-    isSunset: true,
-  },
-  {
-    id: 'sunset-cruise',
-    title: 'Maldivian Sunset Cruise',
-    subtitle: 'Dolphin Search & Resort Sightseeing',
-    category: 'BOAT',
-    durationMin: 180,
-    priceFromUsd: 50,
-    rating: 4.7,
-    reviewCount: 340,
-    maxGuests: 12,
-    minGuests: 2,
-    skillLevel: 'all',
-    isPrivate: false,
-    media: [
-      { type: 'image', uri: '', src: LOCAL_IMAGES.boat },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.dolphins },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.boat3 },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.island },
-    ],
-    tags: ['3 hours', 'Dolphins', 'Sunset', 'Romantic', 'Family-friendly'],
-    highlights: [
-      'Exhilarating dolphin search cruise',
-      'Sightseeing of nearby island resorts from the water',
-      'Fiery, breathtaking sunset colors',
-      'The ultimate photo opportunity',
-    ],
-    whatYoullDo: [
-      'Board in the late afternoon and cruise to dolphin gathering areas',
-      'Search for pods of spinner dolphins in their natural habitat',
-      'Enjoy leisurely sightseeing of nearby island resorts from the water',
-      'Watch the stunning sunset paint the sky with fiery, breathtaking colors',
-    ],
-    included: [
-      'Sunset cruise experience',
-      'Dolphin search excursion',
-      'Resort sightseeing',
-      'Complimentary water & soft drinks',
-      'Sandwiches',
-    ],
-    safety: ['Life jackets provided', 'Experienced captain', 'Weather-dependent departure'],
-    meetingPoint: 'Hulhumalé — pickup available',
-    socialProof: [
-      { label: 'Most romantic excursion available', type: 'popular' },
-      { label: 'Family-friendly adventure', type: 'recent' },
-    ],
-    bookingsThisWeek: 35,
-    isFeatured: true,
-    isTrending: true,
-    isSunset: true,
-  },
-  {
-    id: 'malahini-kuda-bandos',
-    title: 'Malahini Kuda Bandos Day Visit',
-    subtitle: 'Luxury Resort Day Pass',
-    category: 'PRIVATE',
-    durationMin: 480,
-    priceFromUsd: 120,
-    rating: 4.8,
-    reviewCount: 185,
-    maxGuests: 6,
-    minGuests: 1,
-    skillLevel: 'all',
-    isPrivate: false,
-    media: [
-      { type: 'image', uri: '', src: LOCAL_IMAGES.island },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.sandbank },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.snorkel },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.reef },
-    ],
-    tags: ['Full Day', 'Resort', 'Buffet Lunch', 'Snorkeling', 'Beach'],
-    highlights: [
-      'Access to luxury island resort on Bandos Island',
-      'Buffet lunch at Maaga restaurant — international & local cuisine',
-      'White sand beaches & turquoise lagoon',
-      'All transportation included',
-    ],
-    whatYoullDo: [
-      'Enjoy a scenic boat ride from Malé to Bandos Island',
-      'Relax on pristine white sand beaches with turquoise waters',
-      'Savor a buffet lunch at Maaga, the resort\'s main restaurant, featuring international and local cuisine',
-      'Spend the afternoon snorkeling in the lagoon, sunbathing, or swimming',
-    ],
-    included: [
-      'Day pass to Malahini Kuda Bandos resort',
-      'All transportation (scenic boat ride from Malé)',
-      'Buffet lunch at Maaga restaurant',
-      'Access to island beaches & lagoon',
-      'Snorkeling in the lagoon',
-    ],
-    safety: ['Resort staff on site', 'Shallow lagoon waters', 'Sun protection recommended'],
-    meetingPoint: 'Malé — boat transfer included',
-    socialProof: [
-      { label: 'Luxury experience without the price tag', type: 'popular' },
-      { label: 'Perfect for a relaxing day', type: 'recent' },
+      { label: '4.9 rating from 120+ riders', type: 'popular' },
+      { label: 'Most guests fly on their first session', type: 'popular' },
     ],
     bookingsThisWeek: 18,
     isFeatured: true,
-  },
-  {
-    id: 'maafushi-island',
-    title: 'Maafushi Island Adventure Tour',
-    subtitle: 'Sharks, Sandbanks & Local Charm',
-    category: 'BOAT',
-    durationMin: 480,
-    priceFromUsd: 75,
-    rating: 4.7,
-    reviewCount: 420,
-    maxGuests: 12,
-    minGuests: 2,
-    skillLevel: 'all',
-    isPrivate: false,
-    media: [
-      { type: 'image', uri: '', src: LOCAL_IMAGES.snorkel },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.sandbank },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.dolphins },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.island },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.reef },
-    ],
-    tags: ['Full Day', 'Sharks', 'Sandbank', 'Dolphins', 'Island Tour'],
-    highlights: [
-      'Swim alongside gentle nurse sharks in their natural environment',
-      '2+ hours on a pristine white sand sandbank',
-      'Spinner dolphin cruise',
-      '2-hour exploration of Maafushi Island with local shopping',
-    ],
-    whatYoullDo: [
-      'Snorkel with gentle nurse sharks in a safe, exhilarating encounter',
-      'Spend 2+ hours on a pristine sandbank surrounded by turquoise lagoon',
-      'Cruise in search of spinner dolphins',
-      'Explore Maafushi Island for 2 hours — shop for souvenirs and experience authentic Maldivian community',
-    ],
-    included: [
-      'Full-day boat adventure',
-      'Nurse shark snorkeling',
-      'Sandbank visit (2+ hours)',
-      'Dolphin cruise',
-      'Maafushi Island exploration (2 hours)',
-      'All snorkeling equipment',
-      'Experienced guides',
-    ],
-    safety: ['Safe shark encounters supervised by guides', 'Life jackets provided', 'Weather-dependent departure'],
-    meetingPoint: 'Hulhumalé — pickup available',
-    socialProof: [
-      { label: 'The best of Maldives in one trip', type: 'popular' },
-      { label: 'Perfect blend of adventure & relaxation', type: 'recent' },
-    ],
-    bookingsThisWeek: 32,
     isTrending: true,
   },
   {
-    id: 'kayak-rental',
-    title: 'Kayak Rental',
-    subtitle: 'Explore the Lagoon at Your Own Pace',
-    category: 'WATERSPORT',
+    id: 'efoil-maafushi',
+    title: 'eFoil Lesson — Maafushi',
+    subtitle: 'Fly over crystal-clear island waters',
+    category: 'EFOIL',
     durationMin: 60,
-    priceFromUsd: 25,
-    rating: 4.5,
-    reviewCount: 95,
-    maxGuests: 2,
-    minGuests: 1,
-    skillLevel: 'beginner',
-    isPrivate: false,
-    media: [
-      { type: 'image', uri: '', src: LOCAL_IMAGES.lagoonBoat },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.island },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.sandbank },
-    ],
-    tags: ['1 hour', 'Beginner friendly', 'Flexible', 'Self-guided'],
-    highlights: [
-      'Paddle through calm, shallow waters',
-      'Discover baby reef sharks and colorful fish',
-      'Set your own pace and itinerary',
-      'Great photography opportunities from the water',
-    ],
-    whatYoullDo: [
-      'Collect your kayak and set out at your own pace',
-      'Paddle through calm, shallow lagoon waters',
-      'Discover underwater marine life including baby reef sharks and colorful fish',
-      'Enjoy breathtaking scenery and photo opportunities from the water',
-    ],
-    included: [
-      'Single or tandem kayak',
-      'Life jacket',
-      'Lagoon access',
-      'Flexible time slots',
-    ],
-    safety: ['Calm lagoon waters', 'Life jacket provided', 'Stay within designated area'],
-    meetingPoint: 'Hulhumalé lagoon center',
-    socialProof: [
-      { label: 'Relaxing and scenic', type: 'popular' },
-      { label: 'Perfect for families', type: 'recent' },
-    ],
-    bookingsThisWeek: 15,
-  },
-  {
-    id: 'jet-ski-rental',
-    title: 'Jet Ski Rental',
-    subtitle: 'High-Adrenaline Adventure',
-    category: 'WATERSPORT',
-    durationMin: 60,
-    priceFromUsd: 75,
+    priceFromUsd: 150,
     rating: 4.8,
-    reviewCount: 210,
+    reviewCount: 85,
     maxGuests: 2,
     minGuests: 1,
     skillLevel: 'beginner',
     isPrivate: false,
     media: [
-      { type: 'image', uri: '', src: LOCAL_IMAGES.boat },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.boat2 },
-      { type: 'image', uri: '', src: LOCAL_IMAGES.boat3 },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.efoilNew },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.efoil },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.efoilMedium },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.island },
+      { type: 'image', uri: '', src: LOCAL_IMAGES.sandbank2 },
     ],
-    tags: ['15 or 60 min', 'High-speed', 'Adrenaline', 'No experience needed'],
+    tags: ['60 min', 'Beginner friendly', 'Maafushi', 'All equipment included'],
     highlights: [
-      'Glide across the crystal-clear Indian Ocean at high speed',
-      'Comprehensive safety briefing from instructors',
-      '15-minute and 60-minute options available',
-      'Fastest and most exciting way to explore the waters',
+      'Fly above the water surrounded by the stunning Maafushi lagoon',
+      'Professional instruction tailored to your pace — beginners welcome',
+      'Ride in calm, shallow waters with incredible visibility',
+      'Combine with a Maafushi island day trip for the ultimate experience',
+      'The most Instagrammable water sport in the Maldives',
     ],
     whatYoullDo: [
-      'Receive a comprehensive safety briefing from professional instructors',
-      'Get clear boundary instructions before departure',
-      'Ride across the crystal-clear Indian Ocean at exhilarating speeds',
-      'Explore the lagoon and surrounding reefs from the water',
+      'Meet your instructor at Maafushi Beach for a safety briefing and board introduction',
+      'Practice balance and throttle control in waist-deep water',
+      'Start riding across the lagoon surface, building speed gradually',
+      'Lift off and fly above the crystal-clear water with reef views below',
+      'Cruise, turn, and explore the lagoon from a perspective like no other',
     ],
     included: [
-      'Jet ski rental (15 or 60 min)',
-      'Safety briefing & instruction',
-      'Life jacket',
-      'Instructor on standby',
+      'eFoil board & all equipment',
+      'Certified instructor (1-on-1 or 1-on-2)',
+      'Safety gear — helmet & life jacket',
+      '60-minute session',
+      'Land briefing & water coaching',
+      'Photos of your ride (on request)',
     ],
-    safety: ['Professional safety briefing', 'Clear boundaries set before ride', 'Instructor on standby'],
-    meetingPoint: 'Hulhumalé water sports center',
+    safety: [
+      'Certified instructor always in the water with you',
+      'Helmet and life jacket mandatory',
+      'Calm lagoon conditions — protected from open ocean',
+      'Wireless kill-switch on all boards',
+    ],
+    meetingPoint: 'Maafushi Beach — Bikini Beach side',
     socialProof: [
-      { label: 'Ride of your life', type: 'popular' },
-      { label: 'Top-rated thrill activity', type: 'recent' },
+      { label: '4.8 rating from 85+ riders', type: 'popular' },
+      { label: 'Perfect lagoon conditions year-round', type: 'popular' },
     ],
-    bookingsThisWeek: 28,
+    bookingsThisWeek: 12,
+    isFeatured: true,
     isTrending: true,
   },
 ];
@@ -579,15 +311,7 @@ export function getFeaturedActivities(): Activity[] {
 }
 
 export function getTrendingActivities(): Activity[] {
-  const trending = ACTIVITIES.filter((a) => a.isTrending);
-  const order = ['south-ari-atoll', 'sunset-cruise', 'maafushi-island', 'sunset-fishing', 'jet-ski-rental'];
-  return trending.sort((a, b) => {
-    const aIndex = order.indexOf(a.id);
-    const bIndex = order.indexOf(b.id);
-    if (aIndex === -1) return 1;
-    if (bIndex === -1) return -1;
-    return aIndex - bIndex;
-  });
+  return ACTIVITIES.filter((a) => a.isTrending);
 }
 
 export function generateActivitySlots(activity: Activity, daysAhead: number = 2): ActivitySlot[] {
@@ -603,7 +327,7 @@ export function generateActivitySlots(activity: Activity, daysAhead: number = 2)
   });
 
   for (const { dateStr, dateLabel } of dateRanges) {
-    const startHours = activity.isSunset ? [16, 17, 18] : [9, 10, 11, 14, 15, 16, 17];
+    const startHours = [9, 10, 11, 14, 15, 16, 17];
 
     startHours.forEach((hour) => {
       const startTime = `${hour.toString().padStart(2, '0')}:00`;
@@ -614,13 +338,13 @@ export function generateActivitySlots(activity: Activity, daysAhead: number = 2)
 
       const isSunsetSlot = hour >= 17;
       const isPopular = isSunsetSlot || hour === 10;
-      const maxSpots = activity.isPrivate ? 1 : activity.maxGuests;
+      const maxSpots = activity.maxGuests;
       const bookedCount = Math.floor(Math.random() * (maxSpots + 1));
       const spotsRemaining = Math.max(0, maxSpots - bookedCount);
 
       const bookedBy: { label: string; airlineCode?: string }[] = [];
       if (bookedCount > 0) {
-        bookedBy.push({ label: `${bookedCount} guest${bookedCount > 1 ? 's' : ''} booked` });
+        bookedBy.push({ label: `${bookedCount} rider${bookedCount > 1 ? 's' : ''} booked` });
       }
 
       slots.push({
@@ -645,9 +369,9 @@ export function generateActivitySlots(activity: Activity, daysAhead: number = 2)
 }
 
 export const PROMO_CODES: Record<string, { discount: number; label: string }> = {
-  WELCOME10: { discount: 0.1, label: 'Welcome Discount (10%)' },
-  PARADISE10: { discount: 0.1, label: 'Paradise Welcome (10%)' },
-  SUNSET15: { discount: 0.15, label: 'Sunset Special (15%)' },
+  EFOIL10: { discount: 0.1, label: 'eFoil Welcome (10%)' },
+  FLYOVER15: { discount: 0.15, label: 'Fly Over Paradise (15%)' },
+  PARTNER20: { discount: 0.2, label: 'Partner Referral (20%)' },
 };
 
 export function applyPromoCode(code: string, price: number): { finalPrice: number; discount: number; label: string } | null {
