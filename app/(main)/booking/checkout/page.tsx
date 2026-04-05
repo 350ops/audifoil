@@ -100,8 +100,8 @@ export default function CheckoutPage() {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold">No activity selected</h2>
-          <Button href="/activities" title="Browse Activities" variant="outline" className="mt-4" />
+          <h2 className="text-2xl font-bold">No lesson selected</h2>
+          <Button href="/book" title="Browse Lessons" variant="outline" className="mt-4" />
         </div>
       </div>
     );
@@ -120,7 +120,7 @@ export default function CheckoutPage() {
           <div className="rounded-2xl border border-border bg-secondary p-5">
             <h3 className="font-semibold">{activity.title}</h3>
             <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-muted">
-              <span className="flex items-center gap-1"><Icon name="Users" size={14} /> {guestCount} guest{guestCount > 1 ? 's' : ''}</span>
+              <span className="flex items-center gap-1"><Icon name="Users" size={14} /> {guestCount} rider{guestCount > 1 ? 's' : ''}</span>
               <span className="flex items-center gap-1"><Icon name="Clock" size={14} /> {activity.durationMin / 60}h</span>
               {selectedTrip && (
                 <span className="flex items-center gap-1"><Icon name="Calendar" size={14} /> {selectedTrip.dateLabel} at {selectedTrip.startTime}</span>
@@ -211,7 +211,7 @@ export default function CheckoutPage() {
         </AnimatedDiv>
 
         <p className="mt-4 text-center text-xs text-muted">
-          Free cancellation up to 24 hours before the trip
+          Free cancellation up to 24 hours before the session
         </p>
       </div>
     </div>

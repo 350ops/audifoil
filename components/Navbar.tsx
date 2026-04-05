@@ -10,10 +10,10 @@ import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
 
 const NAV_LINKS = [
-  { href: '/explore', label: 'Explore', icon: 'Compass' },
-  { href: '/activities', label: 'Services', icon: 'Waves' },
-  { href: '/bookings', label: 'Bookings', icon: 'CalendarCheck' },
-  { href: '/crew', label: 'About', icon: 'Info' },
+  { href: '/explore', label: 'Home', icon: 'Compass' },
+  { href: '/book', label: 'Book a Lesson', icon: 'Waves' },
+  { href: '/partners', label: 'For Partners', icon: 'Handshake' },
+  { href: '/about', label: 'About', icon: 'Info' },
 ];
 
 export default function Navbar() {
@@ -26,8 +26,8 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
         {/* Logo */}
         <Link href="/explore" className="flex items-center gap-2">
-          <Image src="/img/imagesmaldivesa/logoboho.png" alt="Maldives Water Sports" width={36} height={36} className="rounded-md" />
-          <span className="text-lg font-bold tracking-wider text-foreground">Maldives Water Sports</span>
+          <Image src="/img/imagesmaldivesa/logoboho.png" alt="eFoil Maldives" width={36} height={36} className="rounded-md" />
+          <span className="text-lg font-bold tracking-wider text-foreground">eFoil Maldives</span>
         </Link>
 
         {/* Desktop nav */}
@@ -97,6 +97,9 @@ export default function Navbar() {
           <div className="mt-3 border-t border-border pt-3">
             {user ? (
               <>
+                <Link href="/bookings" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-lg px-4 py-3 text-muted hover:text-foreground">
+                  <Icon name="CalendarCheck" size={20} /> My Bookings
+                </Link>
                 <Link href="/settings" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-lg px-4 py-3 text-muted hover:text-foreground">
                   <Icon name="Settings" size={20} /> Settings
                 </Link>

@@ -2,7 +2,6 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import Image from 'next/image';
 import AnimatedDiv from '@/components/AnimatedDiv';
 import Icon from '@/components/Icon';
 import { Button } from '@/components/Button';
@@ -10,20 +9,20 @@ import ImageCarousel from '@/components/ImageCarousel';
 import { ACTIVITIES, LOCAL_IMAGES } from '@/data/activities';
 import { useStore } from '@/store/useStore';
 
-export default function ActivityDetailPage() {
+export default function LessonDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const slug = params.slug as string;
+  const location = params.location as string;
   const { setSelectedActivity } = useStore();
 
-  const activity = useMemo(() => ACTIVITIES.find((a) => a.id === slug), [slug]);
+  const activity = useMemo(() => ACTIVITIES.find((a) => a.id === location), [location]);
 
   if (!activity) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold">Activity not found</h2>
-          <Button href="/activities" title="Back to Activities" variant="outline" className="mt-4" />
+          <h2 className="text-2xl font-bold">Lesson not found</h2>
+          <Button href="/book" title="Back to Locations" variant="outline" className="mt-4" />
         </div>
       </div>
     );
@@ -54,12 +53,12 @@ export default function ActivityDetailPage() {
                   <span className="font-medium">{activity.rating}</span>
                   <span className="text-sm text-muted">({activity.reviewCount} reviews)</span>
                 </div>
-                <span className="text-muted">·</span>
-                <span className="text-sm text-muted">{activity.durationMin / 60}h · {activity.maxGuests} guests max</span>
+                <span className="text-muted">&middot;</span>
+                <span className="text-sm text-muted">{activity.durationMin} min &middot; Max {activity.maxGuests} riders</span>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold text-highlight">From ${activity.priceFromUsd}</div>
+              <div className="text-3xl font-bold text-highlight">${activity.priceFromUsd}</div>
               <p className="text-sm text-muted">per person</p>
             </div>
           </div>
