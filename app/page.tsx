@@ -39,13 +39,14 @@ export default function LandingPage() {
           {/* Hero content */}
           <div className="max-w-2xl">
             <AnimatedDiv animation="slideInBottom" delay={100}>
-              <h1 className="text-5xl font-bold leading-tight text-white lg:text-7xl">
-                Find Your Perfect<br />Destination
+              <h1 className="text-5xl font-black leading-tight text-white
+               lg:text-7xl">
+                Get out and Explore  <br />
               </h1>
             </AnimatedDiv>
             <AnimatedDiv animation="slideInBottom" delay={200}>
               <p className="mt-4 text-lg leading-relaxed text-white/90 lg:text-xl">
-                Dive into adventure with Maldives Water Sports — your trusted partner for world-class ocean activities, unforgettable memories, and unmatched service in the heart of paradise.
+                Choose your experience, share it, book it, live it <br />3 clicks, join the fun with your crew, friends or family
               </p>
             </AnimatedDiv>
             <AnimatedDiv animation="slideInBottom" delay={300}>
@@ -63,14 +64,7 @@ export default function LandingPage() {
 
             <AnimatedDiv animation="scaleIn" delay={400}>
               <div className="mt-8 flex flex-wrap gap-4">
-                <Button
-                  href="/explore"
-                  title="Explore Excursions"
-                  variant="cta"
-                  size="large"
-                  rounded="full"
-                  iconEnd="ArrowRight"
-                />
+                dc
                 <Button
                   href="/signup"
                   title="Create Account"

@@ -42,8 +42,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <AnimatedDiv animation="slideInBottom">
           <Link href="/" className="mb-8 flex items-center justify-center gap-2">
-            <Image src="/img/imagesmaldivesa/logoboho.png" alt="Maldives Water Sports" width={40} height={40} className="rounded-md" />
-            <span className="text-2xl font-bold tracking-wider">Maldives Water Sports</span>
+            <Image src="/img/imagesmaldivesa/logoboho.png" alt="Maldives" width={40} height={40} className="rounded-md" />
+            <span className="text-2xl font-bold tracking-wider">Maldives</span>
           </Link>
           <h1 className="text-center text-3xl font-bold">Welcome back</h1>
           <p className="mt-2 text-center text-muted">Sign in to your account</p>

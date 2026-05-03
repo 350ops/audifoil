@@ -5,11 +5,11 @@ import StripePaymentProvider from '@/contexts/StripeContext';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Maldives Water Sports — World-Class Ocean Activities',
-  description: 'Excursions, water sports & island adventures in the Maldives. Dolphins, snorkeling, sunset cruises, fishing, jet ski & more. Book via WhatsApp.',
+  title: 'Maldives Tours',
+  description: 'Day Trips. Snorkeling. Fishing. Diving. Island hopping. Surfing and more.',
   openGraph: {
-    title: 'Maldives Water Sports — World-Class Ocean Activities',
-    description: 'Your trusted partner for world-class ocean activities, unforgettable memories, and unmatched service in the heart of paradise.',
+    title: 'Maldives Tours',
+    description: 'Day Trips. Snorkeling. Fishing. Diving. Island hopping. Surfing and more.',
     type: 'website',
   },
 };

@@ -24,7 +24,7 @@ export default function AboutPage() {
     <div className="pb-20">
       {/* Hero */}
       <div className="relative h-[50vh] min-h-[350px]">
-        <Image src={LOCAL_IMAGES.crewOnABoat} alt="Maldives Water Sports team" fill className="object-cover" priority />
+        <Image src={LOCAL_IMAGES.crewOnABoat} alt="Maldives" fill className="object-cover" priority />
         <div className="gradient-hero absolute inset-0" />
         <div className="relative flex h-full flex-col justify-end p-6 lg:p-12">
           <div className="mx-auto w-full max-w-7xl">
