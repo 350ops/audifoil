@@ -1,17 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-let _stripe: Stripe;
-function getStripe() {
-  if (!_stripe) {
-    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {});
-  }
+let _stripe: Stripe | null = null;
+
+function getStripe(): Stripe | null {
+  if (_stripe) return _stripe;
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) return null;
+  _stripe = new Stripe(key, {});
   return _stripe;
 }
 
 export async function POST(request: NextRequest) {
+  const stripe = getStripe();
+  if (!stripe) {
+    console.error(
+      'STRIPE_SECRET_KEY is not set. Add it in Vercel → Settings → Environment Variables and redeploy.'
+    );
+    return NextResponse.json(
+      { error: 'Payment provider not configured' },
+      { status: 503 }
+    );
+  }
+
   try {
-    const stripe = getStripe();
     const body = await request.json();
     const { amount, currency = 'usd', customerEmail, customerName, description, metadata } = body;
 
