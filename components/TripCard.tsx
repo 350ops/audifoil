@@ -13,30 +13,34 @@ interface TripCardProps {
 export default function TripCard({ trip, isSelected, onSelect }: TripCardProps) {
   const isFull = trip.spotsRemaining === 0;
 
+  const MAX_VISIBLE_SPOTS = 6;
+  const visibleSpots = Math.min(trip.maxSpots, MAX_VISIBLE_SPOTS);
+  const hiddenSpots = trip.maxSpots - visibleSpots;
+
   return (
     <button
       onClick={onSelect}
       disabled={isFull}
       className={cn(
-        'w-full rounded-2xl border p-4 text-left transition-all',
+        'w-full min-w-0 overflow-hidden rounded-2xl border p-4 text-left transition-all',
         isSelected
           ? 'border-highlight bg-highlight/5 shadow-md'
           : 'border-border bg-secondary hover:border-highlight/50 hover:shadow-sm',
         isFull && 'opacity-50 cursor-not-allowed'
       )}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', isSelected ? 'bg-highlight/20' : 'bg-background')}>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-xl', isSelected ? 'bg-highlight/20' : 'bg-background')}>
             <Icon name={trip.isSunset ? 'Sunset' : 'Sun'} size={20} color={isSelected ? '#FF0039' : undefined} />
           </div>
-          <div>
-            <p className="font-semibold">{trip.startTime} - {trip.endTime}</p>
-            <p className="text-sm text-muted">{trip.dateLabel}</p>
+          <div className="min-w-0">
+            <p className="truncate font-semibold">{trip.startTime} - {trip.endTime}</p>
+            <p className="truncate text-sm text-muted">{trip.dateLabel}</p>
           </div>
         </div>
 
-        <div className="text-right">
+        <div className="shrink-0 text-right">
           <p className={cn('text-lg font-bold', trip.isAtBasePrice ? 'text-green-500' : 'text-foreground')}>
             ${trip.pricePerPerson}
           </p>
@@ -45,21 +49,24 @@ export default function TripCard({ trip, isSelected, onSelect }: TripCardProps) 
       </div>
 
       {/* Capacity bar */}
-      <div className="mt-3 flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          {Array.from({ length: trip.maxSpots }).map((_, i) => (
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+          {Array.from({ length: visibleSpots }).map((_, i) => (
             <div
               key={i}
               className={cn(
-                'h-6 w-6 rounded-full flex items-center justify-center text-xs',
+                'h-6 w-6 shrink-0 rounded-full flex items-center justify-center text-xs',
                 i < trip.bookedCount ? 'bg-highlight/20 text-highlight' : 'bg-background text-muted'
               )}
             >
               <Icon name="User" size={12} />
             </div>
           ))}
+          {hiddenSpots > 0 && (
+            <span className="ml-1 text-xs text-muted">+{hiddenSpots}</span>
+          )}
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1.5">
           {trip.isPopular && (
             <span className="rounded-full bg-orange-500/10 px-2 py-0.5 text-xs font-medium text-orange-500">Popular</span>
           )}

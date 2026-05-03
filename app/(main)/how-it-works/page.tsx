@@ -5,21 +5,21 @@ import Icon from '@/components/Icon';
 import { Button } from '@/components/Button';
 
 const STEPS = [
-  { step: '1', title: 'Browse Our Excursions', desc: 'Explore our special excursions including full-day adventures, sunset cruises, fishing trips, island tours, and water sports activities.', icon: 'Compass' },
-  { step: '2', title: 'Pick Your Date', desc: 'Check availability and select a date that works for your schedule.', icon: 'Calendar' },
-  { step: '3', title: 'Book via WhatsApp', desc: 'Contact us on WhatsApp at +960 7772241 to confirm your booking. Quick, easy, and personal.', icon: 'MessageCircle' },
-  { step: '4', title: 'We Handle the Rest', desc: 'Transportation, equipment, refreshments, and expert guides — everything is arranged for you.', icon: 'Package' },
-  { step: '5', title: 'Show Up & Enjoy', desc: 'Just bring sunscreen and a sense of adventure. We take care of everything else for an unforgettable day in paradise.', icon: 'Smile' },
+  { step: '1', title: 'Browse experiences', desc: 'Snorkeling, sandbank days, dolphin trips, sunset fishing — full-day or half-day, with a captain that fits your group size.', icon: 'Compass' },
+  { step: '2', title: 'Pick a date and a captain', desc: 'See which Hulhumalé boats are free that day. Each captain has their own profile, photos, and reviews.', icon: 'Calendar' },
+  { step: '3', title: 'Pay online', desc: 'Card, Apple Pay or Google Pay. Instant confirmation. Free cancellation up to 24h before the trip.', icon: 'CreditCard' },
+  { step: '4', title: 'Meet at Phase 2 jetty', desc: 'Your captain will WhatsApp you the exact pickup spot. Gear, water and lunch are provided on board.', icon: 'MapPin' },
+  { step: '5', title: 'Spend the day at sea', desc: 'Snorkel, swim, fish, photograph dolphins. Your captain knows the spots — just bring sunscreen and a swimsuit.', icon: 'Smile' },
 ];
 
 const FAQS = [
-  { q: 'What water sports activities do you offer?', a: 'We offer a wide range of activities including full-day island adventures (South Ari Atoll, Maafushi Island), sunset fishing, sunset cruises with dolphin search, Malahini Kuda Bandos resort day visits, kayak rentals, and jet ski rentals.' },
-  { q: 'Do I need prior experience for water sports?', a: 'No prior experience is needed! Our activities are designed for all skill levels. Professional instructors provide safety briefings and guidance for activities like jet skiing and snorkeling.' },
-  { q: 'How can I book an excursion or water sport?', a: 'Booking is easy! Simply contact us on WhatsApp at +960 7772241 and our team will help you find the perfect excursion and confirm your booking.' },
-  { q: 'Are the excursions safe for children and families?', a: 'Many of our excursions are family-friendly, including the sunset cruise, kayak rental, and sandbank visits. Life jackets are provided for all guests, and our experienced crew ensures safety at every step.' },
-  { q: 'Can I customize my excursion package?', a: 'We offer personalized and friendly service — our team will customize activities based on your interests, schedule, and budget. Contact us on WhatsApp to discuss your perfect trip.' },
-  { q: 'How do I reach the islands or resorts for the excursions?', a: 'All transportation is included in our excursion packages. We arrange scenic boat rides from Malé or Hulhumalé to all destinations.' },
-  { q: 'What should I bring for water sports and excursions?', a: 'We provide all necessary equipment including snorkeling gear, life jackets, and fishing equipment. Just bring sunscreen, a swimsuit, a towel, and your sense of adventure!' },
+  { q: 'Who runs the boats?', a: 'Local Hulhumalé fishermen. Most of our captains use their boats to fish overnight and dock back at Phase 2 around 4–5am. Their boats sit idle for most of the day — that&apos;s when you book them.' },
+  { q: 'Where do we leave from?', a: 'Hulhumalé Phase 2 jetty. Once your booking is confirmed, your captain will WhatsApp you the exact meeting point and time.' },
+  { q: 'What experiences can I book?', a: 'Snorkeling, sandbank visits, dolphin watching, traditional Maldivian fishing, sunset cruises, and full-day combinations of all of the above.' },
+  { q: 'Is it safe for children and families?', a: 'Yes — half-day sandbank, snorkeling and sunset cruises are family-friendly. Every boat carries enough life jackets for all guests, including child sizes.' },
+  { q: 'What if the weather is bad?', a: 'If your captain cancels because of weather, you get a full refund or can reschedule for free. If you cancel for any other reason 24h+ before the trip, you also get a full refund.' },
+  { q: 'How do I pay?', a: 'Online at checkout — card, Apple Pay or Google Pay. Pricing is per person and shown upfront, no hidden fees.' },
+  { q: 'I own a boat. Can I list it?', a: 'Yes — head to the “List your boat” page. We verify your ID and boat registration, then your boat goes live with its own profile and calendar.' },
 ];
 
 export default function HowItWorksPage() {
@@ -27,8 +27,8 @@ export default function HowItWorksPage() {
     <div className="pb-20">
       <div className="mx-auto max-w-4xl px-4 py-12 lg:px-8">
         <AnimatedDiv animation="fadeIn">
-          <h1 className="text-center text-4xl font-bold">How It Works</h1>
-          <p className="mt-3 text-center text-lg text-muted">Book your Maldives excursion in 5 simple steps</p>
+          <h1 className="text-center text-4xl font-bold">How it works</h1>
+          <p className="mt-3 text-center text-lg text-muted">Book a day on a local boat in 5 steps</p>
         </AnimatedDiv>
 
         {/* Steps */}
@@ -75,15 +75,8 @@ export default function HowItWorksPage() {
         {/* CTA */}
         <AnimatedDiv animation="scaleIn" delay={300} className="mt-12 text-center">
           <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="https://wa.me/9607772241?text=Hey!%20I'd%20like%20to%20book%20an%20excursion%20with%20Maldives%20Water%20Sports."
-              target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-white hover:opacity-90 transition-opacity"
-            >
-              <Icon name="MessageCircle" size={20} color="white" />
-              Book via WhatsApp
-            </a>
-            <Button href="/activities" title="Browse Excursions" variant="cta" size="large" rounded="full" iconEnd="ArrowRight" />
+            <Button href="/activities" title="Browse experiences" variant="cta" size="large" rounded="full" iconEnd="ArrowRight" />
+            <Button href="/host" title="I own a boat" variant="outline" size="large" rounded="full" />
           </div>
         </AnimatedDiv>
       </div>

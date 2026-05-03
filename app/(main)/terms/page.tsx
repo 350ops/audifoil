@@ -39,7 +39,7 @@ export default function TermsPage() {
                             <h2 className="mb-3 text-xl font-bold">3. Liability Waiver</h2>
                             <p className="leading-relaxed">
                                 Participation in water sports and boat activities involves inherent risks.
-                                By booking a trip with Boho Waves, you acknowledge these risks and agree to release Boho Waves, its employees, and agents from liability for any injury, loss, or damage arising from your participation, except where such injury or loss is caused by our gross negligence or willful misconduct.
+                                By booking a trip with maldivian.tours, you acknowledge these risks and agree to release maldivian.tours, its employees, and agents from liability for any injury, loss, or damage arising from your participation, except where such injury or loss is caused by our gross negligence or willful misconduct.
                             </p>
                         </section>
 
@@ -63,7 +63,7 @@ export default function TermsPage() {
                             <h2 className="mb-3 text-xl font-bold">6. Contact Information</h2>
                             <p className="leading-relaxed">
                                 Questions about the Terms of Service should be sent to us at:
-                                <a href="mailto:hello@bohowaves.com" className="ml-1 font-medium text-highlight hover:underline">hello@bohowaves.com</a>
+                                <a href="mailto:hello@maldivian.tours" className="ml-1 font-medium text-highlight hover:underline">hello@maldivian.tours</a>
                             </p>
                         </section>
                     </div>

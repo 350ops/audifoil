@@ -34,9 +34,9 @@ export default function ActivitiesPage() {
       <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
         {/* Header */}
         <AnimatedDiv animation="fadeIn">
-          <h1 className="text-3xl font-bold lg:text-4xl">Our Excursions & Water Sports</h1>
+          <h1 className="text-3xl font-bold lg:text-4xl">Experiences on a local boat</h1>
           <p className="mt-2 text-muted max-w-2xl">
-            From full-day island adventures to thrilling jet ski rides — discover the best of the Maldives with our curated experiences.
+            Each one is run by a Hulhumalé captain on their own boat. Pick what you want to do — they&apos;ll take care of the rest.
           </p>
         </AnimatedDiv>
 
@@ -156,8 +156,8 @@ export default function ActivitiesPage() {
         {/* All Activities Grid */}
         <section className="mt-16">
           <AnimatedDiv animation="fadeIn">
-            <h2 className="text-2xl font-bold">All Excursions & Services</h2>
-            <p className="mt-2 text-muted">Choose from our curated collection.</p>
+            <h2 className="text-2xl font-bold">All experiences</h2>
+            <p className="mt-2 text-muted">Hand-picked captains and boats. New ones are added every week.</p>
           </AnimatedDiv>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {ACTIVITIES.map((activity) => (
@@ -199,18 +199,11 @@ export default function ActivitiesPage() {
         {/* Bottom CTA */}
         <AnimatedDiv animation="scaleIn" delay={200} className="mt-12">
           <div className="rounded-2xl border border-border bg-secondary p-8 text-center shadow-sm">
-            <h2 className="text-2xl font-bold">Find Your Perfect Excursion in Minutes</h2>
-            <p className="mt-2 text-muted">Dolphins, snorkeling, sandbanks, sunset cruises, island tours — unforgettable memories await.</p>
+            <h2 className="text-2xl font-bold">Pick a day, pick a captain</h2>
+            <p className="mt-2 text-muted">Snorkeling, sandbanks, dolphins, fishing — the most popular full-day combo is the South Ari Atoll trip.</p>
             <div className="mt-6 flex flex-wrap justify-center gap-4">
-              <a
-                href="https://wa.me/9607772241?text=Hey!%20I'd%20like%20to%20book%20an%20excursion%20with%20Maldives%20Water%20Sports."
-                target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-white hover:opacity-90 transition-opacity"
-              >
-                <Icon name="MessageCircle" size={20} color="white" />
-                Book via WhatsApp
-              </a>
-              <Button href="/activities/south-ari-atoll" title="Book the Adventure" variant="cta" size="large" rounded="full" iconEnd="ArrowRight" />
+              <Button href="/activities/south-ari-atoll" title="Book the South Ari Atoll Day" variant="cta" size="large" rounded="full" iconEnd="ArrowRight" />
+              <Button href="/host" title="I own a boat" variant="outline" size="large" rounded="full" />
             </div>
           </div>
         </AnimatedDiv>

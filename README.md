@@ -1,6 +1,6 @@
-# Boho Waves
+# maldivian.tours
 
-Your Best Day in the Maldives — a booking platform for water activities, e-foiling, dolphins, snorkeling, and sunset cruises.
+A curated marketplace connecting Hulhumalé Phase 2 boat owners (mostly fishing boats that dock back in the early hours and sit idle through the day) with travellers, expats and airline crew looking for half-day or full-day experiences — snorkeling, sandbank visits, dolphin watching, fishing, sunset cruises.
 
 ## Tech Stack
 

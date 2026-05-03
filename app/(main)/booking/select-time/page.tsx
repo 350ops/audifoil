@@ -110,13 +110,13 @@ export default function SelectTimePage() {
   }
 
   return (
-    <div className="pb-32">
-      <div className="mx-auto max-w-4xl px-4 py-8 lg:px-8">
+    <div className="overflow-x-hidden pb-32">
+      <div className="mx-auto w-full max-w-4xl px-4 py-8 lg:px-8">
         <AnimatedDiv animation="fadeIn">
           <button onClick={() => router.back()} className="mb-4 flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors">
             <Icon name="ArrowLeft" size={16} /> Back
           </button>
-          <h1 className="text-2xl font-bold lg:text-3xl">Select Date & Time</h1>
+          <h1 className="text-2xl font-bold lg:text-3xl">Pick a date and a captain</h1>
           <p className="mt-1 text-muted">{activity.title} · {activity.durationMin / 60}h</p>
         </AnimatedDiv>
 
@@ -201,13 +201,24 @@ export default function SelectTimePage() {
 
       {/* Sticky bottom CTA */}
       {selectedTrip && (
-        <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-secondary/90 p-4 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-4xl items-center justify-between">
-            <div>
-              <span className="text-2xl font-bold">${selectedTrip.pricePerPerson * guestCount}</span>
-              <span className="text-sm text-muted"> total · ${selectedTrip.pricePerPerson}/person × {guestCount}</span>
+        <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-secondary/95 px-3 py-3 backdrop-blur-xl sm:px-4">
+          <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex items-baseline gap-1">
+                <span className="text-xl font-bold sm:text-2xl">${selectedTrip.pricePerPerson * guestCount}</span>
+                <span className="text-xs text-muted sm:text-sm">total</span>
+              </div>
+              <p className="truncate text-xs text-muted">${selectedTrip.pricePerPerson}/person × {guestCount}</p>
             </div>
-            <Button title="Continue to Checkout" variant="cta" size="large" rounded="full" onPress={handleContinue} iconEnd="ArrowRight" />
+            <Button
+              title="Continue"
+              variant="cta"
+              size="large"
+              rounded="full"
+              onPress={handleContinue}
+              iconEnd="ArrowRight"
+              className="shrink-0"
+            />
           </div>
         </div>
       )}

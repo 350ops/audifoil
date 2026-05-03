@@ -24,28 +24,36 @@ export default function LandingPage() {
         <div className="relative flex h-full flex-col justify-between p-6 lg:p-12">
           {/* Top bar */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Image src="/img/imagesmaldivesa/logoboho.png" alt="Maldives Water Sports" width={32} height={32} className="rounded-md" />
-              <span className="text-sm font-semibold tracking-[0.2em] text-white/80">Maldives Water Sports</span>
+            <div className="flex min-w-0 items-center gap-2">
+              <Image src="/img/imagesmaldivesa/logoboho.png" alt="maldivian.tours" width={32} height={32} className="rounded-md shrink-0" />
+              <span className="truncate text-sm font-semibold tracking-tight text-white/90">maldivian.tours</span>
             </div>
-            <Link
-              href="/login"
-              className="rounded-full border border-white/30 px-5 py-2 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
-            >
-              Sign In
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/host"
+                className="hidden rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20 sm:inline-flex"
+              >
+                List your boat
+              </Link>
+              <Link
+                href="/login"
+                className="rounded-full border border-white/30 px-5 py-2 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+              >
+                Sign In
+              </Link>
+            </div>
           </div>
 
           {/* Hero content */}
           <div className="max-w-2xl">
             <AnimatedDiv animation="slideInBottom" delay={100}>
               <h1 className="text-5xl font-bold leading-tight text-white lg:text-7xl">
-                Find Your Perfect<br />Destination
+                Spend the day<br />on a local boat.
               </h1>
             </AnimatedDiv>
             <AnimatedDiv animation="slideInBottom" delay={200}>
               <p className="mt-4 text-lg leading-relaxed text-white/90 lg:text-xl">
-                Dive into adventure with Maldives Water Sports — your trusted partner for world-class ocean activities, unforgettable memories, and unmatched service in the heart of paradise.
+                Hulhumalé&apos;s fishing boats sit idle most of the day. Book one directly from its captain — snorkel, hit a sandbank, chase dolphins, or fish at sunset. Real boats, real captains, fair prices.
               </p>
             </AnimatedDiv>
             <AnimatedDiv animation="slideInBottom" delay={300}>
@@ -65,15 +73,15 @@ export default function LandingPage() {
               <div className="mt-8 flex flex-wrap gap-4">
                 <Button
                   href="/explore"
-                  title="Explore Excursions"
+                  title="Browse experiences"
                   variant="cta"
                   size="large"
                   rounded="full"
                   iconEnd="ArrowRight"
                 />
                 <Button
-                  href="/signup"
-                  title="Create Account"
+                  href="/host"
+                  title="I own a boat"
                   variant="ghost"
                   size="large"
                   rounded="full"
@@ -114,7 +122,7 @@ export default function LandingPage() {
             <div className="mt-12 text-center">
               <Button
                 href="/explore"
-                title="View All Excursions"
+                title="View all experiences"
                 variant="cta"
                 size="large"
                 rounded="full"

@@ -312,7 +312,12 @@ function CheckoutForm({
           }}
           options={{
             buttonType: { applePay: 'book', googlePay: 'book' },
-            buttonHeight: 52,
+            buttonHeight: 48,
+            layout: {
+              maxColumns: 2,
+              maxRows: 1,
+              overflow: 'never',
+            },
           }}
         />
       </div>

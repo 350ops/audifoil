@@ -1,4 +1,4 @@
-// Activities Data for Maldives Water Sports - Web version
+// Activities Data for maldivian.tours - Web version
 
 export type ActivityCategory = 'BOAT' | 'SNORKEL' | 'FISHING' | 'PRIVATE' | 'WATERSPORT';
 
@@ -259,7 +259,7 @@ export const ACTIVITIES: Activity[] = [
     ],
     included: [
       'Full-day boat adventure',
-      'Dolphin watching excursion',
+      'Dolphin watching experience',
       'Snorkeling with stingrays + all gear',
       'Local island visit (Himmafushi)',
       'Maldivian-style lunch',
@@ -361,7 +361,7 @@ export const ACTIVITIES: Activity[] = [
     ],
     included: [
       'Sunset cruise experience',
-      'Dolphin search excursion',
+      'Dolphin search experience',
       'Resort sightseeing',
       'Complimentary water & soft drinks',
       'Sandwiches',
@@ -369,7 +369,7 @@ export const ACTIVITIES: Activity[] = [
     safety: ['Life jackets provided', 'Experienced captain', 'Weather-dependent departure'],
     meetingPoint: 'Hulhumalé — pickup available',
     socialProof: [
-      { label: 'Most romantic excursion available', type: 'popular' },
+      { label: 'Most romantic experience available', type: 'popular' },
       { label: 'Family-friendly adventure', type: 'recent' },
     ],
     bookingsThisWeek: 35,

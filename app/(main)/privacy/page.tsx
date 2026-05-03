@@ -14,7 +14,7 @@ export default function PrivacyPage() {
                         <section>
                             <h2 className="mb-3 text-xl font-bold">1. Introduction</h2>
                             <p className="leading-relaxed">
-                                Boho Waves ("we," "our," or "us") respects your privacy and is committed to protecting your personal data.
+                                maldivian.tours ("we," "our," or "us") respects your privacy and is committed to protecting your personal data.
                                 This privacy policy will inform you as to how we look after your personal data when you visit our website
                                 (regardless of where you visit it from) and tell you about your privacy rights and how the law protects you.
                             </p>
@@ -66,7 +66,7 @@ export default function PrivacyPage() {
                             <h2 className="mb-3 text-xl font-bold">6. Contact Us</h2>
                             <p className="leading-relaxed">
                                 If you have any questions about this privacy policy or our privacy practices, please contact us at:
-                                <a href="mailto:hello@bohowaves.com" className="ml-1 font-medium text-highlight hover:underline">hello@bohowaves.com</a>
+                                <a href="mailto:hello@maldivian.tours" className="ml-1 font-medium text-highlight hover:underline">hello@maldivian.tours</a>
                             </p>
                         </section>
                     </div>

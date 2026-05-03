@@ -24,16 +24,16 @@ export default function AboutPage() {
     <div className="pb-20">
       {/* Hero */}
       <div className="relative h-[50vh] min-h-[350px]">
-        <Image src={LOCAL_IMAGES.crewOnABoat} alt="Maldives Water Sports team" fill className="object-cover" priority />
+        <Image src={LOCAL_IMAGES.crewOnABoat} alt="A captain on his boat in Hulhumalé" fill className="object-cover" priority />
         <div className="gradient-hero absolute inset-0" />
         <div className="relative flex h-full flex-col justify-end p-6 lg:p-12">
           <div className="mx-auto w-full max-w-7xl">
             <div className="flex items-center gap-3">
               <Icon name="Info" size={28} color="white" />
-              <h1 className="text-4xl font-bold text-white lg:text-5xl">About Us</h1>
+              <h1 className="text-4xl font-bold text-white lg:text-5xl">About maldivian.tours</h1>
             </div>
             <p className="mt-3 max-w-2xl text-lg text-white/90">
-              Your trusted partner for world-class ocean activities, unforgettable memories, and unmatched service in the heart of paradise.
+              A direct link between Hulhumalé&apos;s captains and travellers — without the resort markup or the agency middleman.
             </p>
           </div>
         </div>
@@ -43,9 +43,9 @@ export default function AboutPage() {
         {/* Our Mission */}
         <section className="mt-12">
           <AnimatedDiv animation="fadeIn">
-            <h2 className="text-2xl font-bold">Our Mission</h2>
+            <h2 className="text-2xl font-bold">Why we built this</h2>
             <p className="mt-4 text-muted leading-relaxed max-w-3xl">
-              At Maldives Water Sports, we believe every traveler deserves to experience the magic of the Maldives. Whether it&apos;s a romantic honeymoon, a family adventure, or a peaceful solo retreat, we design every excursion to create unforgettable memories with personalized service and a safety-first approach.
+              Hulhumalé Phase 2 is full of fishing boats. They head out at night, dock back around 4 or 5 in the morning, and then sit idle for most of the day. Meanwhile tourists, expats and airline crew are paying resort prices for the same trips these boats already do. maldivian.tours is the bridge — a curated, verified marketplace where captains list their boats and travellers book directly.
             </p>
           </AnimatedDiv>
         </section>
@@ -53,14 +53,14 @@ export default function AboutPage() {
         {/* What sets us apart */}
         <section className="mt-12">
           <AnimatedDiv animation="fadeIn">
-            <h2 className="text-2xl font-bold">What Sets Us Apart</h2>
-            <p className="mt-2 text-muted">Three pillars that define our service.</p>
+            <h2 className="text-2xl font-bold">What makes us different</h2>
+            <p className="mt-2 text-muted">Three things we won&apos;t compromise on.</p>
           </AnimatedDiv>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { title: 'Expert Local Guides', desc: 'Our team knows Maldivian waters, reefs, and safety protocols inside and out.', icon: 'Map' },
-              { title: 'Modern & Well-Maintained Equipment', desc: 'Boats, jet skis, and diving gear regularly serviced for your safety and comfort.', icon: 'Wrench' },
-              { title: 'Personalized & Friendly Service', desc: 'We customize activities based on your interests, schedule, and budget.', icon: 'Heart' },
+              { title: 'Real local captains', desc: 'Every captain is a Hulhumalé fisherman with their own ID-verified boat. No outsourced agencies, no anonymous operators.', icon: 'Map' },
+              { title: 'A clear safety floor', desc: 'Boat registration on file, life jackets for everyone on board, weather-cancellation policy you can actually rely on.', icon: 'Shield' },
+              { title: 'Transparent pricing', desc: 'You pay the captain&apos;s rate plus a small platform fee. No hidden commissions, no resort surcharges.', icon: 'Heart' },
             ].map((item, i) => (
               <AnimatedDiv key={item.title} animation="scaleIn" delay={100 + i * 60}>
                 <div className="rounded-2xl border border-border bg-secondary p-5 shadow-sm">
@@ -79,17 +79,20 @@ export default function AboutPage() {
         <section className="mt-12">
           <AnimatedDiv animation="fadeIn">
             <div className="gradient-cta rounded-2xl p-8 text-white lg:p-10">
-              <h2 className="text-2xl font-bold">Our Experiences</h2>
+              <h2 className="text-2xl font-bold">For boat owners</h2>
               <p className="mt-3 text-white/90 max-w-2xl leading-relaxed">
-                From full-day South Ari Atoll adventures with dolphins and sandbanks, to sunset fishing trips, cruise excursions, Maafushi Island tours, resort day visits, and thrilling water sports — we offer the complete Maldives experience.
+                If you own a boat docked in Hulhumalé Phase 2, your boat probably sits idle from morning to late afternoon. List it on maldivian.tours and earn from those hours. We handle the bookings, payments and customer support — you just show up at the dock.
               </p>
               <p className="mt-4 text-white/80 text-sm">
-                Whether you&apos;re seeking adventure or relaxation, our team will help you find the perfect excursion tailored to your desires.
+                We verify your ID and boat registration, then your boat goes live with its own profile, calendar and reviews.
               </p>
-              <div className="mt-6">
-                <Button title="Browse Excursions" variant="ghost" size="large" rounded="full"
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Button title="List your boat" variant="ghost" size="large" rounded="full"
                   className="border-2 border-white text-white hover:bg-white/10"
-                  iconEnd="ArrowRight" href="/activities" />
+                  iconEnd="ArrowRight" href="/host" />
+                <Button title="Browse experiences" variant="ghost" size="large" rounded="full"
+                  className="border border-white/40 text-white hover:bg-white/10"
+                  href="/activities" />
               </div>
             </div>
           </AnimatedDiv>

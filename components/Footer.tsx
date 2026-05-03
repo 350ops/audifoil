@@ -10,21 +10,22 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2">
-              <Image src="/img/imagesmaldivesa/logoboho.png" alt="Maldives Water Sports" width={40} height={40} className="rounded-md" />
-              <h3 className="text-lg font-bold tracking-wider">Maldives Water Sports</h3>
+              <Image src="/img/imagesmaldivesa/logoboho.png" alt="maldivian.tours" width={36} height={36} className="rounded-md" />
+              <h3 className="text-lg font-bold tracking-tight">maldivian.tours</h3>
             </div>
             <p className="mt-2 text-sm text-muted">
-              Your trusted partner for world-class ocean activities, unforgettable memories, and unmatched service in the heart of paradise.
+              A curated marketplace connecting Hulhumalé captains with travellers, expats and crew looking for authentic days at sea.
             </p>
           </div>
 
-          {/* Services */}
+          {/* Experiences */}
           <div>
-            <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted">Services</h4>
+            <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted">Experiences</h4>
             <div className="flex flex-col gap-2">
-              <Link href="/activities/south-ari-atoll" className="text-sm text-muted hover:text-foreground transition-colors">South Ari Atoll Adventure</Link>
+              <Link href="/activities/south-ari-atoll" className="text-sm text-muted hover:text-foreground transition-colors">South Ari Atoll Day</Link>
               <Link href="/activities/sunset-cruise" className="text-sm text-muted hover:text-foreground transition-colors">Sunset Cruise</Link>
-              <Link href="/activities" className="text-sm text-muted hover:text-foreground transition-colors">All Excursions</Link>
+              <Link href="/activities" className="text-sm text-muted hover:text-foreground transition-colors">All experiences</Link>
+              <Link href="/host" className="text-sm text-muted hover:text-foreground transition-colors">List your boat</Link>
             </div>
           </div>
 
@@ -53,7 +54,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 border-t border-border pt-6 text-center text-xs text-muted">
-          &copy; {new Date().getFullYear()} Maldives Water Sports. All rights reserved.
+          &copy; {new Date().getFullYear()} maldivian.tours · A Hulhumalé-based captain marketplace. All rights reserved.
         </div>
       </div>
     </footer>

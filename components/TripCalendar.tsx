@@ -43,9 +43,9 @@ export default function TripCalendar({ selectedDate, onSelectDate, datesWithTrip
   const monthLabel = currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
   return (
-    <div className="rounded-2xl border border-border bg-secondary p-4">
+    <div className="w-full min-w-0 rounded-2xl border border-border bg-secondary p-3 sm:p-4">
       {/* Month navigation */}
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-3 flex items-center justify-between">
         <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))} className="rounded-lg p-2 hover:bg-background transition-colors">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
         </button>
@@ -56,16 +56,16 @@ export default function TripCalendar({ selectedDate, onSelectDate, datesWithTrip
       </div>
 
       {/* Day labels */}
-      <div className="mb-2 grid grid-cols-7 text-center text-xs font-medium text-muted">
+      <div className="mb-1 grid grid-cols-7 gap-0.5 text-center text-[11px] font-medium text-muted sm:text-xs">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-          <div key={d} className="py-1">{d}</div>
+          <div key={d} className="min-w-0 py-1">{d}</div>
         ))}
       </div>
 
       {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
         {Array.from({ length: days.startOffset }).map((_, i) => (
-          <div key={`empty-${i}`} />
+          <div key={`empty-${i}`} className="min-w-0" />
         ))}
         {days.days.map(({ date, day, isPast, hasTrips, isToday }) => (
           <button
@@ -73,7 +73,7 @@ export default function TripCalendar({ selectedDate, onSelectDate, datesWithTrip
             onClick={() => !isPast && onSelectDate(date)}
             disabled={isPast}
             className={cn(
-              'relative flex h-10 items-center justify-center rounded-lg text-sm transition-all',
+              'relative flex aspect-square min-w-0 items-center justify-center rounded-lg text-xs transition-all sm:text-sm',
               isPast && 'text-muted/40 cursor-not-allowed',
               !isPast && 'hover:bg-highlight/10 cursor-pointer',
               selectedDate === date && 'bg-highlight text-white font-bold hover:bg-highlight',

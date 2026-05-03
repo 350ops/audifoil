@@ -5,12 +5,14 @@ import StripePaymentProvider from '@/contexts/StripeContext';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Maldives Water Sports — World-Class Ocean Activities',
-  description: 'Excursions, water sports & island adventures in the Maldives. Dolphins, snorkeling, sunset cruises, fishing, jet ski & more. Book via WhatsApp.',
+  metadataBase: new URL('https://maldivian.tours'),
+  title: 'maldivian.tours — Local Boats, Real Maldivian Experiences',
+  description: 'Book directly with verified Hulhumalé captains. Snorkeling, sandbank visits, dolphin watching, fishing — half-day and full-day experiences on local boats.',
   openGraph: {
-    title: 'Maldives Water Sports — World-Class Ocean Activities',
-    description: 'Your trusted partner for world-class ocean activities, unforgettable memories, and unmatched service in the heart of paradise.',
+    title: 'maldivian.tours — Local Boats, Real Maldivian Experiences',
+    description: 'A curated marketplace connecting Hulhumalé captains with travellers, expats and crew looking for authentic days at sea.',
     type: 'website',
+    url: 'https://maldivian.tours',
   },
 };
 

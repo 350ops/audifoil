@@ -20,17 +20,17 @@ const EXPERIENCE_ITEMS = [
 ];
 
 const STEPS = [
-  { number: '1', title: 'Browse excursions', desc: 'Explore our special excursions, water sports, and paradise retreats.' },
-  { number: '2', title: 'Pick your date', desc: 'Check availability and select a date that works for you.' },
-  { number: '3', title: 'Book via WhatsApp', desc: 'Contact us on WhatsApp at +960 7772241 to confirm your booking.' },
-  { number: '4', title: 'Show up and enjoy', desc: 'We handle transportation, equipment, and refreshments — just bring your sense of adventure.' },
+  { number: '1', title: 'Browse experiences', desc: 'Snorkeling, sandbank visits, fishing, dolphin trips — half-day or full-day.' },
+  { number: '2', title: 'Pick a date and a captain', desc: 'See which Hulhumalé boats are free that day and who is running them.' },
+  { number: '3', title: 'Book and pay online', desc: 'Confirmed instantly. Secure card, Apple Pay or Google Pay at checkout.' },
+  { number: '4', title: 'Meet at Phase 2 jetty', desc: 'Your captain meets you at the dock. Gear, water and lunch included.' },
 ];
 
 const VALUES = [
-  { icon: 'Map', title: 'Expert Local Guides', desc: 'Our team knows the Maldivian waters, reefs, and safety protocols to give you the best experience.' },
-  { icon: 'Wrench', title: 'Modern Equipment', desc: 'Our boats, jet skis, and gear are regularly serviced and well-maintained for your safety and comfort.' },
-  { icon: 'Heart', title: 'Personalized Service', desc: 'We customize activities based on your interests, schedule, and budget. Every trip is tailored to you.' },
-  { icon: 'Shield', title: 'Safety First', desc: 'Certified instructors, life jackets for all, and weather-dependent departures ensure your safety at every step.' },
+  { icon: 'Map', title: 'Local captains', desc: 'Every captain is a Hulhumalé fisherman who knows these waters, reefs and dolphin spots first-hand.' },
+  { icon: 'Shield', title: 'Verified boats', desc: 'ID-checked captains, registered boats, life jackets for all, and a clear weather-cancellation policy.' },
+  { icon: 'Heart', title: 'Fair to everyone', desc: 'Captains earn from a boat that would otherwise sit idle. You pay a fair, transparent price — no resort markup.' },
+  { icon: 'Wrench', title: 'No middleman', desc: 'You book the captain directly. Message them on WhatsApp once confirmed. No agency, no kickbacks.' },
 ];
 
 export default function ExplorePage() {
@@ -55,10 +55,10 @@ export default function ExplorePage() {
         <div className="relative flex h-full flex-col justify-end p-6 lg:p-12">
           <div className="mx-auto w-full max-w-7xl">
             <h1 className="text-4xl font-bold leading-tight text-white lg:text-6xl">
-              Find Your Perfect<br />Excursion
+              Real boats.<br />Real captains.<br />A real day at sea.
             </h1>
             <p className="mt-3 text-lg text-white/90 lg:text-xl">
-              Dive into adventure with Maldives Water Sports — world-class ocean activities, unforgettable memories, and unmatched service in the heart of paradise.
+              maldivian.tours connects Hulhumalé&apos;s fishing boats — docked and idle most of the day — with travellers, expats and crew who want a genuine day on the water.
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-4">
               <div className="flex items-center rounded-xl bg-white/25 px-5 py-3 backdrop-blur-sm">
@@ -82,14 +82,14 @@ export default function ExplorePage() {
         {/* VIDEO TEASER */}
         <AnimatedDiv animation="fadeIn" delay={100} className="mt-8">
           <VideoPreview src="/img/imagesmaldivesa/snorkeling.mp4" height={300} rounded={16} />
-          <p className="mt-2 text-center text-xs text-muted">A day on the water with Maldives Water Sports</p>
+          <p className="mt-2 text-center text-xs text-muted">A day on the water from Hulhumalé Phase 2</p>
         </AnimatedDiv>
 
-        {/* OUR SPECIAL EXCURSIONS */}
+        {/* WHAT YOU CAN DO */}
         <section className="mt-16">
           <AnimatedDiv animation="fadeIn">
-            <h2 className="text-3xl font-bold">Our Special Excursions</h2>
-            <p className="mt-2 text-muted">From full-day adventures to thrilling water sports — we have something for everyone.</p>
+            <h2 className="text-3xl font-bold">What you can do in a day</h2>
+            <p className="mt-2 text-muted">Mix and match — most captains will combine two or three of these into one trip.</p>
           </AnimatedDiv>
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             {EXPERIENCE_ITEMS.map((item, i) => (
@@ -111,14 +111,14 @@ export default function ExplorePage() {
         {/* PRICING */}
         <section className="mt-16">
           <AnimatedDiv animation="fadeIn">
-            <h2 className="text-3xl font-bold">Find Your Perfect Excursion in Minutes</h2>
-            <p className="mt-2 text-muted">Transparent pricing. No hidden fees. Book easily via WhatsApp.</p>
+            <h2 className="text-3xl font-bold">Pick your day in minutes</h2>
+            <p className="mt-2 text-muted">Transparent pricing per person. No hidden fees. Instant confirmation.</p>
           </AnimatedDiv>
 
           {/* Popular packages */}
           <AnimatedDiv animation="fadeIn" delay={200} className="mt-6">
             <div className="rounded-2xl border border-border bg-secondary p-6 shadow-sm">
-              <h3 className="mb-4 font-bold text-lg">Popular excursions starting from:</h3>
+              <h3 className="mb-4 font-bold text-lg">Popular experiences starting from:</h3>
               <div className="grid gap-2 sm:grid-cols-2">
                 {[
                   'South Ari Atoll Full-Day Adventure',
@@ -149,13 +149,13 @@ export default function ExplorePage() {
                 <h2 className="text-2xl font-bold">Paradise Retreats</h2>
               </div>
               <p className="text-white/90 leading-relaxed max-w-2xl">
-                Escape to unmatched serenity. Our resorts offer an array of indulgent experiences — from gourmet dining with fresh local and international cuisine to rejuvenating spa treatments, or simply relaxing in a private villa overlooking the sparkling ocean.
+                Want to escape the city for a day? Most of our captains can also drop you at a nearby resort beach, a quiet uninhabited island, or a private sandbank for a few hours of sun and silence.
               </p>
               <p className="mt-3 text-white/90 leading-relaxed max-w-2xl">
-                For the adventurous, enjoy snorkeling among vibrant coral reefs, private sunset cruises, island-hopping excursions, and cultural tours to nearby local islands. Every detail is designed to create unforgettable memories.
+                Snorkel a reef, picnic on the sand, swim in shallow turquoise water, then cruise back at sunset. Tell your captain what you&apos;re after — they&apos;ll tailor the day.
               </p>
               <div className="mt-6">
-                <Button href="/activities" title="Explore Excursions" variant="ghost" rounded="full" className="border border-white/30 text-white hover:bg-white/10" iconEnd="ArrowRight" />
+                <Button href="/activities" title="Browse experiences" variant="ghost" rounded="full" className="border border-white/30 text-white hover:bg-white/10" iconEnd="ArrowRight" />
               </div>
             </div>
           </AnimatedDiv>
@@ -185,8 +185,8 @@ export default function ExplorePage() {
         {/* VALUES */}
         <section className="mt-16">
           <AnimatedDiv animation="fadeIn">
-            <h2 className="text-3xl font-bold">Why Maldives Water Sports</h2>
-            <p className="mt-2 text-muted">Your trusted partner for world-class ocean activities.</p>
+            <h2 className="text-3xl font-bold">Why maldivian.tours</h2>
+            <p className="mt-2 text-muted">A direct link between Hulhumalé&apos;s captains and you.</p>
           </AnimatedDiv>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {VALUES.map((val) => (
@@ -207,24 +207,23 @@ export default function ExplorePage() {
         <section className="mt-16">
           <AnimatedDiv animation="scaleIn">
             <div className="rounded-2xl border border-border bg-secondary p-8 text-center shadow-sm">
-              <h2 className="text-2xl font-bold">Ready for Your Maldives Adventure?</h2>
-              <p className="mt-2 text-muted">Book your perfect excursion in minutes.</p>
+              <h2 className="text-2xl font-bold">Ready for a day on the water?</h2>
+              <p className="mt-2 text-muted">Find a captain, pick a date, pay online. That&apos;s it.</p>
               <div className="mt-6 flex flex-wrap justify-center gap-4">
-                <a
-                  href="https://wa.me/9607772241?text=Hey!%20I'd%20like%20to%20book%20an%20excursion%20with%20Maldives%20Water%20Sports."
-                  target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-white hover:opacity-90 transition-opacity"
-                >
-                  <Icon name="MessageCircle" size={20} color="white" />
-                  Book via WhatsApp
-                </a>
                 <Button
-                  title="Browse Excursions"
+                  title="Browse experiences"
                   variant="cta"
                   rounded="full"
                   size="large"
                   iconEnd="ArrowRight"
                   href="/activities"
+                />
+                <Button
+                  title="I own a boat"
+                  variant="outline"
+                  rounded="full"
+                  size="large"
+                  href="/host"
                 />
               </div>
             </div>
