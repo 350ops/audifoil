@@ -21,11 +21,11 @@ import {
 } from '@/data/tripsDb';
 import { DemoUser } from '@/data/types';
 
-const ACTIVITY_BOOKINGS_KEY = 'mws_activity_bookings';
+const ACTIVITY_BOOKINGS_KEY = 'efoil_bookings';
 
 function generateConfirmationCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = 'MLD-';
+  let code = 'EFL-';
   for (let i = 0; i < 6; i++) {
     code += chars[Math.floor(Math.random() * chars.length)];
   }
@@ -80,7 +80,7 @@ interface AppState {
 }
 
 export const useStore = create<AppState>((set, get) => ({
-  demoUser: { id: 'demo-user', name: 'Guest', email: 'hello@maldiveswatersports.com', whatsapp: '+960 7772241' },
+  demoUser: { id: 'demo-user', name: 'Guest', email: 'hello@efoilmaldives.com', whatsapp: '+960 7772241' },
   setDemoUser: (user) => set({ demoUser: user }),
 
   activities: ACTIVITIES,

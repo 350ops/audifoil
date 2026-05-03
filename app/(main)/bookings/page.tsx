@@ -28,7 +28,7 @@ export default function BookingsPage() {
       <div className="mx-auto max-w-4xl px-4 py-8 lg:px-8">
         <AnimatedDiv animation="fadeIn">
           <h1 className="text-3xl font-bold">My Bookings</h1>
-          <p className="mt-2 text-muted">Your upcoming and past adventures</p>
+          <p className="mt-2 text-muted">Your upcoming and past eFoil lessons</p>
         </AnimatedDiv>
 
         {activityBookings.length === 0 ? (
@@ -36,8 +36,8 @@ export default function BookingsPage() {
             <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border py-16">
               <Icon name="CalendarX" size={48} className="text-muted mb-4" />
               <h2 className="text-xl font-semibold">No bookings yet</h2>
-              <p className="mt-2 text-muted">Your adventures will appear here once you book</p>
-              <Button href="/activities" title="Browse Activities" variant="cta" rounded="full" className="mt-6" iconEnd="ArrowRight" />
+              <p className="mt-2 text-muted">Your lessons will appear here once you book</p>
+              <Button href="/book" title="Book a Lesson" variant="cta" rounded="full" className="mt-6" iconEnd="ArrowRight" />
             </div>
           </AnimatedDiv>
         ) : (

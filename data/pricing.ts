@@ -1,47 +1,38 @@
-// Dynamic Group Pricing Utilities
-// Pricing model: $300 solo, $150/person for 2, $100/person for 3, $80/person for 4+
+// eFoil Maldives — Flat Pricing Model
+// $150 per person per 60-minute session
 
-// Price tiers
+// Price tiers (flat rate for eFoil lessons)
 export const PRICE_TIERS = {
-  SOLO: 300, // 1 person
-  TWO: 150, // 2 people (each)
-  THREE: 100, // 3 people (each)
-  BASE: 1, // 4+ people (each) — TESTING: set to $1, change back to $80 for production
+  SOLO: 150,
+  TWO: 150,
+  THREE: 150,
+  BASE: 150,
 } as const;
 
-// Minimum guests for base price
-export const MIN_GUESTS_FOR_BASE_PRICE = 4;
+export const MIN_GUESTS_FOR_BASE_PRICE = 1;
 
-// Booking types
 export type BookingType = 'confirmed' | 'hold' | 'waitlist';
-
-// Trip status with group awareness
 export type TripBookingStatus = 'open' | 'tentative' | 'confirmed' | 'full' | 'cancelled';
 
 /**
- * Calculate price per person based on total group size
+ * Calculate price per person — flat rate for eFoil lessons
  */
-export function calculatePricePerPerson(totalGuests: number): number {
-  if (totalGuests >= 4) return PRICE_TIERS.BASE;
-  if (totalGuests === 3) return PRICE_TIERS.THREE;
-  if (totalGuests === 2) return PRICE_TIERS.TWO;
-  return PRICE_TIERS.SOLO;
+export function calculatePricePerPerson(_totalGuests: number): number {
+  return PRICE_TIERS.BASE;
 }
 
 /**
  * Calculate price per person when adding new guests to existing group
  */
-export function calculatePriceWithNewGuests(currentGuests: number, newGuests: number): number {
-  const total = currentGuests + newGuests;
-  return calculatePricePerPerson(total);
+export function calculatePriceWithNewGuests(_currentGuests: number, _newGuests: number): number {
+  return PRICE_TIERS.BASE;
 }
 
 /**
  * Calculate total price for a booking
  */
-export function calculateTotalPrice(totalGuests: number, guestCount: number): number {
-  const pricePerPerson = calculatePricePerPerson(totalGuests);
-  return pricePerPerson * guestCount;
+export function calculateTotalPrice(_totalGuests: number, guestCount: number): number {
+  return PRICE_TIERS.BASE * guestCount;
 }
 
 /**
@@ -64,57 +55,28 @@ export interface PriceTierInfo {
 
 export function getPriceTierInfo(currentGuests: number, newGuests: number = 1): PriceTierInfo {
   const totalAfterBooking = currentGuests + newGuests;
-  const currentPrice = calculatePricePerPerson(totalAfterBooking);
-  const isAtBasePrice = totalAfterBooking >= MIN_GUESTS_FOR_BASE_PRICE;
-
-  // Calculate next tier
-  let nextTierPrice = PRICE_TIERS.BASE;
-  let guestsNeededForNextTier = 0;
-
-  if (totalAfterBooking < 4) {
-    guestsNeededForNextTier = 4 - totalAfterBooking;
-    nextTierPrice = PRICE_TIERS.BASE;
-  }
-
-  // Calculate potential savings if more people join
-  const savingsIfMoreJoin = isAtBasePrice ? 0 : (currentPrice - PRICE_TIERS.BASE) * newGuests;
-
-  // Build price tiers for display
-  const priceTiers = [
-    {
-      guestCount: 1,
-      pricePerPerson: PRICE_TIERS.SOLO,
-      isCurrentTier: totalAfterBooking === 1,
-      label: '1 person',
-    },
-    {
-      guestCount: 2,
-      pricePerPerson: PRICE_TIERS.TWO,
-      isCurrentTier: totalAfterBooking === 2,
-      label: '2 people',
-    },
-    {
-      guestCount: 3,
-      pricePerPerson: PRICE_TIERS.THREE,
-      isCurrentTier: totalAfterBooking === 3,
-      label: '3 people',
-    },
-    {
-      guestCount: 4,
-      pricePerPerson: PRICE_TIERS.BASE,
-      isCurrentTier: totalAfterBooking >= 4,
-      label: '4+ people',
-    },
-  ];
 
   return {
-    currentPrice,
-    nextTierPrice,
-    guestsNeededForNextTier,
-    isAtBasePrice,
+    currentPrice: PRICE_TIERS.BASE,
+    nextTierPrice: PRICE_TIERS.BASE,
+    guestsNeededForNextTier: 0,
+    isAtBasePrice: true,
     totalGuests: totalAfterBooking,
-    savingsIfMoreJoin,
-    priceTiers,
+    savingsIfMoreJoin: 0,
+    priceTiers: [
+      {
+        guestCount: 1,
+        pricePerPerson: PRICE_TIERS.BASE,
+        isCurrentTier: totalAfterBooking === 1,
+        label: '1 rider',
+      },
+      {
+        guestCount: 2,
+        pricePerPerson: PRICE_TIERS.BASE,
+        isCurrentTier: totalAfterBooking >= 2,
+        label: '2 riders',
+      },
+    ],
   };
 }
 
@@ -122,22 +84,12 @@ export function getPriceTierInfo(currentGuests: number, newGuests: number = 1): 
  * Get a human-readable price message
  */
 export function getPriceMessage(
-  currentGuests: number,
-  newGuests: number = 1
+  _currentGuests: number,
+  _newGuests: number = 1
 ): { message: string; subMessage?: string } {
-  const tierInfo = getPriceTierInfo(currentGuests, newGuests);
-
-  if (tierInfo.isAtBasePrice) {
-    return {
-      message: `$${tierInfo.currentPrice}/person`,
-      subMessage: 'Full group rate!',
-    };
-  }
-
-  const guestsNeeded = tierInfo.guestsNeededForNextTier;
   return {
-    message: `$${tierInfo.currentPrice}/person`,
-    subMessage: `${guestsNeeded} more ${guestsNeeded === 1 ? 'person' : 'people'} → $${tierInfo.nextTierPrice}/person`,
+    message: `$${PRICE_TIERS.BASE}/person`,
+    subMessage: '60-minute eFoil lesson',
   };
 }
 
@@ -149,7 +101,7 @@ export function formatPrice(amount: number): string {
 }
 
 /**
- * Get booking status message based on group size
+ * Get booking status message
  */
 export interface BookingStatusInfo {
   status: TripBookingStatus;
@@ -169,60 +121,29 @@ export function getBookingStatusInfo(
   newGuests: number,
   maxCapacity: number
 ): BookingStatusInfo {
-  const totalAfterBooking = currentGuests + newGuests;
   const spotsRemaining = maxCapacity - currentGuests;
-  const pricePerPerson = calculatePricePerPerson(totalAfterBooking);
 
-  // Trip is full
   if (spotsRemaining < newGuests) {
     return {
       status: 'full',
       canBookNow: false,
       requiresHold: false,
-      message: 'This trip is full',
+      message: 'This session is full',
       options: [],
     };
   }
 
-  // Will have 4+ people after booking - confirmed booking
-  if (totalAfterBooking >= 4) {
-    return {
-      status: 'confirmed',
-      canBookNow: true,
-      requiresHold: false,
-      message: 'Full group! Book at the best rate.',
-      options: [
-        {
-          type: 'confirmed',
-          label: `Book now at $${pricePerPerson}/person`,
-          description: 'Instant confirmation',
-          pricePerPerson,
-        },
-      ],
-    };
-  }
-
-  // Under 4 people - tentative booking with options
-  const higherPrice = pricePerPerson;
-  const basePrice = PRICE_TIERS.BASE;
-
   return {
-    status: 'tentative',
+    status: 'confirmed',
     canBookNow: true,
-    requiresHold: true,
-    message: `Currently ${currentGuests} ${currentGuests === 1 ? 'person' : 'people'} on this trip`,
+    requiresHold: false,
+    message: 'Book your eFoil lesson instantly.',
     options: [
       {
-        type: 'hold',
-        label: 'Hold my spot ($0 now)',
-        description: 'Get notified as group fills. Price drops if more join.',
-        pricePerPerson: 0,
-      },
-      {
         type: 'confirmed',
-        label: `Book now at $${higherPrice}/person`,
-        description: `Refund the difference if price drops to $${basePrice}`,
-        pricePerPerson: higherPrice,
+        label: `Book now — $${PRICE_TIERS.BASE}/person`,
+        description: 'Instant confirmation',
+        pricePerPerson: PRICE_TIERS.BASE,
       },
     ],
   };
@@ -252,43 +173,22 @@ export function generateTimeSlots(
     const endMins = endMinutes % 60;
 
     return {
-      startTime: `${startTime}:00`, // HH:mm:ss format for DB
+      startTime: `${startTime}:00`,
       endTime: `${endHours.toString().padStart(2, '0')}:${endMins.toString().padStart(2, '0')}:00`,
     };
   });
 }
 
-// ============================================
-// SINGLE-TICKET PRICING MODEL
-// ============================================
-// Users pay only for their own ticket at the base rate ($80)
-// They can invite friends who pay separately via shareable payment links
+export const SINGLE_TICKET_PRICE = PRICE_TIERS.BASE;
 
-/**
- * Single ticket price - everyone pays the base rate
- * The minimum group size is handled by inviting friends
- */
-export const SINGLE_TICKET_PRICE = PRICE_TIERS.BASE; // $80
-
-/**
- * Calculate the price for a single ticket booking
- * Users always pay the base rate for their own ticket
- */
 export function getSingleTicketPrice(): number {
   return SINGLE_TICKET_PRICE;
 }
 
-/**
- * Calculate total for booking (single user)
- * Each person pays for themselves
- */
 export function calculateSingleTicketTotal(ticketCount: number): number {
   return SINGLE_TICKET_PRICE * ticketCount;
 }
 
-/**
- * Get invite info for sharing with friends
- */
 export interface FriendInviteInfo {
   pricePerPerson: number;
   guestsNeededForTrip: number;
@@ -305,29 +205,20 @@ export function getFriendInviteInfo(
   tripTime: string
 ): FriendInviteInfo {
   const spotsRemaining = Math.max(0, maxCapacity - currentGuests);
-  const guestsNeededForTrip = Math.max(0, MIN_GUESTS_FOR_BASE_PRICE - currentGuests);
-  
-  const shareMessage = guestsNeededForTrip > 0
-    ? `Hey! Join me on ${activityTitle} on ${tripDate} at ${tripTime}. We need ${guestsNeededForTrip} more to fill the group. Only $${SINGLE_TICKET_PRICE}/person!`
-    : `Hey! Join me on ${activityTitle} on ${tripDate} at ${tripTime}. Only $${SINGLE_TICKET_PRICE}/person!`;
+
+  const shareMessage = `Hey! Join me for ${activityTitle} on ${tripDate} at ${tripTime}. Only $${SINGLE_TICKET_PRICE}/person — fly above the water in paradise!`;
 
   return {
     pricePerPerson: SINGLE_TICKET_PRICE,
-    guestsNeededForTrip,
+    guestsNeededForTrip: 0,
     currentGuests,
     spotsRemaining,
     shareMessage,
   };
 }
 
-/**
- * Payment type for tracking
- */
 export type PaymentType = 'direct' | 'payment_link' | 'hold';
 
-/**
- * Single ticket booking info
- */
 export interface SingleTicketBookingInfo {
   ticketPrice: number;
   paymentType: PaymentType;

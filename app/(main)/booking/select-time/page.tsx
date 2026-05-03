@@ -102,8 +102,8 @@ export default function SelectTimePage() {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold">No activity selected</h2>
-          <Button href="/activities" title="Browse Activities" variant="outline" className="mt-4" />
+          <h2 className="text-2xl font-bold">No lesson selected</h2>
+          <Button href="/book" title="Browse Lessons" variant="outline" className="mt-4" />
         </div>
       </div>
     );
@@ -135,13 +135,13 @@ export default function SelectTimePage() {
           <div>
             <AnimatedDiv animation="fadeIn" delay={150}>
               <h2 className="mb-4 text-lg font-semibold">
-                {selectedDate ? `Available trips` : 'Select a date'}
+                {selectedDate ? `Available sessions` : 'Select a date'}
               </h2>
             </AnimatedDiv>
 
             {!selectedDate && (
               <div className="flex h-48 items-center justify-center rounded-2xl border border-dashed border-border">
-                <p className="text-muted">Pick a date to see available trip times</p>
+                <p className="text-muted">Pick a date to see available session times</p>
               </div>
             )}
 
@@ -153,7 +153,7 @@ export default function SelectTimePage() {
 
             {selectedDate && !tripsLoading && !localLoading && dbTrips.length === 0 && (
               <div className="flex h-48 items-center justify-center rounded-2xl border border-dashed border-border">
-                <p className="text-muted">No trips available for this date</p>
+                <p className="text-muted">No sessions available for this date</p>
               </div>
             )}
 

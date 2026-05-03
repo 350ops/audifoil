@@ -13,8 +13,8 @@ export default function LandingPage() {
       {/* Hero */}
       <div className="relative h-screen min-h-[600px]">
         <Image
-          src="/img/imagesmaldivesa/sandbank.jpg"
-          alt="Maldives paradise"
+          src={LOCAL_IMAGES.efoilNew}
+          alt="eFoil flying over Maldives lagoon"
           fill
           className="object-cover"
           priority
@@ -25,8 +25,8 @@ export default function LandingPage() {
           {/* Top bar */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Image src="/img/imagesmaldivesa/logoboho.png" alt="Maldives Water Sports" width={32} height={32} className="rounded-md" />
-              <span className="text-sm font-semibold tracking-[0.2em] text-white/80">Maldives Water Sports</span>
+              <Image src="/img/imagesmaldivesa/logoboho.png" alt="eFoil Maldives" width={32} height={32} className="rounded-md" />
+              <span className="text-sm font-semibold tracking-[0.2em] text-white/80">eFoil Maldives</span>
             </div>
             <Link
               href="/login"
@@ -52,12 +52,12 @@ export default function LandingPage() {
             <AnimatedDiv animation="slideInBottom" delay={300}>
               <div className="mt-6 flex flex-wrap items-center gap-4">
                 <div className="flex items-center rounded-xl bg-white/25 px-5 py-3 backdrop-blur-sm">
-                  <span className="text-xl font-bold text-white">From $25</span>
-                  <span className="ml-2 text-base text-white/80">/ person</span>
+                  <span className="text-xl font-bold text-white">From $150</span>
+                  <span className="ml-2 text-base text-white/80">/ session</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-white/70">
                   <Icon name="Star" size={16} color="#FFD700" />
-                  <span className="text-sm font-medium">4.4 (1,400+ reviews)</span>
+                  <span className="text-sm font-medium">4.9 (120+ riders)</span>
                 </div>
               </div>
             </AnimatedDiv>
@@ -66,8 +66,8 @@ export default function LandingPage() {
               <div className="mt-8 flex flex-wrap gap-4">
                 dc
                 <Button
-                  href="/signup"
-                  title="Create Account"
+                  href="/partners"
+                  title="For Partners"
                   variant="ghost"
                   size="large"
                   rounded="full"
@@ -85,10 +85,10 @@ export default function LandingPage() {
           <AnimatedDiv animation="fadeIn">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {[
-                { icon: 'Fish', title: 'Dolphin Watching', desc: 'Spinner dolphins in their natural habitat' },
-                { icon: 'Waves', title: 'Snorkeling Adventures', desc: 'Stingrays, nurse sharks & tropical reefs' },
-                { icon: 'Sun', title: 'Sandbank Escapes', desc: 'Powder-soft white sands & turquoise waters' },
-                { icon: 'Anchor', title: 'Sunset Cruises', desc: 'Breathtaking sunsets on the Indian Ocean' },
+                { icon: 'Zap', title: 'Learn in 60 Minutes', desc: 'No experience needed — most riders fly above the water on their very first session' },
+                { icon: 'MapPin', title: 'Two Locations', desc: 'Hulhumale (10 min from airport) and Maafushi Island — choose your paradise' },
+                { icon: 'Shield', title: 'Certified Instructors', desc: 'Professional 1-on-1 coaching with all safety equipment included' },
+                { icon: 'Handshake', title: 'Partner Program', desc: 'Resorts, yachts & watersport centers: earn revenue with zero investment' },
               ].map((item) => (
                 <div key={item.title} className="flex items-start gap-4 rounded-2xl border border-border p-5">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-highlight/10">
@@ -107,8 +107,8 @@ export default function LandingPage() {
           <AnimatedDiv animation="scaleIn" delay={200}>
             <div className="mt-12 text-center">
               <Button
-                href="/explore"
-                title="View All Excursions"
+                href="/book"
+                title="Book Your eFoil Lesson"
                 variant="cta"
                 size="large"
                 rounded="full"
